@@ -4,27 +4,17 @@
             <h1>Main page</h1>
 
             <v-layout column>
-                <v-flex v-for="post in posts" :key="post.id">
-                    <v-card class="my-2">
-                        <v-card-title primary-title>
-                            <div>
-                                <h3 class="headline mb-0">{{post.from.lastName}} {{post.from.firstName}}</h3>
-                                <div>{{post.text}}</div>
-                            </div>
-                        </v-card-title>
-
-                        <v-card-actions v-if="false">
-                            <v-btn flat color="orange">Edit</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-flex>
+                <post v-for="post in posts" v-bind="post" :key="post.id" />
             </v-layout>
         </v-flex>
     </v-layout>
 </template>
 
 <script>
+    import Post from '../components/Post'
+
     export default {
+        components: {Post},
         data: () => ({
             posts: []
         }),
