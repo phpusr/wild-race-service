@@ -1,13 +1,9 @@
 <template>
-    <v-layout>
-        <v-flex xs12 md6 offset-md3>
-            <h1>Main page</h1>
-
-            <v-layout column>
-                <post v-for="post in posts" v-bind="post" :key="post.id" />
-            </v-layout>
-        </v-flex>
-    </v-layout>
+    <v-flex xs12 md6 offset-md3>
+        <v-layout column>
+            <post v-for="post in posts" v-bind="post" :key="post.id" />
+        </v-layout>
+    </v-flex>
 </template>
 
 <script>

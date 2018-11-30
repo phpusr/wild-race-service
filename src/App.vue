@@ -7,11 +7,14 @@
                 <v-toolbar-title>Wild Race</v-toolbar-title>
             </v-toolbar>
             <v-content>
+                <v-flex xs11 offset-xs1 md6 offset-md3 class="mt-3">
+                    <h1>{{title}}</h1>
+                </v-flex>
                 <v-container fluid>
                     <router-view/>
                 </v-container>
             </v-content>
-            <v-footer app dark class="pa-3">
+            <v-footer dark class="pa-3">
                 <v-layout justify-center>
                     <div>Created by <a href="http://vk.com/phpusr">Sergey Doronin</a></div>
                 </v-layout>
@@ -21,11 +24,16 @@
 </template>
 
 <script>
-export default {
+    import msg from './i18n'
+
+    export default {
     name: 'app',
-    data: () => ({
-        drawer: false
-    }),
+    data() {
+        return {
+            drawer: false,
+            title: msg.pages[this.$route.path]
+        }
+    },
 }
 </script>
 
