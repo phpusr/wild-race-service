@@ -24,14 +24,16 @@ class PostController(private val postRepo: PostRepo, private val tempDataRepo: T
             @RequestParam manualEditing: Boolean?
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
-        val list = page.content
-        val lastSyncDate = tempDataRepo.get().lastSyncDate
         val lastPost = postRepo.findLastPost()
-        val sumDistance = lastPost.sumDistance ?: 0
-        val numberOfRuns = lastPost.number ?: 0
 
-        return mapOf("total" to page.totalElements, "list" to list, "lastSyncDate" to lastSyncDate,
-                "sumDistance" to sumDistance, "numberOfRuns" to numberOfRuns)
+        return mapOf(
+                "total" to page.totalElements,
+                "totalPages" to page.totalPages,
+                "lastSyncDate" to tempDataRepo.get().lastSyncDate,
+                "sumDistance" to (lastPost.sumDistance ?: 0),
+                "numberOfRuns" to (lastPost.number ?: 0),
+                "list" to page.content
+        )
     }
 
 }
