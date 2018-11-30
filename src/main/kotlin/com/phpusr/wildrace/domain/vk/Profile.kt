@@ -1,4 +1,4 @@
-package com.phpusr.wildrace.domain
+package com.phpusr.wildrace.domain.vk
 
 import com.phpusr.wildrace.consts.Consts
 import org.hibernate.validator.constraints.Length

@@ -1,4 +1,4 @@
-package com.phpusr.wildrace.domain
+package com.phpusr.wildrace.domain.vk
 
 import com.phpusr.wildrace.enum.PostParserStatus
 import org.hibernate.validator.constraints.Length
