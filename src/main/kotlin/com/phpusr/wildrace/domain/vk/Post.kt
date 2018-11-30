@@ -63,13 +63,15 @@ class Post {
 }
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
-    @Query("from Post p " +
+    //TODO join не работает
+    @Query("select p from Post p left join p.from " +
             "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)")
     fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
+    //TODO возможно эта ф-я не нужна, т.к. Page сам умеет так делать
     @Query("from Post " +
-            "where (:status is null OR status = :status) AND (:manualEditing is null OR lastUpdate is not null)")
-    fun count(@Param("status") status: Int?, @Param("manualEditing") manualEditing: Boolean?): Long
+            "where (:statusId is null OR statusId = :statusId) AND (:manualEditing is null OR lastUpdate is not null)")
+    fun count(@Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Long
 
     @Query("from Post " +
             "where number is not null AND distance is not null AND sumDistance is not null " +
