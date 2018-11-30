@@ -1,10 +1,12 @@
 package com.phpusr.wildrace.domain.data
 
 import org.hibernate.validator.constraints.Length
+import javax.persistence.Entity
 
 /**
  * Настройки приложения
  */
+@Entity
 class Config(
         /** Синхронизация постов */
         val syncPosts: Boolean,
