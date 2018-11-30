@@ -1,17 +1,22 @@
 <template>
   <div id="app">
-    <Main />
+    <v-app>
+      <v-toolbar app>
+        <v-toolbar-title>Wild Race</v-toolbar-title>
+      </v-toolbar>
+      <v-content>
+        <v-container fluid>
+          <router-view></router-view>
+        </v-container>
+      </v-content>
+      <v-footer app></v-footer>
+    </v-app>
   </div>
 </template>
 
 <script>
-    import Main from './pages/Main'
-
-    export default {
-    name: 'app',
-    components: {
-        Main
-    }
+export default {
+  name: 'app'
 }
 </script>
 
