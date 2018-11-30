@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.RestController
 class PostController(private val postRepo: PostRepo, private val tempDataRepo: TempDataRepo) {
 
     @GetMapping
-    @JsonView(Views.FullPost::class)
+    @JsonView(Views.PostREST::class)
     fun list(
             @PageableDefault(sort = ["date"], direction = Sort.Direction.DESC) pageable: Pageable,
-            @RequestParam status: Int?,
+            @RequestParam statusId: Int?,
             @RequestParam manualEditing: Boolean?
     ): Map<String, Any> {
-        val page = postRepo.findAll(pageable, status, manualEditing)
+        val page = postRepo.findAll(pageable, statusId, manualEditing)
         val lastSyncDate = tempDataRepo.get().lastSyncDate
         val lastPost = postRepo.findLastPost()
         val sumDistance = lastPost.sumDistance ?: 0
         val numberOfRuns = lastPost.number ?: 0
 
-        return mapOf("page" to page, "lastSyncDate" to lastSyncDate, "sumDistance" to sumDistance, "numberOfRuns" to numberOfRuns)
+        return mapOf("list" to page.content, "lastSyncDate" to lastSyncDate, "sumDistance" to sumDistance, "numberOfRuns" to numberOfRuns)
     }
 
 }

@@ -18,59 +18,54 @@ import javax.persistence.*
 class Post {
     @field:Id
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)
-    @field:JsonView(Views.Id::class)
+    @field:JsonView(Views.PostREST::class)
     var id: Long? = null
 
     /** Порядковый номер */
-    @field:JsonView(Views.FullPost::class)
     var number: Int? = null
 
     /** Статус обработки поста */
     @field:Column(name = "status")
-    @field:JsonView(Views.FullPost::class)
     var statusId: Int? = null
 
     /** Автор записи */
     @field:ManyToOne(fetch = FetchType.LAZY)
     @field:JoinColumn(name = "from_id")
-    @field:JsonView(Views.FullPost::class)
+    @field:JsonView(Views.PostREST::class)
     var from: Profile? = null
 
     /** Дата и время публикации записи */
-    @field:JsonView(Views.FullPost::class)
+    @field:JsonView(Views.PostREST::class)
     var date: Date? = null
 
     /** Текст записи */
     @field:Length(max = 1000, message = "text_too_long")
-    @field:JsonView(Views.FullPost::class)
+    @field:JsonView(Views.PostREST::class)
     var text: String? = null
 
     /** Hash текста (MD5) */
-    @field:JsonView(Views.FullPost::class)
     var textHash: String? = null
 
     /** Дистанция пробежки */
-    @field:JsonView(Views.FullPost::class)
+    @field:JsonView(Views.PostREST::class)
     var distance: Int? = null
 
     /** Сумма дистанций пробежек */
-    @field:JsonView(Views.FullPost::class)
+    @field:JsonView(Views.PostREST::class)
     var sumDistance: Int? = null
 
     /** Причина редактирования */
     @field:Length(max = 255, message = "edit_reason_too_long")
-    @field:JsonView(Views.FullPost::class)
     var editReason: String? = null
 
     /** Дата последнего редактирования */
-    @field:JsonView(Views.FullPost::class)
     var lastUpdate: Date? = null
 }
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
-    @Query("from Post p left join p.from " +
-            "where (:status is null OR status = :status) AND (:manualEditing is null OR p.lastUpdate is not null)")
-    fun findAll(pageable: Pageable, @Param("status") status: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
+    @Query("from Post p " +
+            "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)")
+    fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
     @Query("from Post " +
             "where (:status is null OR status = :status) AND (:manualEditing is null OR lastUpdate is not null)")
