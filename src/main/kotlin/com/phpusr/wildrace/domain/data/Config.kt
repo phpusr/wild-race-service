@@ -2,12 +2,19 @@ package com.phpusr.wildrace.domain.data
 
 import org.hibernate.validator.constraints.Length
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 /**
  * Настройки приложения
  */
 @Entity
 class Config(
+        @field:Id
+        @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long,
+
         /** Синхронизация постов */
         val syncPosts: Boolean,
 

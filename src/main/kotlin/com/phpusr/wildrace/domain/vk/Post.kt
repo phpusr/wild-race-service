@@ -2,12 +2,12 @@ package com.phpusr.wildrace.domain.vk
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
-import com.phpusr.wildrace.enum.PostParserStatus
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.data.repository.query.Param
 import java.util.*
 import javax.persistence.*
 
@@ -17,7 +17,7 @@ import javax.persistence.*
 @Entity
 class Post {
     @field:Id
-    @field:GeneratedValue(strategy = GenerationType.AUTO)
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonView(Views.Id::class)
     var id: Long? = null
 
@@ -26,14 +26,13 @@ class Post {
     var number: Int? = null
 
     /** Статус обработки поста */
-    @field:ManyToOne(fetch = FetchType.EAGER)
-    @field:JoinColumn(name = "status")
+    @field:Column(name = "status")
     @field:JsonView(Views.FullPost::class)
-    var status: PostParserStatus? = null
+    var statusId: Int? = null
 
     /** Автор записи */
     @field:ManyToOne(fetch = FetchType.LAZY)
-    @field:JoinColumn(name = "profile_id")
+    @field:JoinColumn(name = "from_id")
     @field:JsonView(Views.FullPost::class)
     var from: Profile? = null
 
@@ -69,11 +68,16 @@ class Post {
 }
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
-    @Query("from Post p left join p.from" +
-            "where (:status is null OR status = :status) AND (:manualEditing is null OR lastUpdate is not null)")
-    fun findAll(pageable: Pageable, status: Int, manualEditing: Boolean): Page<Post>
+    @Query("from Post p left join p.from " +
+            "where (:status is null OR status = :status) AND (:manualEditing is null OR p.lastUpdate is not null)")
+    fun findAll(pageable: Pageable, @Param("status") status: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
-    @Query("from Post p" +
+    @Query("from Post " +
             "where (:status is null OR status = :status) AND (:manualEditing is null OR lastUpdate is not null)")
-    fun count(status: Int, manualEditing: Boolean): Page<Post>
+    fun count(@Param("status") status: Int?, @Param("manualEditing") manualEditing: Boolean?): Long
+
+    @Query("from Post " +
+            "where number is not null AND distance is not null AND sumDistance is not null " +
+            "AND date = (select max(date) from Post)")
+    fun findLastPost(): Post
 }

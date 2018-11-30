@@ -17,7 +17,7 @@ import javax.persistence.Id
 @Entity
 class Profile {
     @field:Id
-    @field:GeneratedValue(strategy = GenerationType.AUTO)
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonView(Views.Id::class)
     var id: Long? = null
 

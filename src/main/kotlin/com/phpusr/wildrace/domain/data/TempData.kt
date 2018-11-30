@@ -14,8 +14,9 @@ import javax.persistence.Id
 @Entity
 class TempData(
         @field:Id
-        @field:GeneratedValue(strategy = GenerationType.AUTO)
+        @field:GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
+
         val lastSyncDate: Date
 )
 
