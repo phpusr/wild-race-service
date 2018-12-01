@@ -1,7 +1,5 @@
 package com.phpusr.wildrace.domain.vk
 
-import com.fasterxml.jackson.annotation.JsonView
-import com.phpusr.wildrace.domain.Views
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -15,52 +13,46 @@ import javax.persistence.*
  * Класс для хранения записей со стены группы
  */
 @Entity
-class Post {
-    @field:Id
-    @field:JsonView(Views.PostREST::class)
-    var id: Long? = null
+class Post(
+        @field:Id
+        val id: Long,
 
-    /** Порядковый номер */
-    @field:JsonView(Views.PostREST::class)
-    var number: Int? = null
+        /** Порядковый номер */
+        val number: Int?,
 
-    /** Статус обработки поста */
-    @field:Column(name = "status")
-    var statusId: Int? = null
+        /** Статус обработки поста */
+        @field:Column(name = "status")
+        val statusId: Int,
 
-    /** Автор записи */
-    @field:ManyToOne(fetch = FetchType.LAZY)
-    @field:JoinColumn(name = "from_id")
-    @field:JsonView(Views.PostREST::class)
-    var from: Profile? = null
+        /** Автор записи */
+        @field:ManyToOne(fetch = FetchType.LAZY)
+        @field:JoinColumn(name = "from_id")
+        val from: Profile,
 
-    /** Дата и время публикации записи */
-    @field:JsonView(Views.PostREST::class)
-    var date: Date? = null
+        /** Дата и время публикации записи */
+        val date: Date,
 
-    /** Текст записи */
-    @field:Length(max = 1000, message = "text_too_long")
-    @field:JsonView(Views.PostREST::class)
-    var text: String? = null
+        /** Текст записи */
+        @field:Length(max = 1000, message = "text_too_long")
+        val text: String,
 
-    /** Hash текста (MD5) */
-    var textHash: String? = null
+        /** Hash текста (MD5) */
+        @field:Length(max = 32, message = "text_hash_too_long")
+        val textHash: String,
 
-    /** Дистанция пробежки */
-    @field:JsonView(Views.PostREST::class)
-    var distance: Int? = null
+        /** Дистанция пробежки */
+        val distance: Int?,
 
-    /** Сумма дистанций пробежек */
-    @field:JsonView(Views.PostREST::class)
-    var sumDistance: Int? = null
+        /** Сумма дистанций пробежек */
+        val sumDistance: Int?,
 
-    /** Причина редактирования */
-    @field:Length(max = 255, message = "edit_reason_too_long")
-    var editReason: String? = null
+        /** Причина редактирования */
+        @field:Length(max = 255, message = "edit_reason_too_long")
+        val editReason: String?,
 
-    /** Дата последнего редактирования */
-    var lastUpdate: Date? = null
-}
+        /** Дата последнего редактирования */
+        val lastUpdate: Date?
+)
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
 

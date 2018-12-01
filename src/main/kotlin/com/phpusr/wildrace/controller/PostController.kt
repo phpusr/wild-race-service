@@ -1,9 +1,11 @@
 package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
+import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
+import com.phpusr.wildrace.domain.dto.PostDto
 import com.phpusr.wildrace.domain.vk.PostRepo
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -22,13 +24,18 @@ class PostController(
 ) {
 
     @GetMapping
-    @JsonView(Views.PostREST::class)
+    @JsonView(Views.PostDtoREST::class)
     fun list(
             @PageableDefault(sort = ["date"], direction = Sort.Direction.DESC) pageable: Pageable,
             @RequestParam statusId: Int?,
             @RequestParam manualEditing: Boolean?
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
+        val config = configRepo.get()
+        val list = page.content.map { post ->
+            val link = "${Consts.VKLink}/${config.groupShortLink}?w=wall${config.groupId}_${post.id}"
+            PostDto(post.id, post.number, post.from, post.date, post.text, post.distance, post.sumDistance, link)
+        }
         val lastPost = postRepo.findLastPost()
 
         return mapOf(
@@ -37,8 +44,7 @@ class PostController(
                 "lastSyncDate" to tempDataRepo.get().lastSyncDate,
                 "sumDistance" to (lastPost.sumDistance ?: 0),
                 "numberOfRuns" to (lastPost.number ?: 0),
-                "config" to configRepo.get(),
-                "list" to page.content
+                "list" to list
         )
     }
 

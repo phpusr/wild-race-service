@@ -1,7 +1,7 @@
 <template>
     <v-flex xs12 md6 offset-md3>
         <v-layout column>
-            <post v-for="post in posts" :post="post" :config="config" :key="post.id" />
+            <post v-for="post in posts" :post="post" :key="post.id" />
         </v-layout>
     </v-flex>
 </template>
@@ -12,8 +12,7 @@
     export default {
         components: {Post},
         data: () => ({
-            posts: [],
-            config: {},
+            posts: []
         }),
         created() {
             this.fetchData();
