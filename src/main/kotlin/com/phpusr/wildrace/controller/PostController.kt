@@ -1,11 +1,10 @@
 package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
-import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
-import com.phpusr.wildrace.domain.dto.PostDto
+import com.phpusr.wildrace.domain.dto.PostDtoObject
 import com.phpusr.wildrace.domain.vk.PostRepo
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -32,10 +31,7 @@ class PostController(
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
         val config = configRepo.get()
-        val list = page.content.map { post ->
-            val link = "${Consts.VKLink}/${config.groupShortLink}?w=wall${config.groupId}_${post.id}"
-            PostDto(post.id, post.number, post.statusId, post.from, post.date, post.text, post.distance, post.sumDistance, link)
-        }
+        val list = page.content.map { PostDtoObject.create(it, config.groupShortLink, config.groupId) }
         val lastPost = postRepo.findLastPost()
 
         return mapOf(

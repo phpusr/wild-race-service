@@ -8,7 +8,7 @@
                     </v-avatar>
                     <div class="ml-2">
                         <h3><a :href="post.link">#{{post.number}}</a> {{post.from.lastName}} {{post.from.firstName}}</h3>
-                        <div class="caption grey--text lighten-3">{{post.date}}</div>
+                        <div class="caption grey--text lighten-3">{{date}}</div>
                     </div>
                     <post-parser-status :status-id="post.statusId" class="ml-2" />
                     <v-spacer></v-spacer>
@@ -26,11 +26,17 @@
 
 <script>
     import PostParserStatus from './PostParserStatus'
+    import dateFormat from 'dateformat'
 
     export default {
     components: {PostParserStatus},
     props: {
         post: Object
+    },
+    computed: {
+        date() {
+            return dateFormat(new Date(this.post.date), 'HH:MM dd.mm.yyyy');
+        }
     }
 }
 </script>
