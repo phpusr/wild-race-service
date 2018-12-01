@@ -58,6 +58,7 @@ class Profile {
      * url квадратной фотографии пользователя, имеющей ширину 50 пикселей. В случае отсутствия у пользователя фотографии возвращается http://vk.com/images/camera_c.gif
      */
     @field:Length(max = 255, message = "photo_50_too_long")
+    @field:JsonView(Views.ProfileREST::class)
     var photo_50: String? = null
 
     /**
