@@ -7,8 +7,6 @@ import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.Range
 import java.util.*
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 
 /**
@@ -17,7 +15,6 @@ import javax.persistence.Id
 @Entity
 class Profile {
     @field:Id
-    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonView(Views.ProfileREST::class)
     var id: Long? = null
 

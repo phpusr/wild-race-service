@@ -1,6 +1,10 @@
 package com.phpusr.wildrace.domain.data
 
+import com.fasterxml.jackson.annotation.JsonView
+import com.phpusr.wildrace.domain.Views
 import org.hibernate.validator.constraints.Length
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -22,10 +26,12 @@ class Config(
         val syncSeconds: Int,
 
         /** ID группы в VK */
+        @field:JsonView(Views.ConfigREST::class)
         val groupId: Long,
 
         /** Название группы в VK (в URL) */
         @field:Length(max = 100, message = "group_short_link_too_long")
+        @field:JsonView(Views.ConfigREST::class)
         val groupShortLink: String,
 
         /** Комментирование статуса обработки постов */
@@ -41,3 +47,10 @@ class Config(
         /** Публиковать-ли статистику в ВК */
         val publishStat: Boolean
 )
+
+interface ConfigRepo : CrudRepository<Config, Long> {
+
+    @Query("from Config where id = 1")
+    fun get(): Config
+
+}

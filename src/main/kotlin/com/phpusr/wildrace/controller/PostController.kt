@@ -2,6 +2,7 @@ package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
+import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.PostRepo
 import org.springframework.data.domain.Pageable
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("post")
-class PostController(private val postRepo: PostRepo, private val tempDataRepo: TempDataRepo) {
+class PostController(
+        private val postRepo: PostRepo,
+        private val tempDataRepo: TempDataRepo,
+        private val configRepo: ConfigRepo
+) {
 
     @GetMapping
     @JsonView(Views.PostREST::class)
@@ -32,6 +37,7 @@ class PostController(private val postRepo: PostRepo, private val tempDataRepo: T
                 "lastSyncDate" to tempDataRepo.get().lastSyncDate,
                 "sumDistance" to (lastPost.sumDistance ?: 0),
                 "numberOfRuns" to (lastPost.number ?: 0),
+                "config" to configRepo.get(),
                 "list" to page.content
         )
     }

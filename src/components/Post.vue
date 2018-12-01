@@ -2,8 +2,8 @@
     <v-card class="my-2">
         <v-card-title primary-title>
             <div>
-                <h3 class="headline mb-0">{{from.lastName}} {{from.firstName}}</h3>
-                <div>{{text}}</div>
+                <h3 class="headline mb-0"><a :href="getLink">#{{post.number}}</a> {{post.from.lastName}} {{post.from.firstName}}</h3>
+                <div>{{post.text}}</div>
             </div>
         </v-card-title>
 
@@ -16,8 +16,13 @@
 <script>
 export default {
     props: {
-        from: Object,
-        text: String
+        post: Object,
+        config: Object
+    },
+    computed: {
+        getLink() {
+            return `http://vk.com/${this.config.groupShortLink}?w=wall${this.config.groupId}_${this.post.id}`;
+        }
     }
 }
 </script>

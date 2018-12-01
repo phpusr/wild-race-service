@@ -17,11 +17,11 @@ import javax.persistence.*
 @Entity
 class Post {
     @field:Id
-    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonView(Views.PostREST::class)
     var id: Long? = null
 
     /** Порядковый номер */
+    @field:JsonView(Views.PostREST::class)
     var number: Int? = null
 
     /** Статус обработки поста */
