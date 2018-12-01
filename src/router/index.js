@@ -1,6 +1,6 @@
 import VueRouter from 'vue-router'
-import Main from '../pages/Main'
 
 export default new VueRouter({ routes: [
-    { path: '/', component: Main }
+    { path: '/', component: require('../pages/Main').default },
+    { path: '/test', component: require('../pages/Test').default },
 ]});
