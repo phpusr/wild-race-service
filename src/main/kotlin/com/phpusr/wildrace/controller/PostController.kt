@@ -34,7 +34,7 @@ class PostController(
         val config = configRepo.get()
         val list = page.content.map { post ->
             val link = "${Consts.VKLink}/${config.groupShortLink}?w=wall${config.groupId}_${post.id}"
-            PostDto(post.id, post.number, post.from, post.date, post.text, post.distance, post.sumDistance, link)
+            PostDto(post.id, post.number, post.statusId, post.from, post.date, post.text, post.distance, post.sumDistance, link)
         }
         val lastPost = postRepo.findLastPost()
 

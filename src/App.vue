@@ -24,14 +24,14 @@
 </template>
 
 <script>
-    import msg from './i18n'
+    import {pages} from './i18n'
 
     export default {
     name: 'app',
     data() {
         return {
             drawer: false,
-            title: msg.pages[this.$route.path]
+            title: pages[this.$route.path]
         }
     },
 }

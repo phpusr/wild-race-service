@@ -9,6 +9,7 @@ import java.util.*
 class PostDto(
         val id: Long,
         val number: Int?,
+        val statusId: Int,
         val from: Profile,
         val date: Date,
         val text: String,
