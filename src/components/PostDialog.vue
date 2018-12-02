@@ -9,8 +9,10 @@
                             v-model="post.number"
                             label="Number"
                     />
-                    <v-text-field
-                            v-model="post.statusId"
+                    <v-select
+                            :value="post.statusId + ''"
+                            @change="post.statusId = +$event"
+                            :items="statuses"
                             label="Status"
                             required
                     />
@@ -25,8 +27,10 @@
                 </v-form>
             </v-card-text>
 
+            <v-divider/>
+
             <v-card-actions>
-                <v-divider></v-divider>
+                <v-spacer/>
                 <router-link to="/" tag="span">
                     <v-btn>Close</v-btn>
                 </router-link>
@@ -36,16 +40,26 @@
 </template>
 
 <script>
+    import {post} from '../i18n'
+
     export default {
         data() {
             return {
                 valid: false,
-                post: {}
+                post: {},
             }
         },
         computed: {
             show() {
                 return !!this.$route.params.postId
+            },
+            statuses() {
+                return Object.keys(post.status).map(key => ({value: key, text: post.status[key]}))
+            }
+        },
+        methods: {
+            changeSelect(e) {
+                console.log(e, this.post)
             }
         }
     }
