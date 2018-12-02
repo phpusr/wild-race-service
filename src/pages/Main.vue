@@ -2,7 +2,7 @@
     <v-flex md6 offset-md3>
         <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>
-                <v-flex d-flex v-for="v in stat">
+                <v-flex d-flex v-for="v in stat" :key="v.title">
                     <v-card>
                         <v-card-text>
                             <div class="display-1">{{v.value}}</div>
