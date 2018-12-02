@@ -1,11 +1,13 @@
 <template>
-    <v-tooltip v-if="mobile" top>
-        <v-btn :class="color" icon slot="activator">
-            <v-icon>{{icon}}</v-icon>
-        </v-btn>
-        <span>{{value}}</span>
-    </v-tooltip>
-    <span v-else :class="color" class="py-1 px-2">{{value}}</span>
+    <div>
+        <v-tooltip v-if="mobile" top>
+            <v-btn :class="color" icon slot="activator">
+                <v-icon>{{icon}}</v-icon>
+            </v-btn>
+            <span>{{value}}</span>
+        </v-tooltip>
+        <span v-else :class="color" class="py-1 px-2">{{value}}</span>
+    </div>
 </template>
 
 <script>

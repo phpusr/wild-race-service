@@ -30,14 +30,14 @@
     import {pages} from './i18n'
 
     export default {
-    name: 'app',
-    data() {
-        return {
-            drawer: false,
-            title: pages[this.$route.path]
-        }
-    },
-}
+        name: 'app',
+        data() {
+            return {
+                drawer: false,
+                title: pages[this.$route.path]
+            }
+        },
+    }
 </script>
 
 <style>

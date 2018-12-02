@@ -1,5 +1,6 @@
 <template>
     <v-flex md6 offset-md3>
+        <router-view />
         <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>
                 <v-flex d-flex v-for="v in stat" :key="v.title">
@@ -23,42 +24,42 @@
     import Post from '../components/Post'
 
     export default {
-    components: {Post},
-    data: () => ({
-        posts: [],
-        numberOfRuns: 0,
-        sumDistance: 0,
-        total: 0
-    }),
-    created() {
-        this.fetchData();
-    },
-    methods: {
-        fetchData() {
-            this.$http.get('/post').then(response => {
-                const {list, numberOfRuns, sumDistance, total} = response.body;
-                this.posts = list;
-                this.numberOfRuns = numberOfRuns;
-                this.sumDistance = sumDistance;
-                this.total = total;
-            });
-        }
-    },
-    computed: {
-        stat() {
-            return [
-                {title: 'Всего пробежали (км)', value: this.sumDistance},
-                {title: 'Количество пробежек', value: this.numberOfRuns},
-                {title: 'Количество постов', value: this.total}
-            ]
+        components: {Post},
+        data: () => ({
+            posts: [],
+            numberOfRuns: 0,
+            sumDistance: 0,
+            total: 0
+        }),
+        created() {
+            this.fetchData();
         },
-        containerConfig() {
-            return {
-                ['grid-list-' + this.$vuetify.breakpoint.name]: true
-            };
+        methods: {
+            fetchData() {
+                this.$http.get('/post').then(response => {
+                    const {list, numberOfRuns, sumDistance, total} = response.body;
+                    this.posts = list;
+                    this.numberOfRuns = numberOfRuns;
+                    this.sumDistance = sumDistance;
+                    this.total = total;
+                });
+            }
+        },
+        computed: {
+            stat() {
+                return [
+                    {title: 'Всего пробежали (км)', value: this.sumDistance},
+                    {title: 'Количество пробежек', value: this.numberOfRuns},
+                    {title: 'Количество постов', value: this.total}
+                ]
+            },
+            containerConfig() {
+                return {
+                    ['grid-list-' + this.$vuetify.breakpoint.name]: true
+                };
+            }
         }
     }
-}
 </script>
 
 <style>
