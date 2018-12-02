@@ -4,7 +4,10 @@
             <v-navigation-drawer v-model="drawer" app dark></v-navigation-drawer>
             <v-toolbar app dark clipped-left>
                 <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-                <v-toolbar-title>Wild Race</v-toolbar-title>
+                <v-toolbar-title>
+                    <span class="font-weight-regular">Wild</span>
+                    <span class="font-weight-bold">Race</span>
+                </v-toolbar-title>
             </v-toolbar>
             <v-content>
                 <v-container fluid class="pa-1">
