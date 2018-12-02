@@ -48,9 +48,9 @@
         computed: {
             stat() {
                 return [
-                    {title: 'Всего пробежали (км)', value: this.sumDistance},
-                    {title: 'Количество пробежек', value: this.numberOfRuns},
-                    {title: 'Количество постов', value: this.total}
+                    {title: this.$t('post.totalSumDistance'), value: this.sumDistance},
+                    {title: this.$t('post.numberOfRuns'), value: this.numberOfRuns},
+                    {title: this.$t('post.numberOfPosts'), value: this.total}
                 ]
             },
             containerConfig() {

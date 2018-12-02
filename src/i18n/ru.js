@@ -4,6 +4,10 @@ export default {
         '/test': 'Тестовая страница'
     },
     post: {
+        totalSumDistance: 'Всего пробежали (км)',
+        numberOfRuns: 'Количество пробежек',
+        numberOfPosts: 'Количество постов',
+
         editDialogTitle: 'Редактирование поста',
         number: '№',
         status: 'Статус',
