@@ -27,14 +27,12 @@
 </template>
 
 <script>
-    import {pages} from './i18n'
-
     export default {
         name: 'app',
         data() {
             return {
                 drawer: false,
-                title: pages[this.$route.path]
+                title: this.$t('pages')[this.$route.path]
             }
         },
     }

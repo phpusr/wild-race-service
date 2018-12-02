@@ -11,8 +11,6 @@
 </template>
 
 <script>
-    import {post} from '../i18n';
-
     const colors = {1: 'success', 2: 'warning', 3: 'danger', 4: 'warning'};
     const icons = {1: 'done', 2: 'warning', 3: 'error', 4: 'warning'};
 
@@ -22,7 +20,7 @@ export default {
     },
     computed: {
         value() {
-            return post.status[this.statusId];
+            return this.$t('post.statuses')[this.statusId];
         },
         icon() {
             return icons[this.statusId];

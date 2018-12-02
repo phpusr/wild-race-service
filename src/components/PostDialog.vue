@@ -1,32 +1,32 @@
 <template>
     <v-dialog v-model="show" persistent scrollable width="500">
         <v-card>
-            <v-card-title class="headline grey lighten-2">Title</v-card-title>
+            <v-card-title class="headline grey lighten-2">{{$t('post.editDialogTitle')}}</v-card-title>
 
             <v-card-text>
                 <v-form v-model="valid">
                     <v-text-field
                             v-model="post.number"
-                            label="Number"
+                            :label="$t('post.number')"
                     />
                     <v-select
                             :value="post.statusId + ''"
                             @change="post.statusId = +$event"
                             :items="statuses"
-                            label="Status"
+                            :label="$t('post.status')"
                             required
                     />
                     <v-text-field
                             v-model="post.distance"
-                            label="Distance"
+                            :label="$t('post.distance')"
                     />
                     <v-text-field
                             v-model="post.sumDistance"
-                            label="Sum distance"
+                            :label="$t('post.sumDistance')"
                     />
                     <v-textarea
                             v-model="post.editReason"
-                            label="Edit reason"
+                            :label="$t('post.editReason')"
                     />
                 </v-form>
             </v-card-text>
@@ -45,8 +45,6 @@
 </template>
 
 <script>
-    import {post} from '../i18n'
-
     export default {
         data() {
             return {
@@ -65,8 +63,9 @@
                 return !!this.postId
             },
             statuses() {
-                return Object.keys(post.status).map(key => (
-                    { value: key, text: post.status[key] }
+                const statuses = this.$t('post.statuses');
+                return Object.keys(statuses).map(key => (
+                    { value: key, text: statuses[key] }
                 ))
             }
         },

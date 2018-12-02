@@ -30,11 +30,10 @@
 
 <script>
     import PostParserStatus from './PostParserStatus'
-    import PostDialog from './PostDialog'
     import dateFormat from 'dateformat'
 
     export default {
-        components: {PostParserStatus, PostDialog},
+        components: {PostParserStatus},
         props: {
             post: Object
         },
