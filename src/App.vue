@@ -7,7 +7,7 @@
                 <v-toolbar-title>Wild Race</v-toolbar-title>
             </v-toolbar>
             <v-content>
-                <v-container fluid>
+                <v-container fluid class="pa-1">
                     <v-flex md6 offset-md3 class="mt-3">
                         <h1>{{title}}</h1>
                     </v-flex>

@@ -1,8 +1,8 @@
 <template>
     <v-flex md6 offset-md3>
-        <v-container grid-list-lg>
+        <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>
-                <v-flex v-for="v in stat">
+                <v-flex d-flex v-for="v in stat">
                     <v-card>
                         <v-card-text>
                             <div class="display-1">{{v.value}}</div>
@@ -51,6 +51,11 @@
                 {title: 'Количество пробежек', value: this.numberOfRuns},
                 {title: 'Количество постов', value: this.total}
             ]
+        },
+        containerConfig() {
+            return {
+                ['grid-list-' + this.$vuetify.breakpoint.name]: true
+            };
         }
     }
 }
