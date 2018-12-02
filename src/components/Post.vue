@@ -13,9 +13,11 @@
                         </div>
                         <post-parser-status :status-id="post.statusId" class="ml-2" />
                         <v-spacer></v-spacer>
-                        <v-btn icon>
-                            <v-icon>edit</v-icon>
-                        </v-btn>
+                        <post-dialog>
+                            <v-btn icon>
+                                <v-icon>edit</v-icon>
+                            </v-btn>
+                        </post-dialog>
                     </v-layout>
                     <div class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
                     <div class="display-1 green--text">{{post.sumDistance}}</div>
@@ -28,17 +30,18 @@
 
 <script>
     import PostParserStatus from './PostParserStatus'
+    import PostDialog from './PostDialog'
     import dateFormat from 'dateformat'
 
     export default {
-    components: {PostParserStatus},
-    props: {
-        post: Object
-    },
-    computed: {
-        date() {
-            return dateFormat(new Date(this.post.date), 'HH:MM dd.mm.yyyy');
+        components: {PostParserStatus, PostDialog},
+        props: {
+            post: Object
+        },
+        computed: {
+            date() {
+                return dateFormat(new Date(this.post.date), 'HH:MM dd.mm.yyyy');
+            }
         }
     }
-}
 </script>
