@@ -11,17 +11,21 @@ class PostDto(
         val id: Long,
         val number: Int?,
         val statusId: Int,
-        val from: Profile,
-        val date: Long,
-        val text: String,
+        val from: Profile?,
+        val date: Long?,
+        val text: String?,
         val distance: Int?,
         val sumDistance: Int?,
-        val link: String
+        val editReason: String?,
+        val link: String?
 )
 
 object PostDtoObject {
+    fun create(post: Post): PostDto {
+        return PostDto(post.id, post.number, post.statusId, null, null, null, post.distance, post.sumDistance, post.editReason, null)
+    }
     fun create(post: Post, groupShortLink: String, groupId: Long): PostDto {
         val link = "${Consts.VKLink}/${groupShortLink}?w=wall${groupId}_${post.id}"
-        return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, post.text, post.distance, post.sumDistance, link)
+        return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, post.text, post.distance, post.sumDistance, post.editReason, link)
     }
 }

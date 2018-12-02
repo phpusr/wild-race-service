@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="show" persistent width="500">
+    <v-dialog v-model="show" persistent scrollable width="500">
         <v-card>
             <v-card-title class="headline grey lighten-2">Title</v-card-title>
 
@@ -24,6 +24,10 @@
                             v-model="post.sumDistance"
                             label="Sum distance"
                     />
+                    <v-textarea
+                            v-model="post.editReason"
+                            label="Edit reason"
+                    />
                 </v-form>
             </v-card-text>
 
@@ -32,6 +36,7 @@
             <v-card-actions>
                 <v-spacer/>
                 <router-link to="/" tag="span">
+                    <v-btn color="primary" @click="save">Save</v-btn>
                     <v-btn>Close</v-btn>
                 </router-link>
             </v-card-actions>
@@ -49,17 +54,30 @@
                 post: {},
             }
         },
+        created() {
+            this.fetchData();
+        },
         computed: {
+            postId() {
+                return this.$route.params.postId
+            },
             show() {
-                return !!this.$route.params.postId
+                return !!this.postId
             },
             statuses() {
-                return Object.keys(post.status).map(key => ({value: key, text: post.status[key]}))
+                return Object.keys(post.status).map(key => (
+                    { value: key, text: post.status[key] }
+                ))
             }
         },
         methods: {
-            changeSelect(e) {
-                console.log(e, this.post)
+            fetchData() {
+                this.$http.get(`/post/${this.postId}`).then(response => {
+                    this.post = response.body;
+                });
+            },
+            save() {
+                this.$http.put(`/post/${this.postId}`, this.post)
             }
         }
     }

@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
+import com.phpusr.wildrace.domain.dto.PostDto
 import com.phpusr.wildrace.domain.dto.PostDtoObject
+import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("post")
@@ -42,6 +42,28 @@ class PostController(
                 "numberOfRuns" to (lastPost.number ?: 0),
                 "list" to list
         )
+    }
+
+    @GetMapping("{id}")
+    @JsonView(Views.PostDtoREST::class)
+    fun get(@PathVariable("id") post: Post): PostDto {
+        return PostDtoObject.create(post)
+    }
+
+    @PutMapping("{id}")
+    @JsonView(Views.PostDtoREST::class)
+    fun update(@PathVariable("id") post: Post, @RequestBody postDto: PostDto): PostDto {
+        val newPost = post.copy(
+                number = postDto.number,
+                statusId = postDto.statusId,
+                distance = postDto.distance,
+                sumDistance = postDto.sumDistance,
+                editReason = postDto.editReason,
+                lastUpdate = Date()
+        )
+        postRepo.save(newPost)
+
+        return PostDtoObject.create(newPost)
     }
 
 }

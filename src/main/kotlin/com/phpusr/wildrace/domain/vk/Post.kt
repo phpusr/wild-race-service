@@ -13,7 +13,7 @@ import javax.persistence.*
  * Класс для хранения записей со стены группы
  */
 @Entity
-class Post(
+data class Post(
         @field:Id
         val id: Long,
 
