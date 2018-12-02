@@ -1,14 +1,17 @@
 <template>
     <v-flex md6 offset-md3>
         <v-container grid-list-lg>
-            <v-layout justify-center text-xs-center>
+            <v-layout text-xs-center>
                 <v-flex v-for="v in stat">
-                    <v-card class="py-3">
-                        <div class="display-1">{{v.value}}</div>
-                        <div>{{v.title}}</div>
+                    <v-card>
+                        <v-card-text>
+                            <div class="display-1">{{v.value}}</div>
+                            <div>{{v.title}}</div>
+                        </v-card-text>
                     </v-card>
                 </v-flex>
             </v-layout>
+
             <v-layout column>
                 <post v-for="post in posts" :post="post" :key="post.id" />
             </v-layout>
