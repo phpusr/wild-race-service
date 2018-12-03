@@ -11,26 +11,25 @@
 </template>
 
 <script>
-    const colors = {1: 'success', 2: 'warning', 3: 'danger', 4: 'warning'};
-    const icons = {1: 'done', 2: 'warning', 3: 'error', 4: 'warning'};
+    import {postStatusColors, postStatusIcons} from "../util/data"
 
-export default {
-    props: {
-        statusId: Number
-    },
-    computed: {
-        value() {
-            return this.$t('post.statuses')[this.statusId];
+    export default {
+        props: {
+            statusId: Number
         },
-        icon() {
-            return icons[this.statusId];
-        },
-        color() {
-            return colors[this.statusId];
-        },
-        mobile() {
-            return this.$vuetify.breakpoint.name === 'xs';
+        computed: {
+            value() {
+                return this.$t('post.statuses')[this.statusId];
+            },
+            icon() {
+                return postStatusIcons[this.statusId];
+            },
+            color() {
+                return postStatusColors[this.statusId];
+            },
+            mobile() {
+                return this.$vuetify.breakpoint.name === 'xs';
+            }
         }
     }
-}
 </script>

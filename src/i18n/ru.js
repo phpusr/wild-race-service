@@ -27,6 +27,7 @@ export default {
         distance: 'Дистанция',
         sumDistance: 'Сумма дистанций',
         editReason: 'Причина редактирования',
+        filter: 'Фильтр',
         manualEditing: 'Ручная правка'
     }
 }
