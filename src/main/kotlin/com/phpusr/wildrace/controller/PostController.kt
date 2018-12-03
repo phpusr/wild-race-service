@@ -11,6 +11,8 @@ import com.phpusr.wildrace.domain.vk.PostRepo
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -31,7 +33,7 @@ class PostController(
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
         val config = configRepo.get()
-        val list = page.content.map { PostDtoObject.create(it, config.groupShortLink, config.groupId) }
+        val list = page.content.map { PostDtoObject.create(it, config) }
         val lastPost = postRepo.findLastPost()
 
         return mapOf(
@@ -50,10 +52,12 @@ class PostController(
         return PostDtoObject.create(post)
     }
 
-    @PutMapping("{id}")
+    @MessageMapping("/updatePost")
+    @SendTo("/topic/updatePost")
     @JsonView(Views.PostDtoREST::class)
-    fun update(@PathVariable("id") post: Post, @RequestBody postDto: PostDto): PostDto {
-        val newPost = post.copy(
+    fun update(postDto: PostDto): PostDto? {
+        val post = postRepo.findById(postDto.id)
+        val newPost = post.orElseThrow{ RuntimeException("post_not_found") }.copy(
                 number = postDto.number,
                 statusId = postDto.statusId,
                 distance = postDto.distance,
@@ -63,7 +67,7 @@ class PostController(
         )
         postRepo.save(newPost)
 
-        return PostDtoObject.create(newPost)
+        return PostDtoObject.create(newPost, configRepo.get())
     }
 
 }

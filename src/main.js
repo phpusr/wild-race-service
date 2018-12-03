@@ -6,8 +6,11 @@ import VueResource from 'vue-resource'
 import VueI18n from 'vue-i18n'
 import router from './router'
 import messages from './i18n'
+import {connectToWS} from './util/ws'
 
 import 'vuetify/dist/vuetify.min.css'
+
+connectToWS();
 
 Vue.config.productionTip = false;
 

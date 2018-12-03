@@ -22,6 +22,8 @@
 
 <script>
     import Post from '../components/Post'
+    import {addHandler} from '../util/ws'
+    import {replaceObject} from '../util/collections'
 
     export default {
         components: {Post},
@@ -32,6 +34,9 @@
             total: 0
         }),
         created() {
+            addHandler('/topic/updatePost', post =>
+                replaceObject(this.posts, post)
+            );
             this.fetchData();
         },
         methods: {

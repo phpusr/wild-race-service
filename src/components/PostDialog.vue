@@ -36,7 +36,7 @@
             <v-card-actions>
                 <v-spacer/>
                 <router-link to="/" tag="span">
-                    <v-btn color="primary" @click="save">Save</v-btn>
+                    <v-btn color="primary" @click="update">Save</v-btn>
                     <v-btn>Close</v-btn>
                 </router-link>
             </v-card-actions>
@@ -45,6 +45,8 @@
 </template>
 
 <script>
+    import {sendData} from "../util/ws"
+
     export default {
         data() {
             return {
@@ -75,8 +77,8 @@
                     this.post = response.body;
                 });
             },
-            save() {
-                this.$http.put(`/post/${this.postId}`, this.post)
+            update() {
+                sendData('/app/updatePost', this.post)
             }
         }
     }

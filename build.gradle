@@ -54,4 +54,6 @@ dependencies {
 	compile 'mysql:mysql-connector-java'
 	// Thymeleaf Template
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	// Web Socket
+	compile("org.springframework.boot:spring-boot-starter-websocket")
 }
