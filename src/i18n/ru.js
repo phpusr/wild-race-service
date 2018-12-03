@@ -3,6 +3,12 @@ export default {
         '/': 'Главная страница',
         '/test': 'Тестовая страница'
     },
+    default: {
+        saveButton: 'Сохранить',
+        deleteButton: 'Удалить',
+        cancelButton: 'Отмена',
+        confirmDelete: 'Вы действительно хотите удалить?'
+    },
     post: {
         totalSumDistance: 'Всего пробежали (км)',
         numberOfRuns: 'Количество пробежек',
