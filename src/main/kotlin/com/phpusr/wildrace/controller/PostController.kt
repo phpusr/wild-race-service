@@ -39,7 +39,7 @@ class PostController(
         return mapOf(
                 "total" to page.totalElements,
                 "totalPages" to page.totalPages,
-                "lastSyncDate" to tempDataRepo.get().lastSyncDate,
+                "lastSyncDate" to tempDataRepo.get().lastSyncDate.time,
                 "sumDistance" to (lastPost.sumDistance ?: 0),
                 "numberOfRuns" to (lastPost.number ?: 0),
                 "list" to list

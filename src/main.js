@@ -27,5 +27,8 @@ const i18n = new VueI18n({
 new Vue({
     render: h => h(App),
     router,
-    i18n
+    i18n,
+    data: {
+        lastSyncDate: null
+    }
 }).$mount('#app');

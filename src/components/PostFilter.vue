@@ -2,10 +2,10 @@
     <v-flex xs11>
         <v-container class="pr-0">
             <v-layout row wrap>
-                <v-flex class="mb-2">
+                <v-flex class="mb-2" xs12>
                     <span class="headline grey--text text--lighten-5">{{$t('post.filter')}}</span>
                 </v-flex>
-                <v-flex>
+                <v-flex xs12>
                     <v-select
                             :label="$t('post.status')"
                             :value="this.$route.query.statusId"
@@ -22,12 +22,18 @@
                         </template>
                     </v-select>
                 </v-flex>
-                <v-flex>
+                <v-flex xs12>
                     <v-checkbox
                             :label="$t('post.manualEditing')"
                             :value="$route.query.manualEditing"
                             @change="changeQuery('manualEditing', $event)"
                     />
+                </v-flex>
+                <v-flex xs12>
+                    <span class="subheading grey--text text--lighten-1">
+                        <span class="font-weight-medium">{{$t('post.lastSyncDate')}}: </span>
+                        <span>{{lastSyncDate}}</span>
+                    </span>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -36,6 +42,7 @@
 
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
+    import dateFormat from "dateformat"
 
     export default {
         computed: {
@@ -44,6 +51,9 @@
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key], icon: postStatusIcons[key], color: postStatusColors[key] }
                 ))
+            },
+            lastSyncDate() {
+                return dateFormat(new Date(this.$root.lastSyncDate), 'HH:MM dd.mm.yyyy');
             }
         },
         methods: {

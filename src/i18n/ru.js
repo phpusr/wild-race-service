@@ -28,6 +28,7 @@ export default {
         sumDistance: 'Сумма дистанций',
         editReason: 'Причина редактирования',
         filter: 'Фильтр',
-        manualEditing: 'Ручная правка'
+        manualEditing: 'Ручная правка',
+        lastSyncDate: 'Последняя синхронизация'
     }
 }

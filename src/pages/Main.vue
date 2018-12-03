@@ -50,11 +50,12 @@
             fetchData() {
                 const params = this.$route.query;
                 this.$http.get('/post', {params}).then(response => {
-                    const {list, numberOfRuns, sumDistance, total} = response.body;
+                    const {list, numberOfRuns, sumDistance, total, lastSyncDate} = response.body;
                     this.posts = list;
                     this.numberOfRuns = numberOfRuns;
                     this.sumDistance = sumDistance;
                     this.total = total;
+                    this.$root.lastSyncDate = lastSyncDate;
                 });
             }
         },
