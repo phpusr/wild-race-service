@@ -22,7 +22,7 @@
 
 <script>
     import Post from '../components/Post'
-    import {addHandler} from '../util/ws'
+    import {addHandler, sendData} from '../util/ws'
     import {deleteObject, replaceObject} from '../util/collections'
 
     export default {
@@ -41,21 +41,23 @@
                 deleteObject(this.posts, id)
             });
             this.fetchData();
+            sendData('/app/getLastSyncDate') //TODO отправлять после установки соединения через очередь
         },
         beforeRouteUpdate (to, from, next) {
             next();
-            this.fetchData();
+            if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
+                this.fetchData();
+            }
         },
         methods: {
             fetchData() {
                 const params = this.$route.query;
                 this.$http.get('/post', {params}).then(response => {
-                    const {list, numberOfRuns, sumDistance, total, lastSyncDate} = response.body;
+                    const {list, numberOfRuns, sumDistance, total} = response.body;
                     this.posts = list;
                     this.numberOfRuns = numberOfRuns;
                     this.sumDistance = sumDistance;
                     this.total = total;
-                    this.$root.lastSyncDate = lastSyncDate;
                 });
             }
         },

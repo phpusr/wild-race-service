@@ -39,11 +39,16 @@ class PostController(
         return mapOf(
                 "total" to page.totalElements,
                 "totalPages" to page.totalPages,
-                "lastSyncDate" to tempDataRepo.get().lastSyncDate.time,
                 "sumDistance" to (lastPost.sumDistance ?: 0),
                 "numberOfRuns" to (lastPost.number ?: 0),
                 "list" to list
         )
+    }
+
+    @MessageMapping("/getLastSyncDate")
+    @SendTo("/topic/getLastSyncDate")
+    fun getLastSyncDate(): Long {
+        return tempDataRepo.get().lastSyncDate.time
     }
 
     @GetMapping("{id}")

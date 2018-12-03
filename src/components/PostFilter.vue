@@ -43,17 +43,23 @@
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
     import dateFormat from "dateformat"
+    import {addHandler} from '../util/ws'
 
     export default {
+        data: () => ({
+            lastSyncDate: null
+        }),
+        created() {
+            addHandler('/topic/getLastSyncDate', date =>
+                this.lastSyncDate = dateFormat(new Date(date), 'HH:MM dd.mm.yyyy')
+            )
+        },
         computed: {
             statuses() {
                 const statuses = this.$t('post.statuses');
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key], icon: postStatusIcons[key], color: postStatusColors[key] }
                 ))
-            },
-            lastSyncDate() {
-                return dateFormat(new Date(this.$root.lastSyncDate), 'HH:MM dd.mm.yyyy');
             }
         },
         methods: {
