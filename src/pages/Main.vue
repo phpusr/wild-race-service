@@ -40,8 +40,9 @@
             addHandler('/topic/deletePost', id => {
                 deleteObject(this.posts, id)
             });
+
             this.fetchData();
-            sendData('/app/getLastSyncDate') //TODO отправлять после установки соединения через очередь
+            sendData('/app/getLastSyncDate');
         },
         beforeRouteUpdate (to, from, next) {
             next();
