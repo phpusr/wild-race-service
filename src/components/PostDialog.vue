@@ -34,11 +34,10 @@
             <v-divider/>
 
             <v-card-actions>
+                <v-btn color="error" @click="remove">Delete</v-btn>
                 <v-spacer/>
-                <router-link to="/" tag="span">
-                    <v-btn color="primary" @click="update">Save</v-btn>
-                    <v-btn>Close</v-btn>
-                </router-link>
+                <v-btn color="primary" @click="update">Save</v-btn>
+                <v-btn @click="$router.push('/')">Close</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -78,7 +77,14 @@
                 });
             },
             update() {
-                sendData('/app/updatePost', this.post)
+                sendData('/app/updatePost', this.post);
+                this.$router.push('/')
+            },
+            remove() {
+                if (confirm(this.$t('post.confirmDelete'))) {
+                    sendData('/app/deletePost', this.post.id);
+                    this.$router.push('/')
+                }
             }
         }
     }

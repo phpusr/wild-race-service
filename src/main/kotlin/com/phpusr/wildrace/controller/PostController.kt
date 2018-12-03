@@ -70,4 +70,12 @@ class PostController(
         return PostDtoObject.create(newPost, configRepo.get())
     }
 
+    @MessageMapping("/deletePost")
+    @SendTo("/topic/deletePost")
+    fun delete(id: Long): Long {
+        postRepo.deleteById(id)
+
+        return id
+    }
+
 }

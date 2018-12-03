@@ -23,7 +23,7 @@
 <script>
     import Post from '../components/Post'
     import {addHandler} from '../util/ws'
-    import {replaceObject} from '../util/collections'
+    import {deleteObject, replaceObject} from '../util/collections'
 
     export default {
         components: {Post},
@@ -37,6 +37,9 @@
             addHandler('/topic/updatePost', post =>
                 replaceObject(this.posts, post)
             );
+            addHandler('/topic/deletePost', id => {
+                deleteObject(this.posts, id)
+            });
             this.fetchData();
         },
         methods: {

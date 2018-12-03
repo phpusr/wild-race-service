@@ -15,3 +15,10 @@ export function replaceObject(list, object) {
         list.splice(index, 1, object);
     }
 }
+
+export function deleteObject(list, id) {
+    const index = getIndex(list, id);
+    if (index > -1) {
+        list.splice(index, 1)
+    }
+}
