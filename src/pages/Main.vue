@@ -42,9 +42,14 @@
             });
             this.fetchData();
         },
+        beforeRouteUpdate (to, from, next) {
+            next();
+            this.fetchData();
+        },
         methods: {
             fetchData() {
-                this.$http.get('/post').then(response => {
+                const params = this.$route.query;
+                this.$http.get('/post', {params}).then(response => {
                     const {list, numberOfRuns, sumDistance, total} = response.body;
                     this.posts = list;
                     this.numberOfRuns = numberOfRuns;

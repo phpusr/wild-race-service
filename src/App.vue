@@ -1,7 +1,9 @@
 <template>
     <div id="app">
         <v-app>
-            <v-navigation-drawer v-model="drawer" app dark></v-navigation-drawer>
+            <v-navigation-drawer v-model="drawer" clipped app dark>
+                <post-filter />
+            </v-navigation-drawer>
             <v-toolbar app dark clipped-left>
                 <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
                 <v-toolbar-title>
@@ -27,14 +29,21 @@
 </template>
 
 <script>
+    import PostFilter from "./components/PostFilter"
+
     export default {
         name: 'app',
+        components: {PostFilter},
         data() {
             return {
-                drawer: false,
-                title: this.$t('pages')[this.$route.path]
+                drawer: !false,
             }
         },
+        computed: {
+            title() {
+                return this.$t('pages')[this.$route.path]
+            }
+        }
     }
 </script>
 

@@ -23,8 +23,10 @@ export default {
             3: 'Ошибка в формате записи',
             4: 'Ошибка в стартовой сумме'
         },
+        allStatuses: 'Все',
         distance: 'Дистанция',
         sumDistance: 'Сумма дистанций',
-        editReason: 'Причина редактирования'
+        editReason: 'Причина редактирования',
+        manualEditing: 'Ручная правка'
     }
 }
