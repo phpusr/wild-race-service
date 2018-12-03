@@ -2,7 +2,7 @@
     <div id="app">
         <v-app>
             <v-navigation-drawer v-model="drawer" clipped app dark>
-                <post-filter />
+                <router-view name="menu"></router-view>
             </v-navigation-drawer>
             <v-toolbar app dark clipped-left>
                 <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
