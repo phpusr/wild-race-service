@@ -15,7 +15,10 @@
 
             <v-layout column>
                 <post v-for="post in posts" :post="post" :key="post.id" />
-                <infinite-loading :identifier="infiniteId"  @infinite="infiniteHandler" />
+                <infinite-loading :identifier="infiniteId"  @infinite="infiniteHandler">
+                    <div slot="no-more">{{$t('post.noMoreMessages')}}</div>
+                    <div slot="no-results">{{$t('post.noResults')}}</div>
+                </infinite-loading>
             </v-layout>
         </v-container>
     </v-flex>

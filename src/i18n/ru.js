@@ -29,6 +29,8 @@ export default {
         editReason: 'Причина редактирования',
         filter: 'Фильтр',
         manualEditing: 'Ручная правка',
-        lastSyncDate: 'Последняя синхронизация'
+        lastSyncDate: 'Последняя синхронизация',
+        noMoreMessages: '',
+        noResults: 'Нет данных'
     }
 }
