@@ -7644,6 +7644,11 @@ vue-i18n@^8.4.0:
   resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.4.0.tgz#bc3437ff8f5f389c57235ced602e9d7bfd87995c"
   integrity sha512-MiBI1v2pY22aAEbNrcy7GX9qigoUQE9PbmrAydrBuYNRwn0RbD1RZpMemtmGW3Ju6LBA1yn7TZOPa3lxWrT0Eg==
 
+vue-infinite-loading@^2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/vue-infinite-loading/-/vue-infinite-loading-2.4.3.tgz#fa34131a5c70c933b420d302e2a6dccf65095e17"
+  integrity sha512-CKITl7I1cb3X4zIHbVSyrupPTs9XxZGVV/N+P5lSxSrGW+D92gq6zuTy/XnvJOwMRkjJuiotJAQrgv+gOwSx3g==
+
 vue-loader@^15.4.2:
   version "15.4.2"
   resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-15.4.2.tgz#812bb26e447dd3b84c485eb634190d914ce125e2"

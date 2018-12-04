@@ -15,6 +15,7 @@
 
             <v-layout column>
                 <post v-for="post in posts" :post="post" :key="post.id" />
+                <infinite-loading :identifier="infiniteId"  @infinite="infiniteHandler" />
             </v-layout>
         </v-container>
     </v-flex>
@@ -24,14 +25,17 @@
     import Post from '../components/Post'
     import {addHandler, sendData} from '../util/ws'
     import {deleteObject, replaceObject} from '../util/collections'
+    import InfiniteLoading from 'vue-infinite-loading'
 
     export default {
-        components: {Post},
+        components: {Post, InfiniteLoading},
         data: () => ({
             posts: [],
             numberOfRuns: 0,
             sumDistance: 0,
-            total: 0
+            total: 0,
+            page: 1,
+            infiniteId: +new Date()
         }),
         created() {
             addHandler('/topic/updatePost', post =>
@@ -41,26 +45,44 @@
                 deleteObject(this.posts, id)
             });
 
-            this.fetchData();
             sendData('/app/getLastSyncDate');
         },
         beforeRouteUpdate (to, from, next) {
             next();
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
-                this.fetchData();
+                this.resetData();
             }
         },
         methods: {
-            fetchData() {
+            resetData() {
+                this.posts = [];
+                this.numberOfRuns = 0;
+                this.sumDistance = 0;
+                this.total = 0;
+                this.page = 1;
+                this.infiniteId += 1;
+            },
+            infiniteHandler($state) {
                 const params = this.$route.query;
-                this.$http.get('/post', {params}).then(response => {
+                this.$http.get('/post', {
+                    params: {
+                        ...params,
+                        page: this.page,
+                    },
+                }).then(response => {
                     const {list, numberOfRuns, sumDistance, total} = response.body;
-                    this.posts = list;
-                    this.numberOfRuns = numberOfRuns;
-                    this.sumDistance = sumDistance;
-                    this.total = total;
+                    if (list.length) {
+                        this.page += 1;
+                        this.posts.push(...list);
+                        this.numberOfRuns = numberOfRuns;
+                        this.sumDistance = sumDistance;
+                        this.total = total;
+                        $state.loaded();
+                    } else {
+                        $state.complete();
+                    }
                 });
-            }
+            },
         },
         computed: {
             stat() {

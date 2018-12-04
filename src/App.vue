@@ -29,11 +29,8 @@
 </template>
 
 <script>
-    import PostFilter from "./components/PostFilter"
-
     export default {
         name: 'app',
-        components: {PostFilter},
         data() {
             return {
                 drawer: !false,
