@@ -3,7 +3,7 @@
         <router-view />
         <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>
-                <v-flex d-flex v-for="v in stat" :key="v.title">
+                <v-flex d-flex v-for="v in statTitles" :key="v.title">
                     <v-card>
                         <v-card-text>
                             <div class="display-1">{{v.value}}</div>
@@ -34,11 +34,13 @@
         components: {Post, InfiniteLoading},
         data: () => ({
             posts: [],
-            numberOfRuns: 0,
-            sumDistance: 0,
-            total: 0,
             page: 1,
-            infiniteId: +new Date()
+            infiniteId: +new Date(),
+            stat: {
+                numberOfRuns: 0,
+                sumDistance: 0,
+                total: 0
+            }
         }),
         created() {
             addHandler('/topic/updatePost', post =>
@@ -49,19 +51,22 @@
             });
 
             sendData('/app/getLastSyncDate');
+            this.updateStat();
         },
         beforeRouteUpdate (to, from, next) {
             next();
+
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
                 this.resetData();
+            }
+
+            if (to.fullPath !== from.fullPath) {
+                this.updateStat();
             }
         },
         methods: {
             resetData() {
                 this.posts = [];
-                this.numberOfRuns = 0;
-                this.sumDistance = 0;
-                this.total = 0;
                 this.page = 1;
                 this.infiniteId += 1;
             },
@@ -73,26 +78,29 @@
                         page: this.page,
                     },
                 }).then(response => {
-                    const {list, numberOfRuns, sumDistance, total} = response.body;
+                    const list = response.body;
                     if (list.length) {
                         this.page += 1;
                         this.posts.push(...list);
-                        this.numberOfRuns = numberOfRuns;
-                        this.sumDistance = sumDistance;
-                        this.total = total;
                         $state.loaded();
                     } else {
                         $state.complete();
                     }
                 });
             },
+            updateStat() {
+                const params = this.$route.query;
+                this.$http.get('/post/getStat', {params}).then(response => {
+                    this.stat = response.body;
+                });
+            }
         },
         computed: {
-            stat() {
+            statTitles() {
                 return [
-                    {title: this.$t('post.totalSumDistance'), value: this.sumDistance},
-                    {title: this.$t('post.numberOfRuns'), value: this.numberOfRuns},
-                    {title: this.$t('post.numberOfPosts'), value: this.total}
+                    {title: this.$t('post.totalSumDistance'), value: this.stat.sumDistance},
+                    {title: this.$t('post.numberOfRuns'), value: this.stat.numberOfRuns},
+                    {title: this.$t('post.numberOfPosts'), value: this.stat.total}
                 ]
             },
             containerConfig() {
