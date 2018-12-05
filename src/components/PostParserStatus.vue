@@ -6,7 +6,10 @@
             </v-btn>
             <span>{{value}}</span>
         </v-tooltip>
-        <span v-else :class="color" class="py-1 px-2">{{value}}</span>
+        <v-chip v-else :class="color" text-color="white">
+            <v-icon left>{{icon}}</v-icon>
+            <span :class="color">{{value}}</span>
+        </v-chip>
     </div>
 </template>
 

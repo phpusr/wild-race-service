@@ -12,16 +12,28 @@
                             <div class="caption grey--text lighten-3">{{date}}</div>
                         </div>
                         <post-parser-status :status-id="post.statusId" class="ml-2" />
+
+                        <v-tooltip top>
+                            <v-btn icon class="blue-grey lighten-4" slot="activator">
+                                <v-icon>how_to_reg</v-icon>
+                            </v-btn>
+                            <span>{{$t('post.manualEditing')}}</span>
+                        </v-tooltip>
+
                         <v-spacer></v-spacer>
                         <v-btn icon @click="postEditHandler">
                             <v-icon>edit</v-icon>
                         </v-btn>
                     </v-layout>
-                    <div class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
+                    <div v-if="post.distance" class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
                     <div class="display-1 green--text">{{post.sumDistance}}</div>
                     <div class="mt-3 font-italic">{{post.text}}</div>
                 </v-flex>
             </v-card-title>
+            <div v-if="post.editReason" class="blue-grey lighten-4 pa-2">
+                <span class="font-weight-medium">{{$t('post.editReason')}}:</span>
+                {{post.editReason}}
+            </div>
         </v-card>
     </v-flex>
 </template>
