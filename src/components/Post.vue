@@ -13,11 +13,9 @@
                         </div>
                         <post-parser-status :status-id="post.statusId" class="ml-2" />
                         <v-spacer></v-spacer>
-                        <router-link :to="postEditLink" tag="span">
-                            <v-btn icon>
-                                <v-icon>edit</v-icon>
-                            </v-btn>
-                        </router-link>
+                        <v-btn icon @click="postEditHandler">
+                            <v-icon>edit</v-icon>
+                        </v-btn>
                     </v-layout>
                     <div class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
                     <div class="display-1 green--text">{{post.sumDistance}}</div>
@@ -40,9 +38,14 @@
         computed: {
             date() {
                 return dateFormat(new Date(this.post.date), 'HH:MM dd.mm.yyyy');
-            },
-            postEditLink() {
-                return `/post/${this.post.id}/edit`
+            }
+        },
+        methods: {
+            postEditHandler() {
+                this.$router.push({
+                    path: `/post/${this.post.id}/edit`,
+                    query: this.$route.query
+                });
             }
         }
     }

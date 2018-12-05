@@ -34,7 +34,8 @@
         components: {Post, InfiniteLoading},
         data: () => ({
             posts: [],
-            page: 1,
+            totalElements: 0,
+            page: 0,
             infiniteId: +new Date(),
             stat: {
                 numberOfRuns: 0,
@@ -43,11 +44,15 @@
             }
         }),
         created() {
-            addHandler('/topic/updatePost', post =>
-                replaceObject(this.posts, post)
-            );
+            addHandler('/topic/updatePost', post => {
+                replaceObject(this.posts, post);
+                this.updateStat();
+            });
             addHandler('/topic/deletePost', id => {
-                deleteObject(this.posts, id)
+                if (deleteObject(this.posts, id)) {
+                    this.totalElements--;
+                    this.updateStat();
+                }
             });
 
             sendData('/app/getLastSyncDate');
@@ -59,15 +64,11 @@
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
                 this.resetData();
             }
-
-            if (to.fullPath !== from.fullPath) {
-                this.updateStat();
-            }
         },
         methods: {
             resetData() {
                 this.posts = [];
-                this.page = 1;
+                this.page = 0;
                 this.infiniteId += 1;
             },
             infiniteHandler($state) {
@@ -78,7 +79,8 @@
                         page: this.page,
                     },
                 }).then(response => {
-                    const list = response.body;
+                    const {list, totalElements} = response.body;
+                    this.totalElements = totalElements;
                     if (list.length) {
                         this.page += 1;
                         this.posts.push(...list);
@@ -89,8 +91,7 @@
                 });
             },
             updateStat() {
-                const params = this.$route.query;
-                this.$http.get('/post/getStat', {params}).then(response => {
+                this.$http.get('/post/getStat').then(response => {
                     this.stat = response.body;
                 });
             }
@@ -100,7 +101,7 @@
                 return [
                     {title: this.$t('post.totalSumDistance'), value: this.stat.sumDistance},
                     {title: this.$t('post.numberOfRuns'), value: this.stat.numberOfRuns},
-                    {title: this.$t('post.numberOfPosts'), value: this.stat.total}
+                    {title: this.$t('post.numberOfPosts'), value: `${this.totalElements}/${this.stat.numberOfPosts}`}
                 ]
             },
             containerConfig() {

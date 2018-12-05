@@ -37,7 +37,7 @@
                 <v-btn color="error" @click="remove">{{$t('default.deleteButton')}}</v-btn>
                 <v-spacer/>
                 <v-btn color="primary" @click="update">{{$t('default.saveButton')}}</v-btn>
-                <v-btn @click="$router.push('/')">{{$t('default.cancelButton')}}</v-btn>
+                <v-btn @click="goToMainPage">{{$t('default.cancelButton')}}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -78,13 +78,16 @@
             },
             update() {
                 sendData('/app/updatePost', this.post);
-                this.$router.push('/')
+                this.goToMainPage();
             },
             remove() {
                 if (confirm(this.$t('default.confirmDelete'))) {
                     sendData('/app/deletePost', this.post.id);
-                    this.$router.push('/')
+                    this.goToMainPage();
                 }
+            },
+            goToMainPage() {
+                this.$router.push({ path: '/', query: this.$route.query });
             }
         }
     }

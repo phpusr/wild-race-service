@@ -30,25 +30,22 @@ class PostController(
             @PageableDefault(sort = ["date"], direction = Sort.Direction.DESC) pageable: Pageable,
             @RequestParam statusId: Int?,
             @RequestParam manualEditing: Boolean?
-    ): List<PostDto> {
+    ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
         val config = configRepo.get()
         val list = page.content.map { PostDtoObject.create(it, config) }
 
-        return list
+        return mapOf("list" to list, "totalElements" to page.totalElements)
     }
 
     @GetMapping("getStat")
-    fun getStat(
-            @RequestParam statusId: Int?,
-            @RequestParam manualEditing: Boolean?
-    ): Map<String, Any> {
+    fun getStat(): Map<String, Any> {
         val lastPost = postRepo.findLastPost()
 
         return mapOf(
-                "total" to postRepo.count(statusId, manualEditing),
                 "sumDistance" to (lastPost.sumDistance ?: 0),
-                "numberOfRuns" to (lastPost.number ?: 0)
+                "numberOfRuns" to (lastPost.number ?: 0),
+                "numberOfPosts" to postRepo.count()
         )
     }
 
