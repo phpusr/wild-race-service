@@ -2,14 +2,22 @@
     <div id="app">
         <v-app>
             <v-navigation-drawer v-model="drawer" clipped app dark>
-                <router-view name="menu"></router-view>
+                <router-view name="menu" />
             </v-navigation-drawer>
             <v-toolbar app dark clipped-left>
-                <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-                <v-toolbar-title>
-                    <span class="font-weight-regular">Wild</span>
-                    <span class="font-weight-bold">Race</span>
-                </v-toolbar-title>
+                <v-toolbar-side-icon @click.stop="drawer = !drawer" />
+                <v-btn flat to="/" class="text-capitalize">
+                    <v-toolbar-title>
+                        <span class="font-weight-regular">Wild</span>
+                        <span class="font-weight-bold">Race</span>
+                    </v-toolbar-title>
+                </v-btn>
+
+                <v-spacer/>
+
+                <v-toolbar-items>
+                    <v-btn flat to="/config">{{$t('pages./config')}}</v-btn>
+                </v-toolbar-items>
             </v-toolbar>
             <v-content>
                 <v-container fluid class="pa-1">
