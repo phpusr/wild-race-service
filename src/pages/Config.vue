@@ -4,7 +4,7 @@
             <v-checkbox
                     v-model="config.syncPosts"
                     :label="$t('config.syncPosts')"
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-text-field
                     v-model="config.syncSeconds"
@@ -12,7 +12,7 @@
                     mask="#####"
                     :rules="requiredRules"
                     required
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-text-field
                     v-model="config.groupId"
@@ -20,36 +20,36 @@
                     mask="-##########"
                     :rules="requiredRules"
                     required
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-text-field
                     v-model="config.groupShortLink"
                     :label="$t('config.groupShortLink')"
                     :rules="requiredRules"
                     required
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-checkbox
                     v-model="config.commenting"
                     :label="$t('config.commenting')"
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-text-field
                     v-model="config.commentAccessToken"
                     :label="$t('config.commentAccessToken')"
                     :rules="requiredRules"
                     required
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-checkbox
                     v-model="config.commentFromGroup"
                     :label="$t('config.commentFromGroup')"
-                    :disabled="show"
+                    :readonly="show"
             />
             <v-checkbox
                     v-model="config.publishStat"
                     :label="$t('config.publishStat')"
-                    :disabled="show"
+                    :readonly="show"
             />
 
             <div v-if="show">
@@ -71,8 +71,8 @@
             requiredRules: [v => !!v || 'Filed is required']
         }),
         created() {
-            this.$http.get('/config').then(resource =>
-                this.config = resource.body
+            this.$http.get('/config').then(response =>
+                this.config = response.body
             );
         },
         computed: {
@@ -83,7 +83,10 @@
         methods: {
             save() {
                 if (this.$refs.form.validate()) {
-                    console.log(this.config)
+                    this.$http.put('/config', this.config).then(response => {
+                        this.config = response.body;
+                        this.$router.push('/config');
+                    });
                 }
             },
             cancel () {
