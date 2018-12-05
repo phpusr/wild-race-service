@@ -33,5 +33,15 @@ export default {
         lastSyncDate: 'Последняя синхронизация',
         noMoreMessages: '',
         noResults: 'Нет данных'
+    },
+    config: {
+        syncPosts: 'Синхронизация постов',
+        syncSeconds: 'Интервал запуска синхронизации (с.)',
+        groupId: 'ID группы',
+        groupShortLink: 'Домен группы',
+        commenting: 'Комментирование',
+        commentAccessToken: 'Токен для комментирования',
+        commentFromGroup: 'Комментирование от имени группы',
+        publishStat: 'Авто-публикация статистики'
     }
 }
