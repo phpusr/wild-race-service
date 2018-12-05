@@ -16,6 +16,12 @@ export default new VueRouter({ routes: [
             { path: 'post/:postId/edit', component: PostDialog }
         ]
     },
-    { path: '/config', component: ConfigPage },
+    {
+        path: '/config',
+        component: ConfigPage,
+        children: [
+            { path: 'edit' }
+        ]
+    },
     { path: '/test', component: TestPage },
 ]});

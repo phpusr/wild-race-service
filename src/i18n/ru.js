@@ -2,10 +2,12 @@ export default {
     pages: {
         '/': 'Главная страница',
         '/test': 'Тестовая страница',
-        '/config': 'Настройки'
+        '/config': 'Настройки',
+        '/config/edit': 'Настройки'
     },
     default: {
         saveButton: 'Сохранить',
+        editButton: 'Изменить',
         deleteButton: 'Удалить',
         cancelButton: 'Отмена',
         confirmDelete: 'Вы действительно хотите удалить?'

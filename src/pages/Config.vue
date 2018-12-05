@@ -4,6 +4,7 @@
             <v-checkbox
                     v-model="config.syncPosts"
                     :label="$t('config.syncPosts')"
+                    :disabled="show"
             />
             <v-text-field
                     v-model="config.syncSeconds"
@@ -11,6 +12,7 @@
                     mask="#####"
                     :rules="requiredRules"
                     required
+                    :disabled="show"
             />
             <v-text-field
                     v-model="config.groupId"
@@ -18,34 +20,45 @@
                     mask="-##########"
                     :rules="requiredRules"
                     required
+                    :disabled="show"
             />
             <v-text-field
                     v-model="config.groupShortLink"
                     :label="$t('config.groupShortLink')"
                     :rules="requiredRules"
                     required
+                    :disabled="show"
             />
             <v-checkbox
                     v-model="config.commenting"
                     :label="$t('config.commenting')"
+                    :disabled="show"
             />
             <v-text-field
                     v-model="config.commentAccessToken"
                     :label="$t('config.commentAccessToken')"
                     :rules="requiredRules"
                     required
+                    :disabled="show"
             />
             <v-checkbox
                     v-model="config.commentFromGroup"
                     :label="$t('config.commentFromGroup')"
+                    :disabled="show"
             />
             <v-checkbox
                     v-model="config.publishStat"
                     :label="$t('config.publishStat')"
+                    :disabled="show"
             />
 
-            <v-btn :disabled="!valid" @click="save">{{$t('default.saveButton')}}</v-btn>
-            <v-btn @click="cancel" primary>{{$t('default.cancelButton')}}</v-btn>
+            <div v-if="show">
+                <v-btn to="/config/edit">{{$t('default.editButton')}}</v-btn>
+            </div>
+            <div v-else>
+                <v-btn :disabled="!valid" @click="save" color="primary">{{$t('default.saveButton')}}</v-btn>
+                <v-btn @click="cancel" primary>{{$t('default.cancelButton')}}</v-btn>
+            </div>
         </v-form>
     </v-flex>
 </template>
@@ -57,6 +70,16 @@
             config: {},
             requiredRules: [v => !!v || 'Filed is required']
         }),
+        created() {
+            this.$http.get('/config').then(resource =>
+                this.config = resource.body
+            );
+        },
+        computed: {
+            show() {
+                return this.$route.path === '/config'
+            }
+        },
         methods: {
             save() {
                 if (this.$refs.form.validate()) {
@@ -64,7 +87,7 @@
                 }
             },
             cancel () {
-                //TODO
+                this.$router.go(-1);
             }
         }
     }
