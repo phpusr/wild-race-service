@@ -13,6 +13,7 @@
                     :rules="requiredRules"
                     required
                     :readonly="show"
+                    :solo="show"
             />
             <v-text-field
                     v-model="config.groupId"
@@ -21,6 +22,7 @@
                     :rules="requiredRules"
                     required
                     :readonly="show"
+                    :solo="show"
             />
             <v-text-field
                     v-model="config.groupShortLink"
@@ -28,6 +30,7 @@
                     :rules="requiredRules"
                     required
                     :readonly="show"
+                    :solo="show"
             />
             <v-checkbox
                     v-model="config.commenting"
@@ -40,6 +43,7 @@
                     :rules="requiredRules"
                     required
                     :readonly="show"
+                    :solo="show"
             />
             <v-checkbox
                     v-model="config.commentFromGroup"
