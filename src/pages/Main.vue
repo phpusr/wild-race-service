@@ -26,7 +26,7 @@
 
 <script>
     import Post from '../components/Post'
-    import {addHandler, sendData} from '../util/ws'
+    import {addHandler} from '../util/ws'
     import {deleteObject, replaceObject} from '../util/collections'
     import InfiniteLoading from 'vue-infinite-loading'
 
@@ -55,7 +55,6 @@
                 }
             });
 
-            sendData('/app/getLastSyncDate');
             this.updateStat();
         },
         beforeRouteUpdate (to, from, next) {

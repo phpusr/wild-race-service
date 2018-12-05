@@ -49,8 +49,7 @@ class PostController(
         )
     }
 
-    @MessageMapping("/getLastSyncDate")
-    @SendTo("/topic/getLastSyncDate")
+    @GetMapping("getLastSyncDate")
     fun getLastSyncDate(): Long {
         return tempDataRepo.get().lastSyncDate.time
     }
