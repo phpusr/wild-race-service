@@ -34,10 +34,18 @@
             <v-divider/>
 
             <v-card-actions>
-                <v-btn color="error" @click="remove">{{$t('default.deleteButton')}}</v-btn>
+                <v-btn color="error" @click="remove">
+                    <v-icon :left="smAndUp">delete</v-icon>
+                    <span v-if="smAndUp">{{$t('default.deleteButton')}}</span>
+                </v-btn>
                 <v-spacer/>
-                <v-btn color="primary" @click="update">{{$t('default.saveButton')}}</v-btn>
-                <v-btn @click="goToMainPage">{{$t('default.cancelButton')}}</v-btn>
+                <v-btn color="primary" @click="update">
+                    <v-icon :left="smAndUp">save</v-icon>
+                    <span v-if="smAndUp">{{$t('default.saveButton')}}</span>
+                </v-btn>
+                <v-btn @click="goToMainPage">
+                    {{$t('default.cancelButton')}}
+                </v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -68,6 +76,9 @@
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key] }
                 ))
+            },
+            smAndUp() {
+                return this.$vuetify.breakpoint.smAndUp;
             }
         },
         methods: {

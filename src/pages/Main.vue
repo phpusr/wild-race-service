@@ -3,7 +3,7 @@
         <router-view />
         <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>
-                <v-flex d-flex v-for="v in statTitles" :key="v.title">
+                <v-flex d-flex xs4 v-for="v in statTitles" :key="v.title">
                     <v-card>
                         <v-card-text>
                             <div class="display-1">{{v.value}}</div>
@@ -97,10 +97,11 @@
         },
         computed: {
             statTitles() {
+                const numberOfPostsString = (this.totalElements === this.stat.numberOfPosts) ? this.stat.numberOfPosts : `${this.totalElements} / ${this.stat.numberOfPosts}`;
                 return [
                     {title: this.$t('post.totalSumDistance'), value: this.stat.sumDistance},
                     {title: this.$t('post.numberOfRuns'), value: this.stat.numberOfRuns},
-                    {title: this.$t('post.numberOfPosts'), value: `${this.totalElements}/${this.stat.numberOfPosts}`}
+                    {title: this.$t('post.numberOfPosts'), value: numberOfPostsString}
                 ]
             },
             containerConfig() {
