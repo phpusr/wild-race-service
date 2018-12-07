@@ -11,7 +11,8 @@ export default {
         editButton: 'Изменить',
         deleteButton: 'Удалить',
         cancelButton: 'Отмена',
-        confirmDelete: 'Вы действительно хотите удалить?'
+        confirmDelete: 'Вы действительно хотите удалить?',
+        km: 'км'
     },
     post: {
         totalSumDistance: 'Всего пробежали (км)',
@@ -36,6 +37,9 @@ export default {
         lastSyncDate: 'Последняя синхронизация',
         noMoreMessages: '',
         noResults: 'Нет данных'
+    },
+    stat: {
+        recount: 'Пересчет'
     },
     config: {
         syncPosts: 'Синхронизация постов',

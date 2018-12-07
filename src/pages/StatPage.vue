@@ -3,11 +3,73 @@
         <v-container>
             <v-layout>
                 <v-flex>
-                    <v-card>
-                        <v-card-title>
+                    <v-tabs v-model="activeTab" color="cyan" dark slider-color="yellow">
+                        <v-tab ripple>Item</v-tab>
+                        <v-tab ripple>Item 2</v-tab>
 
-                        </v-card-title>
-                    </v-card>
+                        <v-tab-item>
+                            <v-card flat>
+                                <v-card-text>
+                                    <v-layout>
+                                        <v-flex sm2>
+                                            <v-text-field
+                                                    v-model="startDistance"
+                                                    solo
+                                            />
+                                        </v-flex>
+                                        <span class="mx-3 display-1">-</span>
+                                        <v-flex sm2>
+                                            <v-text-field
+                                                    v-model="endDistance"
+                                                    solo
+                                            />
+                                        </v-flex>
+                                        <span class="mx-3 mt-2 headline">{{$t('default.km')}}</span>
+                                        <v-btn>{{$t('stat.recount')}}</v-btn>
+                                    </v-layout>
+                                </v-card-text>
+                            </v-card>
+                        </v-tab-item>
+
+                        <v-tab-item>
+                            <v-card flat>
+                                <v-card-text>
+                                    <v-layout>
+                                        <v-flex sm2>
+                                            <v-menu
+                                                    :close-on-content-click="false"
+                                                    v-model="menu"
+                                                    :nudge-right="40"
+                                                    :return-value.sync="startDate"
+                                                    lazy
+                                                    transition="scale-transition"
+                                                    offset-y
+                                                    full-width
+                                                    min-width="290px"
+                                            >
+                                                <v-text-field
+                                                        slot="activator"
+                                                        v-model="startDate"
+                                                        label="Picker in menu"
+                                                        hint="MM/DD/YYYY format"
+                                                        persistent-hint
+                                                        prepend-icon="event"
+                                                        readonly
+                                                />
+                                                <v-date-picker v-model="startDate" no-title @input="menu = false" />
+                                            </v-menu>
+                                        </v-flex>
+
+                                        <span class="mx-3 display-1">-</span>
+
+
+
+                                        <v-btn>{{$t('stat.recount')}}</v-btn>
+                                    </v-layout>
+                                </v-card-text>
+                            </v-card>
+                        </v-tab-item>
+                    </v-tabs>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -15,5 +77,14 @@
 </template>
 
 <script>
-
+    export default {
+        data: () => ({
+            activeTab: 1,
+            startDistance: null,
+            endDistance: null,
+            menu: false,
+            startDate: null,
+            endDate: null
+        })
+    }
 </script>
