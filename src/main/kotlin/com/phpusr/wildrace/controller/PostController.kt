@@ -8,6 +8,7 @@ import com.phpusr.wildrace.domain.dto.PostDto
 import com.phpusr.wildrace.domain.dto.PostDtoObject
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -40,11 +41,11 @@ class PostController(
 
     @GetMapping("getStat")
     fun getStat(): Map<String, Any> {
-        val lastPost = postRepo.findLastPost()
+        val lastPost = postRepo.findLastRunningList(PageRequest.of(0, 1)).firstOrNull()
 
         return mapOf(
-                "sumDistance" to (lastPost.sumDistance ?: 0),
-                "numberOfRuns" to (lastPost.number ?: 0),
+                "sumDistance" to (lastPost?.sumDistance ?: 0),
+                "numberOfRuns" to (lastPost?.number ?: 0),
                 "numberOfPosts" to postRepo.count()
         )
     }
