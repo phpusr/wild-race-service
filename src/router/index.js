@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
-import MainPage from '../pages/Main'
-import ConfigPage from '../pages/Config'
-import TestPage from '../pages/Test'
+import MainPage from '../pages/MainPage'
+import ConfigPage from '../pages/ConfigPage'
+import TestPage from '../pages/TestPage'
 import PostDialog from '../components/PostDialog'
 import PostFilter from '../components/PostFilter'
 
