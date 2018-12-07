@@ -3,7 +3,8 @@ export default {
         '/': 'Главная страница',
         '/test': 'Тестовая страница',
         '/config': 'Настройки',
-        '/config/edit': 'Настройки'
+        '/config/edit': 'Настройки',
+        '/stat': 'Статистика'
     },
     default: {
         saveButton: 'Сохранить',
