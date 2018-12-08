@@ -8,10 +8,10 @@ import java.util.*
  */
 class StatDto(
         /** Начальная дистанция для отчетности */
-        val startDistance: Int,
+        val startDistance: Int?,
 
         /** Конечная дистанция для отчетности */
-        val endDistance: Int,
+        val endDistance: Int?,
 
         /** Начальная дата для отчетности */
         val startDate: Date,
@@ -32,7 +32,7 @@ class StatDto(
         val distancePerTrainingAvg: Float,
 
         /** Тренировки - всего */
-        val trainingCountAll: Int,
+        val trainingCountAll: Long,
 
         /** Кол-во тренировок на каждого участника */
         val countTraining: List<Map<Profile, Int>>,
@@ -46,16 +46,17 @@ class StatDto(
         /** Бегуны - новых на отрезке */
         val newRunners: List<Profile>,
 
-        /** Кол-во новых бегунов на отрезке */
-        val countNewRunners: Int,
-
         /** Топ бегунов за все время */
         val topAllRunners: List<Map<Profile, Int>>,
 
         /** Топ бегунов на отрезке */
         val topIntevalRunners: List<Map<Profile, Int>>
 ) {
-    /** Тренировки среднее в день */
-    val trainingCountPerDayAvgFunction
+        /** Тренировки среднее в день */
+        val trainingCountPerDayAvgFunction
         get() = trainingCountAll / daysCountAll
+
+        /** Кол-во новых бегунов на отрезке */
+        val countNewRunners
+        get() = newRunners.size
 }

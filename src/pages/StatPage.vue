@@ -14,9 +14,17 @@
         data: () => ({
 
         }),
+        created() {
+            this.fetchData()
+        },
+        beforeRouteUpdate (to, from, next) {
+            next();
+
+            this.fetchData();
+        },
         methods: {
             fetchData() {
-                const params = this.$route.query;
+                const {params} = this.$route;
                 this.$http.get('/stat', {params}).then(response => console.log(response))
             }
         }
