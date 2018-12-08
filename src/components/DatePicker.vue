@@ -43,8 +43,12 @@
             }
         },
         methods: {
-            input(date) {
-                this.$emit('input', new Date(date).getTime());
+            input(inputIsoDateString) {
+                const date = this.parseIsoDateString(inputIsoDateString);
+                this.$emit('input', date.getTime());
+            },
+            parseIsoDateString(dateString) {
+                return new Date(dateString + 'T00:00:00');
             }
         }
     }
