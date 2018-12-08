@@ -18,12 +18,19 @@ export default new VueRouter({ routes: [
         ]
     },
     {
+
+        path: '/stat',
+        component: StatPage,
+        children: [
+            { name: 'stat', path: ':typeForm/:startRange/:endRange' },
+        ]
+    },
+    {
         path: '/config',
         component: ConfigPage,
         children: [
             { path: 'edit' }
         ]
     },
-    { path: '/stat', component: StatPage },
     { path: '/test', component: TestPage },
 ]});

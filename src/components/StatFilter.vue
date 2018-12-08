@@ -69,13 +69,16 @@
         },
         methods: {
             recount() {
-                const query = {
-                    typeForm: this.activeTab,
-                    startRange: this.startRange,
-                    endRange: this.endRange
+                const isDistanceTab = this.activeTab === 0;
+                const startRange = isDistanceTab ? this.startDistance : this.startDate;
+                const endRange = isDistanceTab ? this.endDistance : this.endDate;
+                const params = {
+                    typeForm: isDistanceTab ? 'distance' : 'date',
+                    startRange: startRange || '-',
+                    endRange: endRange || '-'
                 };
 
-                this.$router.push({path: '/stat', query});
+                this.$router.push({name: 'stat', params});
             }
         }
     }
