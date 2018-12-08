@@ -4,8 +4,8 @@
             <v-layout>
                 <v-flex>
                     <v-tabs v-model="activeTab" color="cyan" dark slider-color="yellow">
-                        <v-tab ripple>Item</v-tab>
-                        <v-tab ripple>Item 2</v-tab>
+                        <v-tab ripple>{{ $t('stat.distanceRange') }}</v-tab>
+                        <v-tab ripple>{{ $t('stat.dateRange') }}</v-tab>
 
                         <v-tab-item>
                             <v-card flat>
@@ -33,9 +33,11 @@
                                             <date-picker v-model="startDate" />
                                         </v-flex>
 
-                                        <span class="mx-3 display-1">-</span>
+                                        <span class="mx-3 mt-2 display-1">-</span>
 
-
+                                        <v-flex sm2>
+                                            <date-picker v-model="endDate" />
+                                        </v-flex>
 
                                         <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
                                     </v-layout>
@@ -64,7 +66,12 @@
         }),
         methods: {
             recount() {
-                console.log(this.startDate)
+                const params = {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                    typeForm: this.activeTab
+                };
+                this.$http.get('/stat', {params}).then(response => console.log(response))
             }
         }
     }

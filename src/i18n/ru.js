@@ -41,6 +41,8 @@ export default {
         noResults: 'Нет данных'
     },
     stat: {
+        distanceRange: 'Диапазон расстояний',
+        dateRange: 'Диапазон дат',
         recount: 'Пересчет'
     },
     config: {

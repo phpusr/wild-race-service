@@ -13,7 +13,7 @@ class StatController(private val statService: StatService) {
 
     @GetMapping
     fun getData(
-            @RequestParam typeForm: String,
+            @RequestParam typeForm: Int,
             @RequestParam startDistance: Int?,
             @RequestParam endDistance: Int?,
             @RequestParam startDate: Long?,
@@ -21,7 +21,7 @@ class StatController(private val statService: StatService) {
     ) {
         val sDate: Date?
         val eDate: Date?
-        if (typeForm == "distanceForm") {
+        if (typeForm == 0) {
             sDate = if (startDistance != null) statService.getStartDate(startDistance) else null
             eDate = if (endDistance != null) statService.getEndDate(endDistance) else null
         } else {
