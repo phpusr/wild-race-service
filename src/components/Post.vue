@@ -40,7 +40,7 @@
 
 <script>
     import PostParserStatus from './PostParserStatus'
-    import dateFormat from 'dateformat'
+    import dateFormat from 'date-format'
 
     export default {
         components: {PostParserStatus},
@@ -49,7 +49,7 @@
         },
         computed: {
             date() {
-                return dateFormat(new Date(this.post.date), 'HH:MM dd.mm.yyyy');
+                return dateFormat('hh:mm dd.MM.yyyy', new Date(this.post.date));
             }
         },
         methods: {

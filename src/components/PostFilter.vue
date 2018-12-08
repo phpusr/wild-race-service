@@ -42,7 +42,7 @@
 
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
-    import dateFormat from "dateformat"
+    import dateFormat from "date-format"
 
     export default {
         data: () => ({
@@ -50,7 +50,7 @@
         }),
         created() {
             this.$http.get('/post/getLastSyncDate').then(response =>
-                this.lastSyncDate = dateFormat(new Date(response.body), 'HH:MM dd.mm.yyyy')
+                this.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(response.body))
             );
         },
         computed: {
