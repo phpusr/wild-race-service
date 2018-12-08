@@ -41,7 +41,9 @@ class PostController(
 
     @GetMapping("getStat")
     fun getStat(): Map<String, Any> {
-        val lastPost = postRepo.findLastRunningList(PageRequest.of(0, 1)).firstOrNull()
+        val sort = Sort.by(Sort.Order(Sort.Direction.DESC, "date"))
+        val pageable = PageRequest.of(0, 1, sort)
+        val lastPost = postRepo.findRunningList(pageable).firstOrNull()
 
         return mapOf(
                 "sumDistance" to (lastPost?.sumDistance ?: 0),
