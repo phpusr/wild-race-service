@@ -9,12 +9,12 @@
     >
         <v-text-field
                 slot="activator"
-                :value="formatDate(value)"
+                :value="viewFormattedDate"
                 :label="label"
                 prepend-icon="event"
                 readonly
         />
-        <v-date-picker :value="value" @input="$emit('input', $event)" no-title scrollable />
+        <v-date-picker :value="isoFormattedDate" @input="input" no-title scrollable />
     </v-menu>
 </template>
 
@@ -23,14 +23,28 @@
 
     export default {
         props: {
-            value: String,
+            value: Number,
             label: String
         },
-        methods: {
-            formatDate (date) {
-                if (!date) return null;
+        computed: {
+            viewFormattedDate() {
+                if (!this.value) {
+                    return null;
+                }
 
-                return dateFormat(this.$t('default.datePattern'), new Date(date));
+                return dateFormat(this.$t('default.datePattern'), new Date(this.value));
+            },
+            isoFormattedDate() {
+                if (!this.value) {
+                    return null;
+                }
+
+                return dateFormat(this.$t('default.isoDatePattern'), new Date(this.value))
+            }
+        },
+        methods: {
+            input(date) {
+                this.$emit('input', new Date(date).getTime());
             }
         }
     }

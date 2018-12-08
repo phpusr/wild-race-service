@@ -18,8 +18,8 @@
                                         <v-flex sm2>
                                             <v-text-field v-model="endDistance" solo />
                                         </v-flex>
-                                        <span class="mx-3 mt-2 headline">{{$t('default.km')}}</span>
-                                        <v-btn>{{$t('stat.recount')}}</v-btn>
+                                        <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
+                                        <v-btn>{{ $t('stat.recount') }}</v-btn>
                                     </v-layout>
                                 </v-card-text>
                             </v-card>
@@ -37,7 +37,7 @@
 
 
 
-                                        <v-btn>{{$t('stat.recount')}}</v-btn>
+                                        <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
                                     </v-layout>
                                 </v-card-text>
                             </v-card>
@@ -61,6 +61,11 @@
             menu: false,
             startDate: null,
             endDate: null
-        })
+        }),
+        methods: {
+            recount() {
+                console.log(this.startDate)
+            }
+        }
     }
 </script>

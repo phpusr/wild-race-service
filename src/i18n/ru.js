@@ -8,6 +8,7 @@ export default {
     },
     default: {
         datePattern: 'dd.MM.yyyy',
+        isoDatePattern: 'yyyy-MM-dd',
         saveButton: 'Сохранить',
         editButton: 'Изменить',
         deleteButton: 'Удалить',
