@@ -54,17 +54,20 @@
 <script>
     import DatePicker from '../components/DatePicker'
 
+    const DistanceTab = 'distance';
+    const DateTab = 'date';
+
     export default {
         components: {DatePicker},
         data() {
-            const {typeForm, startRange, endRange} = this.$route.query;
+            const {typeForm, startRange, endRange} = this.$route.params;
             return {
                 menu: false,
-                activeTab: +typeForm,
+                activeTab: typeForm === DistanceTab ? 0 : 1,
                 startDistance: startRange,
                 endDistance: endRange,
-                startDate: +startRange || null,
-                endDate: +endRange || null
+                startDate: startRange,
+                endDate: endRange
             }
         },
         methods: {
@@ -73,7 +76,7 @@
                 const startRange = isDistanceTab ? this.startDistance : this.startDate;
                 const endRange = isDistanceTab ? this.endDistance : this.endDate;
                 const params = {
-                    typeForm: isDistanceTab ? 'distance' : 'date',
+                    typeForm: isDistanceTab ? DistanceTab : DateTab,
                     startRange: startRange || '-',
                     endRange: endRange || '-'
                 };

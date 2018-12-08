@@ -23,8 +23,9 @@
 
     export default {
         props: {
-            value: Number,
-            label: String
+            value: [Number, String],
+            label: String,
+            number: Boolean
         },
         computed: {
             viewFormattedDate() {
@@ -32,20 +33,23 @@
                     return null;
                 }
 
-                return dateFormat(this.$t('default.datePattern'), new Date(this.value));
+                return dateFormat(this.$t('default.datePattern'), this.dateObject);
             },
             isoFormattedDate() {
                 if (!this.value) {
                     return null;
                 }
 
-                return dateFormat(this.$t('default.isoDatePattern'), new Date(this.value))
+                return dateFormat(this.$t('default.isoDatePattern'), this.dateObject);
+            },
+            dateObject() {
+                return this.number ? new Date(this.value) : this.parseIsoDateString(this.value);
             }
         },
         methods: {
             input(inputIsoDateString) {
-                const date = this.parseIsoDateString(inputIsoDateString);
-                this.$emit('input', date.getTime());
+                const returnDate = this.number ? this.parseIsoDateString(inputIsoDateString).getTime() : inputIsoDateString;
+                this.$emit('input', returnDate);
             },
             parseIsoDateString(dateString) {
                 return new Date(dateString + 'T00:00:00');
