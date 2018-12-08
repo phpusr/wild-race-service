@@ -7,6 +7,7 @@ export default {
         '/stat': 'Статистика'
     },
     default: {
+        datePattern: 'dd.MM.yyyy',
         saveButton: 'Сохранить',
         editButton: 'Изменить',
         deleteButton: 'Удалить',
