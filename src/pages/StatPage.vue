@@ -1,76 +1,22 @@
 <template>
     <v-flex md6 offset-md3>
-        <v-container>
-            <v-layout>
-                <v-flex>
-                    <v-tabs v-model="activeTab" color="cyan" dark slider-color="yellow">
-                        <v-tab ripple>{{ $t('stat.distanceRange') }}</v-tab>
-                        <v-tab ripple>{{ $t('stat.dateRange') }}</v-tab>
-
-                        <v-tab-item>
-                            <v-card flat>
-                                <v-card-text>
-                                    <v-layout>
-                                        <v-flex sm2>
-                                            <v-text-field v-model="startDistance" solo />
-                                        </v-flex>
-                                        <span class="mx-3 display-1">-</span>
-                                        <v-flex sm2>
-                                            <v-text-field v-model="endDistance" solo />
-                                        </v-flex>
-                                        <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
-                                        <v-btn>{{ $t('stat.recount') }}</v-btn>
-                                    </v-layout>
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-
-                        <v-tab-item>
-                            <v-card flat>
-                                <v-card-text>
-                                    <v-layout>
-                                        <v-flex sm2>
-                                            <date-picker v-model="startDate" />
-                                        </v-flex>
-
-                                        <span class="mx-3 mt-2 display-1">-</span>
-
-                                        <v-flex sm2>
-                                            <date-picker v-model="endDate" />
-                                        </v-flex>
-
-                                        <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
-                                    </v-layout>
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-                    </v-tabs>
-                </v-flex>
-            </v-layout>
-        </v-container>
+        <v-layout>
+            <stat-filter />
+        </v-layout>
     </v-flex>
 </template>
 
 <script>
-    import DatePicker from '../components/DatePicker'
+    import StatFilter from '../components/StatFilter'
 
     export default {
-        components: {DatePicker},
+        components: {StatFilter},
         data: () => ({
-            activeTab: 1,
-            startDistance: null,
-            endDistance: null,
-            menu: false,
-            startDate: null,
-            endDate: null
+
         }),
         methods: {
-            recount() {
-                const params = {
-                    startDate: this.startDate,
-                    endDate: this.endDate,
-                    typeForm: this.activeTab
-                };
+            fetchData() {
+                const params = this.$route.query;
                 this.$http.get('/stat', {params}).then(response => console.log(response))
             }
         }
