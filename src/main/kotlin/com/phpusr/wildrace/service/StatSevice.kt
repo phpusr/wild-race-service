@@ -15,40 +15,22 @@ import java.util.*
 @Service
 class StatService(private val postRepo: PostRepo) {
 
+    private lateinit var firstRunning: Post
+    private lateinit var lastRunning: Post
+    private var trainingCountAll: Int = 0
+
     fun calcStat(typeForm: String, startRange: String?, endRange: String?): StatDto {
-        var startDate: Date?
-        var endDate: Date?
-        if (typeForm == "distance") {
-            startDate = getStartDate(startRange?.toInt())
-            endDate = getEndDate(endRange?.toInt())
-        } else {
+        var startDate: Date? = null
+        var endDate: Date? = null
+
+        if (typeForm == "date") {
             val df = SimpleDateFormat("yyyy-MM-dd")
             startDate = df.parse(startRange)
             // Изменение времени на окончание дня
             endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
         }
 
-        val firstRunning = getFirstRunning()
-        if (startDate == null) {
-            startDate = firstRunning.date
-        }
-
-        val lastRunning = getLastRunning()
-        if (endDate == null) {
-            endDate = lastRunning.date
-        }
-
-        val sort = Sort(Sort.Direction.ASC, "date")
-        var pageable: Pageable = PageRequest.of(0, 1000, sort)
-        var runningPage = postRepo.findRunningPage(pageable)
-
-        var index = 0
-        while(pageable.isPaged) {
-            println("Time: ${++index}, count: ${runningPage.count()}")
-            //TODO continue calculating
-            pageable = runningPage.nextPageable()
-            runningPage = postRepo.findRunningPage(pageable)
-        }
+        handleList()
 
         val daysCountAll = Duration.of(lastRunning.date.time - firstRunning.date.time, ChronoUnit.MILLIS).toDays().toInt() + 1
         val stat = StatDto(
@@ -62,7 +44,7 @@ class StatService(private val postRepo: PostRepo) {
 
                 distanceAll = lastRunning.sumDistance ?: 0,
 
-                trainingCountAll = runningPage.totalElements.toInt(),
+                trainingCountAll = trainingCountAll,
                 countTraining = listOf(),
 
                 runnersCountAll = 0,
@@ -76,29 +58,25 @@ class StatService(private val postRepo: PostRepo) {
         return stat
     }
 
-    fun getStartDate(startDistance: Int?): Date? {
-        if (startDistance == null) {
-            return null
-        }
-
-        return postRepo.findStartDateList(startDistance, PageRequest.of(0, 1)).firstOrNull()
-    }
-
-    fun getEndDate(endDistance: Int?): Date? {
-        if (endDistance == null) {
-            return null
-        }
-
-        return postRepo.findEndDateList(endDistance, PageRequest.of(0, 1)).firstOrNull()
-    }
-
-    fun getFirstRunning(): Post {
+    private fun handleList() {
         val sort = Sort(Sort.Direction.ASC, "date")
-        val pageable = PageRequest.of(0, 1, sort)
+        var pageable: Pageable = PageRequest.of(0, 1000, sort)
+        var runningPage = postRepo.findRunningPage(pageable)
+        trainingCountAll = runningPage.totalElements.toInt()
+        firstRunning = runningPage.first()
 
-        return postRepo.findRunningPage(pageable).first()
+        var index = 0
+        while(pageable.isPaged) {
+            println("Time: ${++index}, count: ${runningPage.count()}")
+            //TODO continue calculating
+            pageable = runningPage.nextPageable()
+            runningPage = postRepo.findRunningPage(pageable)
+        }
+
+        lastRunning = runningPage.last()
     }
 
+    //TODO move it to postService
     fun getLastRunning(): Post {
         val sort = Sort(Sort.Direction.DESC, "date")
         val pageable = PageRequest.of(0, 1, sort)

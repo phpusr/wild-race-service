@@ -14,10 +14,10 @@ class StatDto(
         val endDistance: Int?,
 
         /** Начальная дата для отчетности */
-        val startDate: Date,
+        val startDate: Date?,
 
         /** Конечная дата для отчетности */
-        val endDate: Date,
+        val endDate: Date?,
 
         /** Кол-во дней бега - всего */
         val daysCountAll: Int,
