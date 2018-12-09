@@ -43,11 +43,9 @@ class StatService(private val postRepo: PostRepo) {
         var firstIntRunning: Post? = null
         var lastIntRunning: Post? = null
         val runnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
+        val intRunnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
 
-        var index = 0
         while(pageable.isPaged) {
-            println("Time: ${++index}, count: ${runningPage.count()}")
-
             runningPage.stream().forEach { running ->
                 if (firstIntRunning == null) {
                     if (startDate != null  && running.date >= startDate || startDistance != null && running.sumDistance!! > startDistance) {
@@ -55,16 +53,16 @@ class StatService(private val postRepo: PostRepo) {
                     }
                 }
 
-                if (firstIntRunning != null && lastIntRunning == null) {
-                    if (endDate != null && running.date <= endDate || endDistance != null && running.sumDistance!! >= endDistance) {
+                addRunning(running, runnersMap)
+                if (firstIntRunning != null && (endDate != null && running.date <= endDate || lastIntRunning == null)) {
+                    addRunning(running, intRunnersMap)
+                }
+
+                if (firstIntRunning != null) {
+                    if (endDate != null && running.date <= endDate || lastIntRunning == null && endDistance != null && running.sumDistance!! >= endDistance) {
                         lastIntRunning = running
                     }
                 }
-
-                val map = runnersMap[running.from] ?: mutableMapOf()
-                map["count"] = (map["count"] ?: 0) + 1
-                map["distance"] = (map["distance"] ?: 0) + running.distance!!
-                runnersMap[running.from] = map
             }
 
             pageable = runningPage.nextPageable()
@@ -76,7 +74,7 @@ class StatService(private val postRepo: PostRepo) {
         stat.daysCountAll = getCountDays(firstRunning.date, lastRunning.date)
         stat.daysCountInterval = getCountDays(startDate ?: firstIntRunning?.date, endDate ?: lastIntRunning?.date)
 
-        stat.distanceAll = lastRunning.sumDistance ?: 0
+        stat.distanceAll = lastRunning.sumDistance!!
 
         stat.countTraining = listOf()
 
@@ -85,15 +83,28 @@ class StatService(private val postRepo: PostRepo) {
         stat.newRunners = listOf()
 
         stat.topAllRunners = calcTopRunners(runnersMap)
-        stat.topIntervalRunners = listOf()
+        stat.topIntervalRunners = calcTopRunners(intRunnersMap)
 
         return stat
     }
 
-    private fun calcTopRunners(runners: Map<Profile, MutableMap<String, Int>>): List<Map<String, Any>> {
-        return runners.map {
+    private fun addRunning(running: Post, runnersMap: MutableMap<Profile, MutableMap<String, Int>>) {
+        val map = runnersMap[running.from] ?: mutableMapOf()
+        map["count"] = (map["count"] ?: 0) + 1
+        map["distance"] = (map["distance"] ?: 0) + running.distance!!
+        runnersMap[running.from] = map
+    }
+
+    private fun calcTopRunners(runners: Map<Profile, Map<String, Int>>): List<Map<String, Any>> {
+        val list = runners.map {
             mapOf("profile" to it.key, "distance" to (it.value["distance"] ?: 0))
-        }.sortedBy { it["distance"] as Int * -1 }.subList(0, 5)
+        }.sortedBy { it["distance"] as Int * -1 }
+
+        if (list.size > 5) {
+            return list.subList(0, 5)
+        }
+
+        return list
     }
 
     private fun getCountDays(startDate: Date?, endDate: Date?): Int {

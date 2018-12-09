@@ -68,6 +68,6 @@ class StatDto {
     lateinit var topAllRunners: List<Map<String, Any>>
 
     /** Топ бегунов на отрезке */
-    lateinit var topIntervalRunners: List<Map<Profile, Int>>
+    lateinit var topIntervalRunners: List<Map<String, Any>>
 
 }
