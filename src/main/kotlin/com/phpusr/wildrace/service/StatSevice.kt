@@ -36,13 +36,14 @@ class StatService(private val postRepo: PostRepo) {
             endDate = lastRunning.date
         }
 
-        var pageable: Pageable = PageRequest.of(0, 1000)
+        val sort = Sort(Sort.Direction.ASC, "date")
+        var pageable: Pageable = PageRequest.of(0, 1000, sort)
         var runningPage = postRepo.findRunningPage(pageable)
 
         var index = 0
-        while(runningPage.count() > 0) {
-            //TODO  что-то не так
+        while(pageable.isPaged) {
             println("Time: ${++index}, count: ${runningPage.count()}")
+            //TODO continue calculating
             pageable = runningPage.nextPageable()
             runningPage = postRepo.findRunningPage(pageable)
         }
@@ -50,8 +51,8 @@ class StatService(private val postRepo: PostRepo) {
 
 
         val stat = StatDto(
-                startDistance = startRange?.toInt(),
-                endDistance = endRange?.toInt(),
+                startDistance = startRange?.toIntOrNull(),
+                endDistance = endRange?.toIntOrNull(),
                 startDate = startDate,
                 endDate = endDate,
 
@@ -69,7 +70,7 @@ class StatService(private val postRepo: PostRepo) {
                 newRunners = listOf(),
 
                 topAllRunners = listOf(),
-                topIntevalRunners = listOf()
+                topIntervalRunners = listOf()
         )
 
         return stat
@@ -92,14 +93,14 @@ class StatService(private val postRepo: PostRepo) {
     }
 
     fun getFirstRunning(): Post {
-        val sort = Sort.by(Sort.Order(Sort.Direction.ASC, "date"))
+        val sort = Sort(Sort.Direction.ASC, "date")
         val pageable = PageRequest.of(0, 1, sort)
 
         return postRepo.findRunningPage(pageable).first()
     }
 
     fun getLastRunning(): Post {
-        val sort = Sort.by(Sort.Order(Sort.Direction.DESC, "date"))
+        val sort = Sort(Sort.Direction.DESC, "date")
         val pageable = PageRequest.of(0, 1, sort)
 
         return postRepo.findRunningPage(pageable).first()

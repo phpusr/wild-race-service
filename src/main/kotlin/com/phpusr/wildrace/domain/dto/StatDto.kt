@@ -50,11 +50,11 @@ class StatDto(
         val topAllRunners: List<Map<Profile, Int>>,
 
         /** Топ бегунов на отрезке */
-        val topIntevalRunners: List<Map<Profile, Int>>
+        val topIntervalRunners: List<Map<Profile, Int>>
 ) {
         /** Тренировки среднее в день */
         val trainingCountPerDayAvgFunction
-        get() = trainingCountAll / daysCountAll
+        get() = if (daysCountAll == 0) 0 else trainingCountAll / daysCountAll
 
         /** Кол-во новых бегунов на отрезке */
         val countNewRunners
