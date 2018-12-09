@@ -8,7 +8,7 @@
                     <stat-card :title="$t('stat.topAllRunners')">
                         <ol>
                             <li v-for="r in stat.topAllRunners" :key="r.id">
-                                <a :href="r.link">{{ r.name }}</a>
+                                <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
                                 <span> - {{ r.distance }}</span>
                                 <span> {{ $t('default.km') }}</span>
                             </li>
@@ -20,7 +20,7 @@
                     <stat-card :title="$t('stat.topIntervalRunners')">
                         <ol>
                             <li v-for="r in stat.topAllRunners" :key="r.id">
-                                <a :href="r.link">{{ r.name }}</a>
+                                <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
                                 <span> - {{ r.distance }}</span>
                                 <span> {{ $t('default.km') }}</span>
                             </li>
@@ -37,8 +37,8 @@
 
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.distance')">
-                        <div>- {{ $t('stat.distancePerDayAvg') }} - {{ stat.distancePerDayAvg }} {{ $t('default.kmPerDay') }}</div>
-                        <div>- {{ $t('stat.distancePerTrainingAvg') }} - {{ stat.distancePerTrainingAvg }} {{ $t('default.kmPerTraining') }}</div>
+                        <div>- {{ $t('stat.distancePerDayAvg') }} - {{ stat.distancePerDayAvg.toFixed(1) }} {{ $t('default.kmPerDay') }}</div>
+                        <div>- {{ $t('stat.distancePerTrainingAvg') }} - {{ stat.distancePerTrainingAvg.toFixed(1) }} {{ $t('default.kmPerTraining') }}</div>
                         <div>- {{ $t('stat.distanceMaxOneMan') }} - {{ stat.distanceMaxOneMan }} {{ $t('default.km') }}</div>
                     </stat-card>
                 </v-flex>
@@ -72,6 +72,8 @@
         components: {StatFilter, StatCard},
         data: () => ({
             stat: {
+                distancePerDayAvg: 0.0,
+                distancePerTrainingAvg: 0.0,
                 trainingCountPerDayAvgFunction: 0.0,
                 newRunners: []
             }

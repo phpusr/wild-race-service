@@ -6,64 +6,68 @@ import java.util.*
 /**
  * Класс для хранения статистики
  */
-class StatDto(
-        /** Начальная дистанция для отчетности */
-        val startDistance: Int?,
+class StatDto {
+    /** Начальная дистанция для отчетности */
+    var startDistance: Int? = null
 
-        /** Конечная дистанция для отчетности */
-        val endDistance: Int?,
+    /** Конечная дистанция для отчетности */
+    var endDistance: Int? = null
 
-        /** Начальная дата для отчетности */
-        val startDate: Date?,
+    /** Начальная дата для отчетности */
+    var startDate: Date? = null
 
-        /** Конечная дата для отчетности */
-        val endDate: Date?,
+    /** Конечная дата для отчетности */
+    var endDate: Date? = null
 
-        /** Кол-во дней бега - всего */
-        val daysCountAll: Int,
 
-        /** Кол-во дней бега - на отрезке */
-        val daysCountInterval: Int,
+    /** Кол-во дней бега - всего */
+    var daysCountAll: Int = 0
 
-        /** Километраж - общий  */
-        val distanceAll: Int,
+    /** Кол-во дней бега - на отрезке */
+    var daysCountInterval: Int = 0
 
-        /** Тренировки - всего */
-        val trainingCountAll: Int,
 
-        /** Кол-во тренировок на каждого участника */
-        val countTraining: List<Map<Profile, Int>>,
+    /** Километраж - общий  */
+    var distanceAll: Int = 0
 
-        /** Бегуны - всего отметилось */
-        val runnersCountAll: Int,
-
-        /** Бегуны - отметилось на отрезке */
-        val runnersCountInterval: Int,
-
-        /** Бегуны - новых на отрезке */
-        val newRunners: List<Profile>,
-
-        /** Топ бегунов за все время */
-        val topAllRunners: List<Map<Profile, Int>>,
-
-        /** Топ бегунов на отрезке */
-        val topIntervalRunners: List<Map<Profile, Int>>
-) {
-
-        /** Километраж - средний в день */
-        val distancePerDayAvg: Float
+    /** Километраж - средний в день */
+    val distancePerDayAvg: Float
         get() = if (daysCountAll == 0) 0F else distanceAll.toFloat() / daysCountAll
 
-        /** Километраж - средняя длина одной пробежки */
-        val distancePerTrainingAvg: Float
+    /** Километраж - средняя длина одной пробежки */
+    val distancePerTrainingAvg: Float
         get() = if (trainingCountAll == 0) 0F else distanceAll.toFloat() / trainingCountAll
 
 
-        /** Тренировки среднее в день */
-        val trainingCountPerDayAvgFunction
+    /** Тренировки - всего */
+    var trainingCountAll: Int = 0
+
+    /** Тренировки среднее в день */
+    val trainingCountPerDayAvgFunction
         get() = if (daysCountAll == 0) 0 else trainingCountAll / daysCountAll
 
-        /** Кол-во новых бегунов на отрезке */
-        val countNewRunners
+    /** Кол-во тренировок на каждого участника */
+    lateinit var countTraining: List<Map<Profile, Int>>
+
+
+    /** Бегуны - всего отметилось */
+    var runnersCountAll: Int = 0
+
+    /** Бегуны - отметилось на отрезке */
+    var runnersCountInterval: Int = 0
+
+    /** Бегуны - новых на отрезке */
+    lateinit var newRunners: List<Profile>
+
+    /** Кол-во новых бегунов на отрезке */
+    val countNewRunners
         get() = newRunners.size
+
+
+    /** Топ бегунов за все время */
+    lateinit var topAllRunners: List<Map<String, Any>>
+
+    /** Топ бегунов на отрезке */
+    lateinit var topIntervalRunners: List<Map<Profile, Int>>
+
 }
