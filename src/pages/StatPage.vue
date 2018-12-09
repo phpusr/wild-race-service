@@ -71,7 +71,10 @@
     export default {
         components: {StatFilter, StatCard},
         data: () => ({
-            stat: {}
+            stat: {
+                trainingCountPerDayAvgFunction: 0.0,
+                newRunners: []
+            }
         }),
         created() {
             this.fetchData()

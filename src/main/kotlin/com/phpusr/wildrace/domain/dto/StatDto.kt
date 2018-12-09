@@ -25,14 +25,11 @@ class StatDto(
         /** Кол-во дней бега - на отрезке */
         val daysCountInterval: Int,
 
-        /** Километраж - средний в день */
-        val distancePerDayAvg: Float,
-
-        /** Километраж - средняя длина одной пробежки */
-        val distancePerTrainingAvg: Float,
+        /** Километраж - общий  */
+        val distanceAll: Int,
 
         /** Тренировки - всего */
-        val trainingCountAll: Long,
+        val trainingCountAll: Int,
 
         /** Кол-во тренировок на каждого участника */
         val countTraining: List<Map<Profile, Int>>,
@@ -52,6 +49,16 @@ class StatDto(
         /** Топ бегунов на отрезке */
         val topIntervalRunners: List<Map<Profile, Int>>
 ) {
+
+        /** Километраж - средний в день */
+        val distancePerDayAvg: Float
+        get() = if (daysCountAll == 0) 0F else distanceAll.toFloat() / daysCountAll
+
+        /** Километраж - средняя длина одной пробежки */
+        val distancePerTrainingAvg: Float
+        get() = if (trainingCountAll == 0) 0F else distanceAll.toFloat() / trainingCountAll
+
+
         /** Тренировки среднее в день */
         val trainingCountPerDayAvgFunction
         get() = if (daysCountAll == 0) 0 else trainingCountAll / daysCountAll

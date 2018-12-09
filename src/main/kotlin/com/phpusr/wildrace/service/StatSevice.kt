@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -48,21 +50,19 @@ class StatService(private val postRepo: PostRepo) {
             runningPage = postRepo.findRunningPage(pageable)
         }
 
-
-
+        val daysCountAll = Duration.of(lastRunning.date.time - firstRunning.date.time, ChronoUnit.MILLIS).toDays().toInt() + 1
         val stat = StatDto(
                 startDistance = startRange?.toIntOrNull(),
                 endDistance = endRange?.toIntOrNull(),
                 startDate = startDate,
                 endDate = endDate,
 
-                daysCountAll = 0,
+                daysCountAll = daysCountAll,
                 daysCountInterval = 0,
 
-                distancePerDayAvg = 0f,
-                distancePerTrainingAvg = 0f,
+                distanceAll = lastRunning.sumDistance ?: 0,
 
-                trainingCountAll = runningPage.totalElements,
+                trainingCountAll = runningPage.totalElements.toInt(),
                 countTraining = listOf(),
 
                 runnersCountAll = 0,
