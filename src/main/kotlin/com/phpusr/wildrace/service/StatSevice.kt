@@ -5,13 +5,14 @@ import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.NoSuchElementException
 
 @Service
 class StatService(private val postRepo: PostRepo) {
@@ -21,65 +22,48 @@ class StatService(private val postRepo: PostRepo) {
 
         if (typeForm == "date") {
             val df = SimpleDateFormat("yyyy-MM-dd")
-            stat.startDate = df.parse(startRange)
-            // Изменение времени на окончание дня
-            stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
+            try {
+                stat.startDate = df.parse(startRange)
+            } catch (ignored: ParseException) {}
+            try {
+                // Изменение времени на окончание дня
+                stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
+            } catch (ignored: ParseException) {}
         } else if (typeForm == "distance") {
             stat.startDistance = startRange?.toIntOrNull()
             stat.endDistance = endRange?.toIntOrNull()
         }
 
-        val startDate = stat.startDate
-        val endDate = stat.endDate
-        val startDistance = stat.startDistance
-        val endDistance = stat.endDistance
+        val firstRunning = getOneRunning(Sort.Direction.ASC)
+        val lastRunning = getOneRunning(Sort.Direction.DESC)
 
-        val sort = Sort(Sort.Direction.ASC, "date")
-        var pageable: Pageable = PageRequest.of(0, 1000, sort)
-        var runningPage = postRepo.findRunningPage(pageable)
-        stat.trainingCountAll = runningPage.totalElements.toInt()
+        if (firstRunning == null || lastRunning == null) {
+            throw NoSuchElementException("not_found_posts")
+        }
 
-        val firstRunning = runningPage.first()
-        var firstIntRunning: Post? = null
-        var lastIntRunning: Post? = null
+        val firstIntRunning = getOneRunning(Sort.Direction.ASC, stat.startDate, stat.endDate)
+        if (stat.startDate == null) {
+            stat.startDate = firstIntRunning?.date
+        }
+        val lastIntRunning = getOneRunning(Sort.Direction.DESC, stat.startDate, stat.endDate)
+        if (stat.endDate == null) {
+            stat.endDate = lastIntRunning?.date
+        }
+
         val runnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
         val intRunnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
 
-        while(pageable.isPaged) {
-            runningPage.stream().forEach { running ->
-                if (firstIntRunning == null) {
-                    if (startDate != null  && running.date >= startDate || startDistance != null && running.sumDistance!! > startDistance) {
-                        firstIntRunning = running
-                    }
-                }
-
-                addRunning(running, runnersMap)
-                if (firstIntRunning != null && (endDate != null && running.date <= endDate || lastIntRunning == null)) {
-                    addRunning(running, intRunnersMap)
-                }
-
-                if (firstIntRunning != null) {
-                    if (endDate != null && running.date <= endDate || lastIntRunning == null && endDistance != null && running.sumDistance!! >= endDistance) {
-                        lastIntRunning = running
-                    }
-                }
-            }
-
-            pageable = runningPage.nextPageable()
-            runningPage = postRepo.findRunningPage(pageable)
-        }
-
-        val lastRunning = runningPage.last()
+        stat.trainingCountAll = lastRunning.number ?: -1
 
         stat.daysCountAll = getCountDays(firstRunning.date, lastRunning.date)
-        stat.daysCountInterval = getCountDays(startDate ?: firstIntRunning?.date, endDate ?: lastIntRunning?.date)
+        stat.daysCountInterval = getCountDays(stat.startDate, stat.endDate)
 
-        stat.distanceAll = lastRunning.sumDistance!!
+        stat.distanceAll = lastRunning.sumDistance ?: -1
 
         stat.countTraining = listOf()
 
-        stat.runnersCountAll = 0
-        stat.runnersCountInterval = 0
+        stat.runnersCountAll = -1
+        stat.runnersCountInterval = -1
         stat.newRunners = listOf()
 
         stat.topAllRunners = calcTopRunners(runnersMap)
@@ -88,11 +72,11 @@ class StatService(private val postRepo: PostRepo) {
         return stat
     }
 
-    private fun addRunning(running: Post, runnersMap: MutableMap<Profile, MutableMap<String, Int>>) {
-        val map = runnersMap[running.from] ?: mutableMapOf()
-        map["count"] = (map["count"] ?: 0) + 1
-        map["distance"] = (map["distance"] ?: 0) + running.distance!!
-        runnersMap[running.from] = map
+    fun getOneRunning(direction: Sort.Direction, startDate: Date? = null, endDate: Date? = null): Post? {
+        val sort = Sort(direction, "date")
+        val pageable = PageRequest.of(0, 1, sort)
+
+        return postRepo.findRunningPage(pageable, startDate, endDate).firstOrNull()
     }
 
     private fun calcTopRunners(runners: Map<Profile, Map<String, Int>>): List<Map<String, Any>> {
