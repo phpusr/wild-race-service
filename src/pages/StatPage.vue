@@ -9,7 +9,7 @@
                         <ol>
                             <li v-for="r in stat.topAllRunners" :key="r.id">
                                 <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
-                                <span> - {{ r.distance }}</span>
+                                <span> - {{ r.sumDistance }}</span>
                                 <span> {{ $t('default.km') }}</span>
                             </li>
                         </ol>
@@ -21,7 +21,7 @@
                         <ol>
                             <li v-for="r in stat.topIntervalRunners" :key="r.id">
                                 <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
-                                <span> - {{ r.distance }}</span>
+                                <span> - {{ r.sumDistance }}</span>
                                 <span> {{ $t('default.km') }}</span>
                             </li>
                         </ol>

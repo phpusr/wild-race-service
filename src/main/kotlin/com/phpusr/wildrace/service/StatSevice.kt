@@ -1,9 +1,9 @@
 package com.phpusr.wildrace.service
 
+import com.phpusr.wildrace.domain.dto.RunnerDto
 import com.phpusr.wildrace.domain.dto.StatDto
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
-import com.phpusr.wildrace.domain.vk.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -50,8 +50,7 @@ class StatService(private val postRepo: PostRepo) {
             stat.endDate = lastIntRunning?.date
         }
 
-        val runnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
-        val intRunnersMap = mutableMapOf<Profile, MutableMap<String, Int>>()
+        val runners = postRepo.calcSumDistanceForRunners()
 
         stat.trainingCountAll = lastRunning.number ?: -1
 
@@ -66,8 +65,8 @@ class StatService(private val postRepo: PostRepo) {
         stat.runnersCountInterval = -1
         stat.newRunners = listOf()
 
-        stat.topAllRunners = calcTopRunners(runnersMap)
-        stat.topIntervalRunners = calcTopRunners(intRunnersMap)
+        stat.topAllRunners = getTopRunners(runners)
+        stat.topIntervalRunners = listOf()
 
         return stat
     }
@@ -79,16 +78,12 @@ class StatService(private val postRepo: PostRepo) {
         return postRepo.findRunningPage(pageable, startDate, endDate).firstOrNull()
     }
 
-    private fun calcTopRunners(runners: Map<Profile, Map<String, Int>>): List<Map<String, Any>> {
-        val list = runners.map {
-            mapOf("profile" to it.key, "distance" to (it.value["distance"] ?: 0))
-        }.sortedBy { it["distance"] as Int * -1 }
-
-        if (list.size > 5) {
-            return list.subList(0, 5)
+    private fun getTopRunners(runners: List<RunnerDto>): List<RunnerDto> {
+        if (runners.size > 5) {
+            return runners.subList(0, 5)
         }
 
-        return list
+        return runners
     }
 
     private fun getCountDays(startDate: Date?, endDate: Date?): Int {
