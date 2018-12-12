@@ -10,13 +10,13 @@
                         <v-card-text>
                             <v-layout>
                                 <v-flex sm2>
-                                    <v-text-field v-model="startDistance" solo />
+                                    <v-text-field v-model="startDistance" mask="##########" solo />
                                 </v-flex>
 
                                 <span class="mx-3 display-1">-</span>
 
                                 <v-flex sm2>
-                                    <v-text-field v-model="endDistance" solo />
+                                    <v-text-field v-model="endDistance" mask="##########" solo />
                                 </v-flex>
 
                                 <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
@@ -64,10 +64,10 @@
             return {
                 menu: false,
                 activeTab: typeForm === DistanceTab ? 0 : 1,
-                startDistance: startRange,
-                endDistance: endRange,
-                startDate: startRange,
-                endDate: endRange
+                startDistance: typeForm === DistanceTab ? +startRange : null,
+                endDistance: typeForm === DistanceTab ? +endRange : null,
+                startDate: typeForm === DateTab ? startRange : null,
+                endDate: typeForm === DateTab ? endRange : null
             }
         },
         methods: {

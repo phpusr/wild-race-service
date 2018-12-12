@@ -29,14 +29,14 @@
         },
         computed: {
             viewFormattedDate() {
-                if (!this.value) {
+                if (!this.value || this.value === '-') {
                     return null;
                 }
 
                 return dateFormat(this.$t('default.datePattern'), this.dateObject);
             },
             isoFormattedDate() {
-                if (!this.value) {
+                if (!this.value || this.value === '-') {
                     return null;
                 }
 
