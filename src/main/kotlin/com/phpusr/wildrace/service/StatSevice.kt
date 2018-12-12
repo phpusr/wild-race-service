@@ -27,7 +27,7 @@ class StatService(private val postRepo: PostRepo) {
                 stat.startDate = df.parse(startRange)
             } catch (ignored: ParseException) {}
             try {
-                // Изменение времени на окончание дня
+                // Change time at end of day
                 stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
             } catch (ignored: ParseException) {}
         } else if (typeForm == "distance") {
@@ -52,8 +52,9 @@ class StatService(private val postRepo: PostRepo) {
         }
 
         val runners = getRunners()
-        stat.trainingCountAll = lastRunning.number ?: -1
-        stat.trainingMaxOneMan = runners.sortedBy { it.numberOfRuns * -1 }.first()
+        stat.topAllRunners = getTopRunners(runners)
+        val intRunners = getRunners(firstIntRunning, lastIntRunning)
+        stat.topIntervalRunners = getTopRunners(intRunners)
 
         stat.daysCountAll = getCountDays(firstRunning.date, lastRunning.date)
         stat.daysCountInterval = getCountDays(stat.startDate, stat.endDate)
@@ -62,12 +63,11 @@ class StatService(private val postRepo: PostRepo) {
         stat.distanceMaxOneMan = runners.first()
 
         stat.runnersCountAll = runners.size
-        val intRunners = getRunners(firstIntRunning, lastIntRunning)
         stat.runnersCountInterval = intRunners.size
         setNewRunners(stat, intRunners, stat.startDate)
 
-        stat.topAllRunners = getTopRunners(runners)
-        stat.topIntervalRunners = getTopRunners(intRunners)
+        stat.trainingCountAll = lastRunning.number ?: -1
+        stat.trainingMaxOneMan = runners.sortedBy { it.numberOfRuns * -1 }.first()
 
         return stat
     }
