@@ -103,7 +103,11 @@ class Profile {
     @field:Length(max = 100, message = "domain_too_long")
     var domain: String? = null
 
-    fun getFirstAndLastNames() = "${firstName} ${lastName}"
+    val firstAndLastName
+        get() = "${firstName} ${lastName}"
 
-    fun getVKLink() = "${Consts.VKLink}/id${id}"
+    @get:JsonView(Views.ProfileREST::class)
+    val vkLink
+        get() = "${Consts.VKLink}/id${id}"
+
 }

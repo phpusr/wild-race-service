@@ -47,7 +47,15 @@
                     <stat-card :title="$t('stat.runners')">
                         <div>- {{ $t('stat.runnersCountAll') }} - {{ stat.runnersCountAll }} {{ $t('default.people') }}</div>
                         <div>- {{ $t('stat.runnersCountInterval') }} - {{ stat.runnersCountInterval }} {{ $t('default.peoplePerDay') }}</div>
-                        <div>- {{ $t('stat.newRunners') }} - {{ stat.newRunners.length }} {{ $t('default.people') }} ()</div>
+                        <div>
+                            <span>- {{ $t('stat.newRunners') }} - {{ stat.countNewRunners }} {{ $t('default.people') }} {{ '(' }}</span>
+                            <span v-for="(r, index) in stat.newRunners">
+                                <a :href="r.vkLink">{{ r.firstName }}  {{ r.lastName }}</a>
+                                <span v-if="index < stat.newRunners.length - 1">, </span>
+                            </span>
+                            <span v-if="stat.newRunners.length < stat.countNewRunners"> ...</span>
+                            {{ ')' }}
+                        </div>
                     </stat-card>
                 </v-flex>
 

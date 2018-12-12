@@ -63,9 +63,7 @@ class StatDto {
     lateinit var newRunners: List<Profile>
 
     /** Кол-во новых бегунов на отрезке */
-    val countNewRunners
-        get() = newRunners.size
-
+    var countNewRunners: Int = 0
 
     /** Топ бегунов за все время */
     lateinit var topAllRunners: List<RunnerDto>

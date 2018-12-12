@@ -51,8 +51,6 @@ class StatService(private val postRepo: PostRepo) {
             stat.endDate = lastIntRunning?.date
         }
 
-        val runners = getRunners()
-
         stat.trainingCountAll = lastRunning.number ?: -1
 
         stat.daysCountAll = getCountDays(firstRunning.date, lastRunning.date)
@@ -62,12 +60,15 @@ class StatService(private val postRepo: PostRepo) {
 
         stat.countTraining = listOf()
 
-        stat.runnersCountAll = -1
-        stat.runnersCountInterval = -1
-        stat.newRunners = listOf()
+        val runners = getRunners()
+        stat.runnersCountAll = runners.size
+
+        val intRunners = getRunners(firstIntRunning, lastIntRunning)
+        stat.runnersCountInterval = intRunners.size
+        setNewRunners(stat, intRunners, stat.startDate)
 
         stat.topAllRunners = getTopRunners(runners)
-        stat.topIntervalRunners = listOf()
+        stat.topIntervalRunners = getTopRunners(intRunners)
 
         return stat
     }
@@ -79,8 +80,8 @@ class StatService(private val postRepo: PostRepo) {
         return postRepo.findRunningPage(pageable, startDate, endDate).firstOrNull()
     }
 
-    private fun getRunners(): List<RunnerDto> {
-        return postRepo.calcSumDistanceForRunners().map{
+    private fun getRunners(firstIntRunning: Post? = null, lastIntRunning: Post? = null): List<RunnerDto> {
+        return postRepo.calcSumDistanceForRunners(firstIntRunning?.date, lastIntRunning?.date).map{
             val el = it as Array<*>
             RunnerDto(el[0] as Profile, el[1] as Long, el[2] as Long)
         }
@@ -92,6 +93,28 @@ class StatService(private val postRepo: PostRepo) {
         }
 
         return runners
+    }
+
+    private fun setNewRunners(stat: StatDto, runners: List<RunnerDto>, startDate: Date?) {
+        if (startDate == null) {
+            stat.newRunners = listOf()
+            return
+        }
+
+        val newRunners = runners.filter {
+            val joinDate = it.profile.joinDate
+            joinDate != null && joinDate >= startDate
+        }.map{ it.profile }.sortedBy { it.joinDate }
+
+        stat.countNewRunners = newRunners.size
+
+        val max = 25
+        if (runners.size > max) {
+            stat.newRunners = newRunners.subList(0, max)
+            return
+        }
+
+        stat.newRunners = newRunners
     }
 
     private fun getCountDays(startDate: Date?, endDate: Date?): Int {
