@@ -63,18 +63,21 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
     fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
     @Query("select p from Post p where number is not null AND distance is not null AND sumDistance is not null AND " +
-            "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate)"
+            "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) AND " +
+            "(:sDst is null OR sumDistance >= :sDst) AND (:eDst is null OR sumDistance <= :eDst)"
     )
     fun findRunningPage(
             pageable: Pageable,
             @Param("sDate") startDate: Date? = null,
-            @Param("eDate") endDate: Date? = null
+            @Param("eDate") endDate: Date? = null,
+            @Param("sDst") startDistance: Int? = null,
+            @Param("eDst") endDistance: Int? = null
     ): Page<Post>
 
     @Query("select pr, count(p.id), sum(p.distance) as s " +
             "from Post p left join p.from pr " +
             "where p.number is not null AND p.distance is not null AND p.sumDistance is not null AND " +
-            "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate)" +
+            "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) " +
             "group by pr order by s desc"
     )
     fun calcSumDistanceForRunners(

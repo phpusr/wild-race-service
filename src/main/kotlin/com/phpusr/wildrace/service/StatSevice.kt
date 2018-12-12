@@ -42,11 +42,11 @@ class StatService(private val postRepo: PostRepo) {
             throw NoSuchElementException("not_found_posts")
         }
 
-        val firstIntRunning = getOneRunning(Sort.Direction.ASC, stat.startDate, stat.endDate)
+        val firstIntRunning = getOneRunning(Sort.Direction.ASC, stat)
         if (stat.startDate == null) {
             stat.startDate = firstIntRunning?.date
         }
-        val lastIntRunning = getOneRunning(Sort.Direction.DESC, stat.startDate, stat.endDate)
+        val lastIntRunning = getOneRunning(Sort.Direction.DESC, stat)
         if (stat.endDate == null) {
             stat.endDate = lastIntRunning?.date
         }
@@ -72,11 +72,11 @@ class StatService(private val postRepo: PostRepo) {
         return stat
     }
 
-    fun getOneRunning(direction: Sort.Direction, startDate: Date? = null, endDate: Date? = null): Post? {
+    fun getOneRunning(direction: Sort.Direction, stat: StatDto? = null): Post? {
         val sort = Sort(direction, "date")
         val pageable = PageRequest.of(0, 1, sort)
 
-        return postRepo.findRunningPage(pageable, startDate, endDate).firstOrNull()
+        return postRepo.findRunningPage(pageable, stat?.startDate, stat?.endDate, stat?.startDistance, stat?.endDistance).firstOrNull()
     }
 
     private fun getRunners(firstIntRunning: Post? = null, lastIntRunning: Post? = null): List<RunnerDto> {

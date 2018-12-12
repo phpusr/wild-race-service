@@ -10,13 +10,13 @@
                         <v-card-text>
                             <v-layout>
                                 <v-flex sm2>
-                                    <v-text-field v-model="startDistance" mask="##########" solo />
+                                    <v-text-field v-model="startDistance" mask="##########" solo @keyup.enter="recount" />
                                 </v-flex>
 
                                 <span class="mx-3 display-1">-</span>
 
                                 <v-flex sm2>
-                                    <v-text-field v-model="endDistance" mask="##########" solo />
+                                    <v-text-field v-model="endDistance" mask="##########" solo @keyup.enter="recount" />
                                 </v-flex>
 
                                 <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
