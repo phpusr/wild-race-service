@@ -42,11 +42,11 @@ class PostController(
 
     @GetMapping("getStat")
     fun getStat(): Map<String, Any> {
-        val lastPost = statService.getLastRunning()
+        val lastPost = statService.getOneRunning(Sort.Direction.DESC)
 
         return mapOf(
-                "sumDistance" to (lastPost.sumDistance ?: 0),
-                "numberOfRuns" to (lastPost.number ?: 0),
+                "sumDistance" to (lastPost?.sumDistance ?: 0),
+                "numberOfRuns" to (lastPost?.number ?: 0),
                 "numberOfPosts" to postRepo.count()
         )
     }

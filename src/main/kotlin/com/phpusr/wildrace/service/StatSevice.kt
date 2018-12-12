@@ -102,12 +102,4 @@ class StatService(private val postRepo: PostRepo) {
         return Duration.of(endDate.time - startDate.time, ChronoUnit.MILLIS).toDays().toInt() + 1
     }
 
-    //TODO move it to postService
-    fun getLastRunning(): Post {
-        val sort = Sort(Sort.Direction.DESC, "date")
-        val pageable = PageRequest.of(0, 1, sort)
-
-        return postRepo.findRunningPage(pageable).first()
-    }
-
 }
