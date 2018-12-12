@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.domain.vk
 
-import com.phpusr.wildrace.domain.dto.RunnerDto
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -57,7 +56,6 @@ data class Post(
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
 
-    //TODO проверить нужен ли fetch
     @Query(value = "from Post p left join fetch p.from " +
             "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)",
             countQuery = "select count(id) from Post p " +
@@ -75,11 +73,11 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
             @Param("eDate") endDate: Date? = null
     ): Page<Post>
 
-    //TODO профиль извлекается отдельно для каждого
-    @Query("select new com.phpusr.wildrace.domain.dto.RunnerDto(pr, count(p.id), sum(p.distance)) " +
+    @Query("select pr, count(p.id) as c, sum(p.distance) " +
             "from Post p left join p.from pr " +
-            "where p.distance is not null " +
-            "group by pr order by count(p.id) desc")
-    fun calcSumDistanceForRunners(): List<RunnerDto>
+            "where p.number is not null AND p.distance is not null AND p.sumDistance is not null " +
+            "group by pr order by c desc"
+    )
+    fun calcSumDistanceForRunners(): List<*>
 
 }

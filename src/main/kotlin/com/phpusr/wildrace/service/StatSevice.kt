@@ -4,6 +4,7 @@ import com.phpusr.wildrace.domain.dto.RunnerDto
 import com.phpusr.wildrace.domain.dto.StatDto
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
+import com.phpusr.wildrace.domain.vk.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -50,7 +51,7 @@ class StatService(private val postRepo: PostRepo) {
             stat.endDate = lastIntRunning?.date
         }
 
-        val runners = postRepo.calcSumDistanceForRunners()
+        val runners = getRunners()
 
         stat.trainingCountAll = lastRunning.number ?: -1
 
@@ -76,6 +77,13 @@ class StatService(private val postRepo: PostRepo) {
         val pageable = PageRequest.of(0, 1, sort)
 
         return postRepo.findRunningPage(pageable, startDate, endDate).firstOrNull()
+    }
+
+    private fun getRunners(): List<RunnerDto> {
+        return postRepo.calcSumDistanceForRunners().map{
+            val el = it as Array<*>
+            RunnerDto(el[0] as Profile, el[1] as Long, el[2] as Long)
+        }
     }
 
     private fun getTopRunners(runners: List<RunnerDto>): List<RunnerDto> {
