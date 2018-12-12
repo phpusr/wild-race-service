@@ -72,7 +72,7 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
             @Param("eDate") endDate: Date? = null,
             @Param("sDst") startDistance: Int? = null,
             @Param("eDst") endDistance: Int? = null
-    ): Page<Post>
+    ): List<Post>
 
     @Query("select pr, count(p.id), sum(p.distance) as s " +
             "from Post p left join p.from pr " +
