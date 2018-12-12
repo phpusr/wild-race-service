@@ -62,9 +62,9 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
                 "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)")
     fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
-    @Query("select p from Post p where number is not null AND distance is not null AND sumDistance is not null AND " +
+    @Query("from Post p left join fetch p.from where number is not null AND distance is not null AND p.sumDistance is not null AND " +
             "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) AND " +
-            "(:sDst is null OR sumDistance - distance >= :sDst) AND (:eDst is null OR sumDistance - distance <= :eDst)"
+            "(:sDst is null OR p.sumDistance - distance >= :sDst) AND (:eDst is null OR p.sumDistance - distance <= :eDst)"
     )
     fun findRunningPage(
             pageable: Pageable,
