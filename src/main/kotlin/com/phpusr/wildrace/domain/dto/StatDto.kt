@@ -41,16 +41,19 @@ class StatDto {
     val distancePerTrainingAvg: Float
         get() = if (trainingCountAll == 0) 0F else distanceAll.toFloat() / trainingCountAll
 
+    /** Километраж - максимум от 1-го человека */
+    lateinit var distanceMaxOneMan: RunnerDto
+
 
     /** Тренировки - всего */
     var trainingCountAll: Int = 0
 
-    /** Тренировки среднее в день */
+    /** Тренировки - среднее в день */
     val trainingCountPerDayAvgFunction
         get() = if (daysCountAll == 0) 0 else trainingCountAll / daysCountAll
 
-    /** Кол-во тренировок на каждого участника */
-    lateinit var countTraining: List<Map<Profile, Int>>
+    /** Тренировки - максимум от 1-го человека */
+    lateinit var trainingMaxOneMan: RunnerDto
 
 
     /** Бегуны - всего отметилось */

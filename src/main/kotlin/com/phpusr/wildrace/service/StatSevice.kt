@@ -51,18 +51,17 @@ class StatService(private val postRepo: PostRepo) {
             stat.endDate = lastIntRunning?.date
         }
 
+        val runners = getRunners()
         stat.trainingCountAll = lastRunning.number ?: -1
+        stat.trainingMaxOneMan = runners.sortedBy { it.numberOfRuns * -1 }.first()
 
         stat.daysCountAll = getCountDays(firstRunning.date, lastRunning.date)
         stat.daysCountInterval = getCountDays(stat.startDate, stat.endDate)
 
         stat.distanceAll = lastRunning.sumDistance ?: -1
+        stat.distanceMaxOneMan = runners.first()
 
-        stat.countTraining = listOf()
-
-        val runners = getRunners()
         stat.runnersCountAll = runners.size
-
         val intRunners = getRunners(firstIntRunning, lastIntRunning)
         stat.runnersCountInterval = intRunners.size
         setNewRunners(stat, intRunners, stat.startDate)
@@ -109,7 +108,7 @@ class StatService(private val postRepo: PostRepo) {
         stat.countNewRunners = newRunners.size
 
         val max = 25
-        if (runners.size > max) {
+        if (newRunners.size > max) {
             stat.newRunners = newRunners.subList(0, max)
             return
         }

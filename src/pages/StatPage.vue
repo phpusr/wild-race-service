@@ -8,9 +8,7 @@
                     <stat-card :title="$t('stat.topAllRunners')">
                         <ol>
                             <li v-for="r in stat.topAllRunners" :key="r.id">
-                                <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
-                                <span> - {{ r.sumDistance }}</span>
-                                <span> {{ $t('default.km') }}</span>
+                                <runner-value v-bind="r" />
                             </li>
                         </ol>
                     </stat-card>
@@ -20,9 +18,7 @@
                     <stat-card :title="$t('stat.topIntervalRunners')">
                         <ol>
                             <li v-for="r in stat.topIntervalRunners" :key="r.id">
-                                <a :href="r.profile.vklink">{{ r.profile.firstName }} {{ r.profile.lastName }}</a>
-                                <span> - {{ r.sumDistance }}</span>
-                                <span> {{ $t('default.km') }}</span>
+                                <runner-value v-bind="r" />
                             </li>
                         </ol>
                     </stat-card>
@@ -39,7 +35,7 @@
                     <stat-card :title="$t('stat.distance')">
                         <div>- {{ $t('stat.distancePerDayAvg') }} - {{ stat.distancePerDayAvg.toFixed(1) }} {{ $t('default.kmPerDay') }}</div>
                         <div>- {{ $t('stat.distancePerTrainingAvg') }} - {{ stat.distancePerTrainingAvg.toFixed(1) }} {{ $t('default.kmPerTraining') }}</div>
-                        <div>- {{ $t('stat.distanceMaxOneMan') }} - {{ stat.distanceMaxOneMan }} {{ $t('default.km') }}</div>
+                        <div>- {{ $t('stat.distanceMaxOneMan') }} - <runner-value v-bind="stat.distanceMaxOneMan" /></div>
                     </stat-card>
                 </v-flex>
 
@@ -50,7 +46,7 @@
                         <div>
                             <span>- {{ $t('stat.newRunners') }} - {{ stat.countNewRunners }} {{ $t('default.people') }} {{ '(' }}</span>
                             <span v-for="(r, index) in stat.newRunners">
-                                <a :href="r.vkLink">{{ r.firstName }}  {{ r.lastName }}</a>
+                                <profile-link v-bind="r" />
                                 <span v-if="index < stat.newRunners.length - 1">, </span>
                             </span>
                             <span v-if="stat.newRunners.length < stat.countNewRunners"> ...</span>
@@ -63,7 +59,7 @@
                     <stat-card :title="$t('stat.trainings')">
                         <div>- {{ $t('stat.trainingCountAll') }} - {{ stat.trainingCountAll }} {{ $t('default.trainings') }}</div>
                         <div>- {{ $t('stat.trainingCountPerDayAvgFunction') }} - {{ stat.trainingCountPerDayAvgFunction.toFixed(1) }} {{ $t('default.trainingsPerDay') }}</div>
-                        <div>- {{ $t('stat.trainingMaxOneMan') }} - {{ stat.trainingMaxOneMan }} {{ $t('default.trainings') }}</div>
+                        <div>- {{ $t('stat.trainingMaxOneMan') }} - <runner-value v-bind="stat.trainingMaxOneMan" number /></div>
                     </stat-card>
                 </v-flex>
 
@@ -75,9 +71,11 @@
 <script>
     import StatFilter from '../components/StatFilter'
     import StatCard from '../components/StatCard'
+    import ProfileLink from '../components/ProfileLink'
+    import RunnerValue from '../components/RunnerValue'
 
     export default {
-        components: {StatFilter, StatCard},
+        components: {StatFilter, StatCard, ProfileLink, RunnerValue},
         data: () => ({
             stat: {
                 distancePerDayAvg: 0.0,
