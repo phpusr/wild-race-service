@@ -1,5 +1,7 @@
 <template>
     <v-menu
+            :close-on-content-click="false"
+            v-model="menu"
             :nudge-right="40"
             lazy
             transition="scale-transition"
@@ -14,7 +16,12 @@
                 prepend-icon="event"
                 readonly
         />
-        <v-date-picker :value="isoFormattedDate" @input="input" no-title scrollable />
+        <v-date-picker
+                :value="isoFormattedDate"
+                @input="input"
+                no-title scrollable
+                first-day-of-week="1"
+        />
     </v-menu>
 </template>
 
@@ -22,6 +29,9 @@
     import dateFormat from 'date-format'
 
     export default {
+        data: () => ({
+            menu: false
+        }),
         props: {
             value: [Number, String],
             label: String,
@@ -50,6 +60,7 @@
             input(inputIsoDateString) {
                 const returnDate = this.number ? this.parseIsoDateString(inputIsoDateString).getTime() : inputIsoDateString;
                 this.$emit('input', returnDate);
+                this.menu = false;
             },
             parseIsoDateString(dateString) {
                 return new Date(dateString + 'T00:00:00');
