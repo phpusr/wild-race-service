@@ -1,8 +1,10 @@
 package com.phpusr.wildrace.domain.vk
 
+import com.phpusr.wildrace.domain.dto.RunnerDto
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
@@ -13,6 +15,7 @@ import javax.persistence.*
  * Класс для хранения записей со стены группы
  */
 @Entity
+@NamedEntityGraph(name = "Post.detail", attributeNodes = [NamedAttributeNode("from")])
 data class Post(
         @field:Id
         val id: Long,
@@ -56,13 +59,13 @@ data class Post(
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
 
-    @Query(value = "from Post p left join fetch p.from " +
-            "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)",
-            countQuery = "select count(id) from Post p " +
-                "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)")
+    @EntityGraph(value = "Post.detail", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("from Post p " +
+            "where (:statusId is null OR p.statusId = :statusId) AND (:manualEditing is null OR p.lastUpdate is not null)")
     fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
-    @Query("from Post p left join fetch p.from where number is not null AND distance is not null AND p.sumDistance is not null AND " +
+    @EntityGraph(value = "Post.detail", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("from Post p where number is not null AND distance is not null AND p.sumDistance is not null AND " +
             "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) AND " +
             "(:sDst is null OR p.sumDistance - distance >= :sDst) AND (:eDst is null OR p.sumDistance - distance <= :eDst)"
     )
