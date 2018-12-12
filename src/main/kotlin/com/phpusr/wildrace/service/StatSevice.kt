@@ -32,7 +32,9 @@ class StatService(private val postRepo: PostRepo) {
             } catch (ignored: ParseException) {}
         } else if (typeForm == "distance") {
             stat.startDistance = startRange?.toIntOrNull()
+            stat.startDate = postRepo.findFirstBySumDistanceGreaterThanOrderBySumDistance(stat.startDistance)?.date
             stat.endDistance = endRange?.toIntOrNull()
+            stat.endDate = postRepo.findFirstBySumDistanceGreaterThanOrderBySumDistance(stat.endDistance)?.date
         }
 
         val firstRunning = getOneRunning(Sort.Direction.ASC)
@@ -76,7 +78,7 @@ class StatService(private val postRepo: PostRepo) {
         val sort = Sort(direction, "date")
         val pageable = PageRequest.of(0, 1, sort)
 
-        return postRepo.findRunningPage(pageable, stat?.startDate, stat?.endDate, stat?.startDistance, stat?.endDistance).firstOrNull()
+        return postRepo.findRunningPage(pageable, stat?.startDate, stat?.endDate).firstOrNull()
     }
 
     private fun getRunners(firstIntRunning: Post? = null, lastIntRunning: Post? = null): List<RunnerDto> {
