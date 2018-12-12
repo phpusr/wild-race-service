@@ -1,11 +1,14 @@
 package com.phpusr.wildrace.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonView
+import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.vk.Profile
 import java.util.*
 
 /**
  * Класс для хранения статистики
  */
+@JsonView(Views.StatDtoREST::class)
 class StatDto {
     /** Начальная дистанция для отчетности */
     var startDistance: Int? = null

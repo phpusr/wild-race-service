@@ -4,4 +4,5 @@ object Views {
     interface ProfileREST
     interface ConfigREST
     interface PostDtoREST : ProfileREST, ConfigREST
+    interface StatDtoREST : ProfileREST
 }
