@@ -51,7 +51,7 @@ dependencies {
 	runtimeOnly('org.springframework.boot:spring-boot-devtools')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	// Use MySQL Connector-J
-	compile 'mysql:mysql-connector-java'
+	compile('mysql:mysql-connector-java')
 	// Thymeleaf Template
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// Web Socket

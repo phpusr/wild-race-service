@@ -18,7 +18,6 @@
             <v-text-field
                     v-model="config.groupId"
                     :label="$t('config.groupId')"
-                    mask="-##########"
                     :rules="requiredRules"
                     required
                     :readonly="show"
