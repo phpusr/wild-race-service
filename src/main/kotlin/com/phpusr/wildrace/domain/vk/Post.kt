@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.domain.vk
 
-import com.phpusr.wildrace.domain.dto.RunnerDto
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

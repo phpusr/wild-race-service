@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
-import com.phpusr.wildrace.domain.dto.EventType
-import com.phpusr.wildrace.domain.dto.ObjectType
-import com.phpusr.wildrace.domain.dto.PostDto
-import com.phpusr.wildrace.domain.dto.PostDtoObject
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
+import com.phpusr.wildrace.dto.EventType
+import com.phpusr.wildrace.dto.ObjectType
+import com.phpusr.wildrace.dto.PostDto
+import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.util.WsSender
 import org.springframework.data.domain.Pageable

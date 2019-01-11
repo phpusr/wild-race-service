@@ -1,9 +1,9 @@
 package com.phpusr.wildrace.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.phpusr.wildrace.domain.dto.EventType
-import com.phpusr.wildrace.domain.dto.ObjectType
-import com.phpusr.wildrace.domain.dto.WsEvenDto
+import com.phpusr.wildrace.dto.EventType
+import com.phpusr.wildrace.dto.ObjectType
+import com.phpusr.wildrace.dto.WsEvenDto
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 

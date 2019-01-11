@@ -1,4 +1,4 @@
-package com.phpusr.wildrace.domain.dto
+package com.phpusr.wildrace.dto
 
 import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.annotation.JsonView
