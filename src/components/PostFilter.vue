@@ -43,15 +43,15 @@
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
     import dateFormat from "date-format"
+    import postApi from '../api/post'
 
     export default {
         data: () => ({
             lastSyncDate: null
         }),
-        created() {
-            this.$http.get('/post/getLastSyncDate').then(response =>
-                this.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(response.body))
-            );
+        async created() {
+            const {body} = await postApi.getLastSyncDate();
+            this.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(body));
         },
         computed: {
             statuses() {

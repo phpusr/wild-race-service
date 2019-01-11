@@ -52,7 +52,7 @@
 </template>
 
 <script>
-    import {sendData} from "../util/ws"
+    import postApi from "../api/post"
 
     export default {
         data() {
@@ -82,18 +82,17 @@
             }
         },
         methods: {
-            fetchData() {
-                this.$http.get(`/post/${this.postId}`).then(response => {
-                    this.post = response.body;
-                });
+            async fetchData() {
+                const {body} = await postApi.getOne(this.postId);
+                this.post = body;
             },
-            update() {
-                sendData('/app/updatePost', this.post);
+            async update() {
+                await postApi.update(this.post);
                 this.goToMainPage();
             },
-            remove() {
+            async remove() {
                 if (confirm(this.$t('default.confirmDelete'))) {
-                    sendData('/app/deletePost', this.post.id);
+                    await postApi.remove(this.post.id);
                     this.goToMainPage();
                 }
             },

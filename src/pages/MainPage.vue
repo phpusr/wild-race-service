@@ -29,6 +29,7 @@
     import {addHandler} from '../util/ws'
     import {deleteObject, replaceObject} from '../util/collections'
     import InfiniteLoading from 'vue-infinite-loading'
+    import postApi from '../api/post'
 
     export default {
         components: {Post, InfiniteLoading},
@@ -70,29 +71,25 @@
                 this.page = 0;
                 this.infiniteId += 1;
             },
-            infiniteHandler($state) {
+            async infiniteHandler($state) {
                 const params = this.$route.query;
-                this.$http.get('/post', {
-                    params: {
+                const {body} = await postApi.getAll({
                         ...params,
                         page: this.page,
-                    },
-                }).then(response => {
-                    const {list, totalElements} = response.body;
-                    this.totalElements = totalElements;
-                    if (list.length) {
-                        this.page += 1;
-                        this.posts.push(...list);
-                        $state.loaded();
-                    } else {
-                        $state.complete();
-                    }
                 });
+                const {list, totalElements} = body;
+                this.totalElements = totalElements;
+                if (list.length) {
+                    this.page += 1;
+                    this.posts.push(...list);
+                    $state.loaded();
+                } else {
+                    $state.complete();
+                }
             },
-            updateStat() {
-                this.$http.get('/post/getStat').then(response => {
-                    this.stat = response.body;
-                });
+            async updateStat() {
+                const {body} = await postApi.getStat();
+                this.stat = body;
             }
         },
         computed: {

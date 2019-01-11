@@ -45,7 +45,7 @@
                         <div>- {{ $t('stat.runnersCountInterval') }} - {{ stat.runnersCountInterval }} {{ $t('default.peoplePerDay') }}</div>
                         <div>
                             <span>- {{ $t('stat.newRunners') }} - {{ stat.countNewRunners }} {{ $t('default.people') }} {{ '(' }}</span>
-                            <span v-for="(r, index) in stat.newRunners">
+                            <span v-for="(r, index) in stat.newRunners" :key="r.id">
                                 <profile-link v-bind="r" />
                                 <span v-if="index < stat.newRunners.length - 1">, </span>
                             </span>
