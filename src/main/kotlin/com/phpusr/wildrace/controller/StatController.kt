@@ -16,7 +16,7 @@ class StatController(private val statService: StatService) {
     @GetMapping
     @JsonView(Views.StatDtoREST::class)
     fun getData(
-            @RequestParam typeForm: String,
+            @RequestParam typeForm: String?,
             @RequestParam startRange: String?,
             @RequestParam endRange: String?
     ): StatDto {

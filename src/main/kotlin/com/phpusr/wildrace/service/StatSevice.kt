@@ -18,7 +18,7 @@ import kotlin.NoSuchElementException
 @Service
 class StatService(private val postRepo: PostRepo) {
 
-    fun calcStat(typeForm: String, startRange: String?, endRange: String?): StatDto {
+    fun calcStat(typeForm: String?, startRange: String?, endRange: String?): StatDto {
         val stat = StatDto()
 
         if (typeForm == "date") {
