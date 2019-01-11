@@ -45,14 +45,24 @@
             }
         }),
         created() {
-            addHandler('/topic/updatePost', post => {
-                replaceObject(this.posts, post);
-                this.updateStat();
-            });
-            addHandler('/topic/deletePost', id => {
-                if (deleteObject(this.posts, id)) {
-                    this.totalElements--;
-                    this.updateStat();
+            addHandler('/topic/activity', data => {
+                if (data.objectType === 'Post') {
+                    switch(data.eventType) {
+                        case 'Update':
+                            replaceObject(this.posts, data.body);
+                            this.updateStat();
+                            break;
+                        case 'Remove':
+                            if (deleteObject(this.posts, data.body.id)) {
+                                this.totalElements--;
+                                this.updateStat();
+                            }
+                            break;
+                        default:
+                            throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
+                    }
+                } else {
+                    throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
                 }
             });
 
