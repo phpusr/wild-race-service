@@ -5,6 +5,7 @@ import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.Views
 import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.Range
+import org.springframework.data.repository.CrudRepository
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -111,3 +112,5 @@ class Profile {
         get() = "${Consts.VKLink}/id${id}"
 
 }
+
+interface ProfileRepo : CrudRepository<Profile, Long>

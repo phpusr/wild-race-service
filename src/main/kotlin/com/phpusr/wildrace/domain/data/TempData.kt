@@ -12,7 +12,7 @@ import javax.persistence.Id
  * Данные которые периодически меняются
  */
 @Entity
-class TempData(
+data class TempData(
         @field:Id
         @field:GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
@@ -24,5 +24,10 @@ interface TempDataRepo : CrudRepository<TempData, Long> {
 
     @Query("from TempData where id = 1")
     fun get(): TempData
+
+    fun updateLastSyncDate() {
+        val tempData = get()
+        save(tempData.copy(lastSyncDate = Date()))
+    }
 
 }
