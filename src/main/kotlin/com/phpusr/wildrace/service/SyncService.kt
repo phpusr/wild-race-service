@@ -80,7 +80,7 @@ class SyncService(
             val text = postMap["text"] as String
             val textHash = Util.MD5(text)
             val postOp = postRepo.findById(postId)
-            var post: Post? = null
+            val post: Post
             var isUpdate = false
 
             if (postOp.isPresent) {
@@ -98,8 +98,8 @@ class SyncService(
                 post = Post(postId, PostParserStatus.Success.id, profile, postDate)
             }
 
-            val parserOut = analyzePostText(text, textHash, post)
-
+            val parserOut = analyzePostText(text, textHash, post, lastPosts)
+            postRepo.save(post)
             println(post)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
@@ -108,7 +108,6 @@ class SyncService(
                 lastPosts.sortBy { it.date.time * -1 }
             }
         }
-        //TODO continue
     }
 
     private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile {
@@ -135,20 +134,41 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, post: Post): Boolean {
+    private fun analyzePostText(text: String, textHash: String, post: Post, lastPosts: List<Post>): Boolean {
         val parserOut = MessageParser(text).run()
-        var status = PostParserStatus.Success
-        var number: Int? = null
-        var distance: Int? = null
-        var lastSumDistance: Int? = null
-        var newSumDistance: Int? = null
+        val status: PostParserStatus
+        val number: Int?
+        val distance: Int?
+        val lastSumDistance: Int?
+        val newSumDistance: Int?
 
         post.text = Util.removeBadChars(text) ?: ""
         post.textHash = textHash
         if (parserOut != null) {
-            //TODO
+            val lastPost = lastPosts.find{ it.id != post.id && it.date <= post.date }
+            lastSumDistance = lastPost?.sumDistance ?: 0
+            val lastPostNumber = lastPost?.number ?: 0
+
+            // Проверка суммы
+            distance = parserOut.distance!!.sum()
+            newSumDistance = lastSumDistance + distance
+            if (parserOut.startSumNumber == lastSumDistance) {
+                if (newSumDistance == parserOut.endSumNumber) {
+                    status = PostParserStatus.Success
+                } else {
+                    status = PostParserStatus.ErrorSum
+                }
+            } else {
+                status = PostParserStatus.ErrorStartSum
+            }
+
+            number = lastPostNumber + 1
         } else {
             status = PostParserStatus.ErrorParse
+            number = null
+            distance = null
+            lastSumDistance = null
+            newSumDistance = null
         }
 
         // Проверка: поменялось-ли выражение суммы в тексте
