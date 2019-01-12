@@ -44,6 +44,16 @@ class SyncService(
         tempDataRepo.updateLastSyncDate()
     }
 
+    private fun getCountPosts(): Long {
+        val result = vkApiService.wallGet(0, 1, false)
+
+        if (result == null) {
+            throw Exception("Response is null")
+        }
+
+        return (result["response"] as Map<*, *>)["count"] as Long
+    }
+
     private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {
         val offset = if (countPosts - alreadyDownloadCount > downloadCount) {
             countPosts - alreadyDownloadCount - downloadCount
@@ -122,16 +132,6 @@ class SyncService(
         }
 
         return profile
-    }
-
-    private fun getCountPosts(): Long {
-        val result = vkApiService.wallGet(0, 1, false)
-
-        if (result == null) {
-            throw Exception("Response is null")
-        }
-
-        return (result["response"] as Map<*, *>)["count"] as Long
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
