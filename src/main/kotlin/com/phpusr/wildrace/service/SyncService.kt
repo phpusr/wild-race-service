@@ -7,6 +7,7 @@ import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
 import com.phpusr.wildrace.domain.vk.ProfileRepo
 import com.phpusr.wildrace.enum.PostParserStatus
+import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -60,7 +61,7 @@ class SyncService(
         val posts = (response["items"] as List<*>).reversed()
         //removeDeletedPosts(posts)
 
-        postRepo.findRunningPage(PageRequest.of(0, 200, Sort(Sort.Direction.DESC, "date")))
+        val lastPosts = postRepo.findRunningPage(PageRequest.of(0, 200, Sort(Sort.Direction.DESC, "date"))).toMutableList()
         val profiles = response["profiles"] as List<*>
 
         posts.forEach {
@@ -87,8 +88,17 @@ class SyncService(
                 post = Post(postId, PostParserStatus.Success.id, profile, postDate)
             }
 
-            //TODO continue
+            val parserOut = analyzePostText(text, textHash, post)
+
+            println(post)
+
+            // Добавление нового поста в список последних постов и сортировка постов по времени
+            if (!isUpdate && parserOut) {
+                lastPosts.add(post)
+                lastPosts.sortBy { it.date.time * -1 }
+            }
         }
+        //TODO continue
     }
 
     private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile {
@@ -122,6 +132,55 @@ class SyncService(
         }
 
         return (result["response"] as Map<*, *>)["count"] as Long
+    }
+
+    /** Анализ сообщения и вытаскивание дистанции */
+    private fun analyzePostText(text: String, textHash: String, post: Post): Boolean {
+        val parserOut = MessageParser(text).run()
+        var status = PostParserStatus.Success
+        var number: Int? = null
+        var distance: Int? = null
+        var lastSumDistance: Int? = null
+        var newSumDistance: Int? = null
+
+        post.text = Util.removeBadChars(text) ?: ""
+        post.textHash = textHash
+        if (parserOut != null) {
+            //TODO
+        } else {
+            status = PostParserStatus.ErrorParse
+        }
+
+        // Проверка: поменялось-ли выражение суммы в тексте
+        var updateExp = false
+        if (post.number != number || post.distance != distance || post.sumDistance != newSumDistance || post.statusId != status.id) {
+            updateExp = true
+            post.number = number
+            post.distance = distance
+            post.sumDistance = newSumDistance
+            post.statusId = status.id
+        }
+
+        if (updateExp) {
+            // Комментарий статуса обработки поста
+            val commentText = createCommentText(post, lastSumDistance, newSumDistance)
+            addStatusComment(post.id, commentText)
+            updateNextPosts(post)
+        }
+
+        return parserOut != null
+    }
+
+    private fun createCommentText(post: Post, lastSumDistance: Int?, newSumDistance: Int?): String {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun addStatusComment(id: Long, commentText: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun updateNextPosts(post: Post) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }
