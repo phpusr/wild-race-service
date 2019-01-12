@@ -6,6 +6,7 @@ import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
 import com.phpusr.wildrace.domain.vk.ProfileRepo
+import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.util.Util
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -83,16 +84,14 @@ class SyncService(
                 val postDate = Date(postMap["date"] as Long * 1000)
                 // Поиск или создание профиля пользователя
                 val profile = findOrCreateProfile(postMap, profileList, profiles, postDate)
-                post = Post(from = profile)
-                post.id = postId
-                post.date = postDate
+                post = Post(postId, PostParserStatus.Success.id, profile, postDate)
             }
 
             //TODO continue
         }
     }
 
-    private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile? {
+    private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile {
         val profileId = postMap["from_id"] as Long
         var profile = profileList.find{ it.id == profileId }
         if (profile == null) {

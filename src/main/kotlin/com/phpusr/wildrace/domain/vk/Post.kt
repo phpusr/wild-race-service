@@ -19,9 +19,6 @@ data class Post(
         @field:Id
         val id: Long,
 
-        /** Порядковый номер */
-        val number: Int?,
-
         /** Статус обработки поста */
         @field:Column(name = "status")
         val statusId: Int,
@@ -32,29 +29,32 @@ data class Post(
         val from: Profile,
 
         /** Дата и время публикации записи */
-        val date: Date,
+        val date: Date
+) {
+    /** Порядковый номер */
+    var number: Int? = null
 
-        /** Текст записи */
-        @field:Length(max = 1000, message = "text_too_long")
-        val text: String,
+    /** Текст записи */
+    @field:Length(max = 1000, message = "text_too_long")
+    var text: String = ""
 
-        /** Hash текста (MD5) */
-        @field:Length(max = 32, message = "text_hash_too_long")
-        val textHash: String,
+    /** Hash текста (MD5) */
+    @field:Length(max = 32, message = "text_hash_too_long")
+    var textHash: String = ""
 
-        /** Дистанция пробежки */
-        val distance: Int?,
+    /** Дистанция пробежки */
+    var distance: Int? = null
 
-        /** Сумма дистанций пробежек */
-        val sumDistance: Int?,
+    /** Сумма дистанций пробежек */
+    var sumDistance: Int? = null
 
-        /** Причина редактирования */
-        @field:Length(max = 255, message = "edit_reason_too_long")
-        val editReason: String?,
+    /** Причина редактирования */
+    @field:Length(max = 255, message = "edit_reason_too_long")
+    var editReason: String? = null
 
-        /** Дата последнего редактирования */
-        val lastUpdate: Date?
-)
+    /** Дата последнего редактирования */
+    var lastUpdate: Date? = null
+}
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
 
