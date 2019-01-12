@@ -69,7 +69,7 @@ class SyncService(
         }
 
         val posts = (response["items"] as List<*>).reversed()
-        //removeDeletedPosts(posts)
+        removeDeletedPosts(posts)
 
         val lastPosts = postRepo.findRunningPage(PageRequest.of(0, 200, Sort(Sort.Direction.DESC, "date"))).toMutableList()
         val profiles = response["profiles"] as List<*>
@@ -108,6 +108,29 @@ class SyncService(
                 lastPosts.sortBy { it.date.time * -1 }
             }
         }
+    }
+
+    /** Удаление из БД удаленных постов */
+    private fun removeDeletedPosts(posts: List<Any?>) {
+        val startDate = Date()
+        val endDate = Date()
+        val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.DESC, "date"))
+        val todayPosts = postRepo.findRunningPage(pageable, startDate, endDate)
+        val deletedPosts = todayPosts.filter { post ->
+            posts.find {
+                val postMap = it as Map<*, *>
+                postMap["id"] as Long == post.id
+            } != null
+        }
+
+        if (deletedPosts.isEmpty()) {
+            return
+        }
+
+        println(">> Delete posts: ${deletedPosts}")
+        deletedPosts.forEach { it.distance = null }
+        updateNextPosts(deletedPosts.last())
+        deletedPosts.forEach { postRepo.delete(it) }
     }
 
     private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile {
