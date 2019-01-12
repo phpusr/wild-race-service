@@ -21,7 +21,7 @@ data class Post(
 
         /** Статус обработки поста */
         @field:Column(name = "status")
-        val statusId: Int,
+        var statusId: Int,
 
         /** Автор записи */
         @field:ManyToOne(fetch = FetchType.LAZY)

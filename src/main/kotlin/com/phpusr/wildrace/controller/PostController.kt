@@ -70,20 +70,19 @@ class PostController(
     @PutMapping("{id}")
     @JsonView(Views.PostDtoREST::class)
     fun update(@RequestBody postDto: PostDto): PostDto? {
-        val post = postRepo.findById(postDto.id)
-        val newPost = post.orElseThrow{ RuntimeException("post_not_found") }.copy(
-                number = postDto.number,
-                statusId = postDto.statusId,
-                distance = postDto.distance,
-                sumDistance = postDto.sumDistance,
-                editReason = postDto.editReason,
-                lastUpdate = Date()
-        )
-        postRepo.save(newPost)
-        val newPostDto = PostDtoObject.create(newPost, configRepo.get())
-        postSender(EventType.Update, newPostDto)
+        val post = postRepo.findById(postDto.id).orElseThrow{ RuntimeException("post_not_found") }
+        post.number = postDto.number
+        post.statusId = postDto.statusId
+        post.distance = postDto.distance
+        post.sumDistance = postDto.sumDistance
+        post.editReason = postDto.editReason
+        post.lastUpdate = Date()
+        postRepo.save(post)
 
-        return newPostDto
+        val updatePostDto = PostDtoObject.create(post, configRepo.get())
+        postSender(EventType.Update, updatePostDto)
+
+        return updatePostDto
     }
 
     @DeleteMapping("{id}")
