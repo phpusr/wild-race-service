@@ -31,6 +31,9 @@ data class Post(
         /** Дата и время публикации записи */
         val date: Date
 ) {
+    //TODO remove in Postgres
+    val version: Long = 0L
+
     /** Порядковый номер */
     var number: Int? = null
 

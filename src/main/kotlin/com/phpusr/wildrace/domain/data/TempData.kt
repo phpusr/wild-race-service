@@ -25,9 +25,4 @@ interface TempDataRepo : CrudRepository<TempData, Long> {
     @Query("from TempData where id = 1")
     fun get(): TempData
 
-    fun updateLastSyncDate() {
-        val tempData = get()
-        save(tempData.copy(lastSyncDate = Date()))
-    }
-
 }

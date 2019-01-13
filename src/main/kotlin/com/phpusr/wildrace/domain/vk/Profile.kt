@@ -19,6 +19,9 @@ class Profile {
     @field:JsonView(Views.ProfileREST::class)
     var id: Long? = null
 
+    //TODO remove in Postgres
+    val version: Long = 0L
+
     /** Дата первой пробежки (дата присоединения) */
     var joinDate: Date? = null
 
