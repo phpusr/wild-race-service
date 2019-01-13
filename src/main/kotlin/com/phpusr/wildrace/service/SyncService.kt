@@ -162,16 +162,12 @@ class SyncService(
         }
         println("startPost: ${startPost}")
 
-        if (startPost == null) {
-            return
-        }
-
-        var currentNumber = startPost.number!!
-        var currentSumDistance = startPost.sumDistance!!
+        var currentNumber = startPost?.number ?: 0
+        var currentSumDistance = startPost?.sumDistance ?: 0
         val pageable = PageRequest.of(0, nextPostsCount, Sort(Sort.Direction.ASC, "date"))
-        val nextPosts = postRepo.findRunningPage(pageable, startPost.date)
+        val nextPosts = postRepo.findRunningPage(pageable, startPost?.date)
         nextPosts.forEach { post ->
-            if (post.id == startPost.id) {
+            if (post.id == startPost?.id) {
                 return@forEach
             }
 
@@ -223,9 +219,7 @@ class SyncService(
             } else {
                 vkProfile as Map<*, *>
             }
-            dbProfile = Profile()
-            dbProfile.id = profileId
-            dbProfile.joinDate = postDate
+            dbProfile = Profile(profileId, postDate)
             dbProfile.firstName = profileMap["first_name"] as String?
             dbProfile.lastName = profileMap["lastName"] as String?
             dbProfile.sex = profileMap["sex"] as Int?
@@ -300,7 +294,11 @@ class SyncService(
 
         // Обращение
         if (post.statusId != PostParserStatus.Success.id) {
-            commentText.append("[id${post.from.id}|${post.from.firstName}], ")
+            commentText.append(if (post.from.id > 0) {
+                "@id${post.from.id} (${post.from.firstName}), "
+            } else {
+                "@club${post.from.id * -1} (${post.from.firstName}), "
+            })
         }
 
         // № пробежки

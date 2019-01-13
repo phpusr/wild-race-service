@@ -14,16 +14,17 @@ import javax.persistence.Id
  * Профиль в VK
  */
 @Entity
-class Profile {
+class Profile(
     @field:Id
     @field:JsonView(Views.ProfileREST::class)
-    var id: Long? = null
+    val id: Long,
+
+    /** Дата первой пробежки (дата присоединения) */
+    val joinDate: Date
+) {
 
     //TODO remove in Postgres
     val version: Long = 0L
-
-    /** Дата первой пробежки (дата присоединения) */
-    var joinDate: Date? = null
 
     /** Дата последней синхронизации с VK */
     var lastSync: Date? = null
