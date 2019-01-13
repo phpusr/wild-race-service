@@ -11,6 +11,7 @@ import com.phpusr.wildrace.dto.ObjectType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.StatService
+import com.phpusr.wildrace.service.SyncService
 import com.phpusr.wildrace.util.WsSender
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -25,7 +26,8 @@ class PostController(
         private val statService: StatService,
         private val tempDataRepo: TempDataRepo,
         private val configRepo: ConfigRepo,
-        private val wsSender: WsSender
+        private val wsSender: WsSender,
+        private val syncService: SyncService
 ) {
 
     private val postSender: (EventType, PostDto) -> Unit
@@ -81,6 +83,7 @@ class PostController(
 
         val updatePostDto = PostDtoObject.create(post, configRepo.get())
         postSender(EventType.Update, updatePostDto)
+        syncService.updateNextPosts(post)
 
         return updatePostDto
     }
@@ -89,6 +92,8 @@ class PostController(
     fun delete(@PathVariable("id") post: Post): Long {
         postRepo.deleteById(post.id)
         postSender(EventType.Remove, PostDtoObject.create(post))
+        post.number = null
+        syncService.updateNextPosts(post)
 
         return post.id
     }

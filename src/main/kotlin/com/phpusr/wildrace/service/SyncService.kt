@@ -99,12 +99,11 @@ class SyncService(
             val postId = (vkPost["id"] as Int).toLong()
             val text = vkPost["text"] as String
             val textHash = Util.MD5(text)
-            val dbPostOption = postRepo.findById(postId)
-            val dbPost: Post
+            var dbPost = lastDbPosts.find { it.id == postId }
             var isUpdate = false
 
-            if (dbPostOption.isPresent) {
-                dbPost = dbPostOption.get()
+            if (dbPost != null) {
+                // Если пост уже есть в базе и (он не менялся или было ручное ред-е), то переход к следующему
                 if (textHash == dbPost.textHash || dbPost.lastUpdate != null) {
                     return@forEach
                 }
@@ -153,14 +152,14 @@ class SyncService(
         updateNextPosts(deletedPosts.last())
     }
 
-    private fun updateNextPosts(updatePost: Post) {
+    fun updateNextPosts(updatePost: Post) {
         val startPost = if (updatePost.number != null && updatePost.distance != null && updatePost.sumDistance != null) {
             updatePost
         } else {
             val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
             postRepo.findRunningPage(pageable, null, updatePost.date).firstOrNull()
         }
-        println("startPost: ${startPost}")
+        println(">> Update next, start: ${startPost}")
 
         var currentNumber = startPost?.number ?: 0
         var currentSumDistance = startPost?.sumDistance ?: 0
@@ -196,6 +195,8 @@ class SyncService(
                 post.number = number
                 post.sumDistance = newSumDistance
                 post.statusId = status.id
+                postRepo.save(post)
+                println(" >> Save post after update next: ${post}")
 
                 // Комментарий статуса обработки поста
                 val commentText = createCommentText(post, currentSumDistance, newSumDistance)
@@ -278,7 +279,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            println(">> Save post: ${post}")
+            println(" >> Save post after analyze: ${post}")
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
