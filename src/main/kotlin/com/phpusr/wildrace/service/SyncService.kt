@@ -259,12 +259,39 @@ class SyncService(
         return parserOut != null
     }
 
-    private fun createCommentText(post: Post, lastSumDistance: Int?, newSumDistance: Int?): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun createCommentText(post: Post, startSumNumber: Int?, endSumNumber: Int?): String {
+        val commentText = StringBuilder()
+
+        // Обращение
+        if (post.statusId != PostParserStatus.Success.id) {
+            commentText.append("[id${post.from.id}|${post.from.firstName}, ")
+        }
+
+        // № пробежки
+        if (post.statusId != PostParserStatus.ErrorParse.id) {
+            commentText.append("#${post.number} пробежка: ")
+        }
+
+        commentText.append(when(post.statusId) {
+            PostParserStatus.Success.id -> "Пост успешно обработан"
+            PostParserStatus.ErrorSum.id -> "Ошибка при сложении, должно быть: ${endSumNumber}"
+            PostParserStatus.ErrorParse.id -> "Ошибка в формате записи, пост не распознан: ${endSumNumber}"
+            PostParserStatus.ErrorStartSum.id -> "Ошибка в стартовой сумме, должна быть: ${startSumNumber}"
+            else -> "Ошибка: Не предусмотренный статус, напишите администратору"
+        })
+
+        return commentText.toString()
     }
 
-    private fun addStatusComment(id: Long, commentText: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun addStatusComment(postId: Long, commentText: String) {
+        if (!configRepo.get().commenting) {
+            return
+        }
+
+        // Задержка перед добавлением комментария, чтобы не заблокировали пользователя
+        Thread.sleep(300)
+
+        vkApiService.wallAddComment(postId, commentText)
     }
 
 }

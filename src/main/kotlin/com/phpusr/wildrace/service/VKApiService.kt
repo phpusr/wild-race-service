@@ -11,6 +11,8 @@ class VKApiService(
         private val restService: RestService
 ) {
 
+    private val Url = "https://api.vk.com/method"
+
     fun wallGet(offset: Long, count: Int, extended: Boolean): HashMap<*, *>? {
         val config = configRepo.get()
         val params = mapOf(
@@ -22,9 +24,22 @@ class VKApiService(
                 "extended" to if (extended) 1 else 0,
                 "access_token" to config.commentAccessToken
         )
-        val response = restService.get("https://api.vk.com/method/wall.get", params)
+        val response = restService.get("${Url}/wall.get", params)
 
         return response
+    }
+
+    fun wallAddComment(postId: Long, text: String) {
+        val config = configRepo.get()
+        val params = mapOf(
+                "owner_id" to  config.groupId,
+                "post_id" to postId,
+                "text" to text,
+                "v" to Consts.VK_API_Version,
+                "access_token" to config.commentAccessToken,
+                "from_group" to if (config.commentFromGroup) 1 else 0
+        )
+        val response = restService.get("${Url}/wall.addComment", params)
     }
 
 }
