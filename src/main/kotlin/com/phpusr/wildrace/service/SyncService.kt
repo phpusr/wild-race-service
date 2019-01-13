@@ -86,7 +86,7 @@ class SyncService(
             if (dbPostOption.isPresent) {
                 dbPost = dbPostOption.get()
                 if (textHash == dbPost.textHash || dbPost.lastUpdate != null) {
-                    return
+                    return@forEach
                 }
 
                 isUpdate = true
@@ -99,8 +99,6 @@ class SyncService(
             }
 
             val parserOut = analyzePostText(text, textHash, dbPost, lastDbPosts)
-            postRepo.save(dbPost)
-            println(">> Save post: ${dbPost}")
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (!isUpdate && parserOut) {
@@ -151,7 +149,7 @@ class SyncService(
         val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.ASC, "date"))
         postRepo.findRunningPage(pageable, startPost.date).forEach { post ->
             if (post.id == startPost.id) {
-                return
+                return@forEach
             }
 
             val number = ++currentNumber
@@ -262,6 +260,9 @@ class SyncService(
             post.sumDistance = newSumDistance
             post.statusId = status.id
 
+            postRepo.save(post)
+            println(">> Save post: ${post}")
+
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
             addStatusComment(post.id, commentText)
@@ -287,7 +288,7 @@ class SyncService(
         commentText.append(when(post.statusId) {
             PostParserStatus.Success.id -> "Пост успешно обработан"
             PostParserStatus.ErrorSum.id -> "Ошибка при сложении, должно быть: ${endSumNumber}"
-            PostParserStatus.ErrorParse.id -> "Ошибка в формате записи, пост не распознан: ${endSumNumber}"
+            PostParserStatus.ErrorParse.id -> "Ошибка в формате записи, пост не распознан"
             PostParserStatus.ErrorStartSum.id -> "Ошибка в стартовой сумме, должна быть: ${startSumNumber}"
             else -> "Ошибка: Не предусмотренный статус, напишите администратору"
         })
