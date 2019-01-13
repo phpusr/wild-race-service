@@ -157,20 +157,27 @@ class SyncService(
             val number = ++currentNumber
             val newSumDistance = currentSumDistance + post.distance!!
 
+            // Обновление статуса
             val status: PostParserStatus
-            if (post.startSum == currentSumDistance) {
-                if (post.sumDistance == newSumDistance) {
-                    status = PostParserStatus.Success
+            val parserOut = MessageParser(post.text).run()
+            if (parserOut != null) {
+                if (parserOut.startSumNumber == currentSumDistance) {
+                    if (parserOut.endSumNumber == newSumDistance) {
+                        status = PostParserStatus.Success
+                    } else {
+                        status = PostParserStatus.ErrorSum
+                    }
                 } else {
-                    status = PostParserStatus.ErrorSum
+                    status = PostParserStatus.ErrorStartSum
                 }
             } else {
-                status = PostParserStatus.ErrorStartSum
+                status = PostParserStatus.ErrorParse
             }
 
             // Проверка: поменялось-ли выражение суммы в тексте
-            if (post.number != number || post.statusId != status.id) {
+            if (post.number != number || post.sumDistance != newSumDistance || post.statusId != status.id) {
                 post.number = number
+                post.sumDistance = newSumDistance
                 post.statusId = status.id
 
                 // Комментарий статуса обработки поста
@@ -269,7 +276,7 @@ class SyncService(
 
         // Обращение
         if (post.statusId != PostParserStatus.Success.id) {
-            commentText.append("[id${post.from.id}|${post.from.firstName}, ")
+            commentText.append("[id${post.from.id}|${post.from.firstName}], ")
         }
 
         // № пробежки
