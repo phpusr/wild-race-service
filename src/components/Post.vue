@@ -13,7 +13,7 @@
                         </div>
                         <post-parser-status :status-id="post.statusId" class="ml-2" />
 
-                        <v-tooltip top>
+                        <v-tooltip top v-if="post.lastUpdate">
                             <v-btn icon class="blue-grey lighten-4" slot="activator">
                                 <v-icon>how_to_reg</v-icon>
                             </v-btn>
