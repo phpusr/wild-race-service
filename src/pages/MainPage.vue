@@ -46,8 +46,18 @@
         }),
         created() {
             addHandler('/topic/activity', data => {
+                console.log(data) //TODO remove
                 if (data.objectType === 'Post') {
                     switch(data.eventType) {
+                        case 'Create':
+                            const index = this.posts.findIndex(el => el.id === data.body.id);
+                            if (index === -1) {
+                                this.posts.unshift(data.body);
+                            } else {
+                                replaceObject(this.posts, data.body);
+                            }
+                            this.updateStat();
+                            break;
                         case 'Update':
                             replaceObject(this.posts, data.body);
                             this.updateStat();

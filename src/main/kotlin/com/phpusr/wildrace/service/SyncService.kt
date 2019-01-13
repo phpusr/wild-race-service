@@ -1,14 +1,20 @@
 package com.phpusr.wildrace.service
 
+import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
 import com.phpusr.wildrace.domain.vk.ProfileRepo
+import com.phpusr.wildrace.dto.EventType
+import com.phpusr.wildrace.dto.ObjectType
+import com.phpusr.wildrace.dto.PostDto
+import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
+import com.phpusr.wildrace.util.WsSender
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -22,7 +28,8 @@ class SyncService(
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
         private val profileRepo: ProfileRepo,
-        private val vkApiService: VKApiService
+        private val vkApiService: VKApiService,
+        private val wsSender: WsSender
 ) {
 
     /**
@@ -41,6 +48,9 @@ class SyncService(
     private val syncBlockInterval = 1000L
     /** Интервал между публикациями комментариев */
     private val publishingCommentInterval = 300L
+
+    private val postSender: (EventType, PostDto) -> Unit
+        get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
 
     fun syncPosts() {
         if (!configRepo.get().syncPosts) {
@@ -99,6 +109,7 @@ class SyncService(
             val postId = (vkPost["id"] as Int).toLong()
             val text = vkPost["text"] as String
             val textHash = Util.MD5(text)
+            val eventType: EventType
             var dbPost = lastDbPosts.find { it.id == postId }
             var isUpdate = false
 
@@ -108,16 +119,18 @@ class SyncService(
                     return@forEach
                 }
 
+                eventType = EventType.Update
                 isUpdate = true
                 println(">> Post change: ${dbPost}")
             } else {
+                eventType = EventType.Create
                 val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
                 // Поиск или создание профиля пользователя
                 val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
                 dbPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
             }
 
-            val parserOut = analyzePostText(text, textHash, dbPost, lastDbPosts)
+            val parserOut = analyzePostText(text, textHash, dbPost, lastDbPosts, eventType)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (!isUpdate && parserOut) {
@@ -148,6 +161,7 @@ class SyncService(
         deletedPosts.forEach {
             it.distance = null
             postRepo.delete(it)
+            postSender(EventType.Remove, PostDtoObject.create(it))
         }
         updateNextPosts(deletedPosts.last())
     }
@@ -197,6 +211,7 @@ class SyncService(
                 post.statusId = status.id
                 postRepo.save(post)
                 println(" >> Save post after update next: ${post}")
+                postSender(EventType.Remove, PostDtoObject.create(post))
 
                 // Комментарий статуса обработки поста
                 val commentText = createCommentText(post, currentSumDistance, newSumDistance)
@@ -234,7 +249,7 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, post: Post, lastPosts: List<Post>): Boolean {
+    private fun analyzePostText(text: String, textHash: String, post: Post, lastPosts: List<Post>, eventType: EventType): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
@@ -280,6 +295,7 @@ class SyncService(
 
             postRepo.save(post)
             println(" >> Save post after analyze: ${post}")
+            postSender(eventType, PostDtoObject.create(post))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
