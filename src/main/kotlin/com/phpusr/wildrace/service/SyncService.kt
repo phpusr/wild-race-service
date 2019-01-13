@@ -100,7 +100,7 @@ class SyncService(
 
             val parserOut = analyzePostText(text, textHash, dbPost, lastDbPosts)
             postRepo.save(dbPost)
-            println(dbPost)
+            println(">> Save post: ${dbPost}")
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (!isUpdate && parserOut) {
@@ -195,10 +195,10 @@ class SyncService(
         if (dbProfile == null) {
             val vkProfile = vkProfiles.find {
                 val map = it as Map<*, *>
-                map["id"] == profileId
+                (map["id"] as Int).toLong() == profileId
             }
             val profileMap = if (vkProfile == null) {
-                mapOf("first_name" to "Unknown", "last_name" to "Unknown")
+                mapOf("first_name" to "Unknown", "lastName" to "Unknown")
             } else {
                 vkProfile as Map<*, *>
             }
