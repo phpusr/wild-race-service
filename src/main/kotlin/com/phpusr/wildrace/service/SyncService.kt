@@ -157,26 +157,20 @@ class SyncService(
             val number = ++currentNumber
             val newSumDistance = currentSumDistance + post.distance!!
 
-            val parserOut = MessageParser(post.text).run()
             val status: PostParserStatus
-            if (parserOut != null) {
-                if (parserOut.startSumNumber == currentSumDistance) {
-                    if (parserOut.endSumNumber == newSumDistance) {
-                        status = PostParserStatus.Success
-                    } else {
-                        status = PostParserStatus.ErrorSum
-                    }
+            if (post.startSum == currentSumDistance) {
+                if (post.sumDistance == newSumDistance) {
+                    status = PostParserStatus.Success
                 } else {
-                    status = PostParserStatus.ErrorStartSum
+                    status = PostParserStatus.ErrorSum
                 }
             } else {
-                status = PostParserStatus.ErrorParse
+                status = PostParserStatus.ErrorStartSum
             }
 
             // Проверка: поменялось-ли выражение суммы в тексте
-            if (post.number != number || post.sumDistance != newSumDistance || post.statusId != status.id) {
+            if (post.number != number || post.statusId != status.id) {
                 post.number = number
-                post.sumDistance = newSumDistance
                 post.statusId = status.id
 
                 // Комментарий статуса обработки поста
@@ -250,16 +244,12 @@ class SyncService(
         }
 
         // Проверка: поменялось-ли выражение суммы в тексте
-        var updateExp = false
         if (post.number != number || post.distance != distance || post.sumDistance != newSumDistance || post.statusId != status.id) {
-            updateExp = true
             post.number = number
             post.distance = distance
             post.sumDistance = newSumDistance
             post.statusId = status.id
-        }
 
-        if (updateExp) {
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
             addStatusComment(post.id, commentText)

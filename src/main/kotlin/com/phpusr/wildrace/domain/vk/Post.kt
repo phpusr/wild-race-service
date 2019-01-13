@@ -42,6 +42,13 @@ data class Post(
     @field:Length(max = 32, message = "text_hash_too_long")
     var textHash: String = ""
 
+    val startSum: Int?
+        get() {
+            val sum = sumDistance
+            val dst = distance
+            return if (sum != null && dst != null) sum - dst else null
+        }
+
     /** Дистанция пробежки */
     var distance: Int? = null
 
