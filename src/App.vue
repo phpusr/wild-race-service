@@ -45,7 +45,7 @@
         name: 'app',
         data() {
             return {
-                drawer: !false,
+                drawer: false,
             }
         },
         computed: {
