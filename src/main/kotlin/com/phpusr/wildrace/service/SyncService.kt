@@ -12,6 +12,8 @@ import com.phpusr.wildrace.util.Util
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 @Service
@@ -110,15 +112,15 @@ class SyncService(
 
     /** Удаление из БД удаленных постов */
     private fun removeDeletedPosts(vkPosts: List<Any?>) {
-        val startDate = Date()
-        val endDate = Date()
+        val startDate = Date.from(ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        val endDate = Date(startDate.time + 24 * 3600 * 1000 - 1)
         val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.DESC, "date"))
         val todayPosts = postRepo.findRunningPage(pageable, startDate, endDate)
         val deletedPosts = todayPosts.filter { post ->
             vkPosts.find {
                 val vkPost = it as Map<*, *>
-                vkPost["id"] as Long == post.id
-            } != null
+                (vkPost["id"] as Int).toLong() == post.id
+            } == null
         }
 
         if (deletedPosts.isEmpty()) {
@@ -126,9 +128,11 @@ class SyncService(
         }
 
         println(">> Delete vkPosts: ${deletedPosts}")
-        deletedPosts.forEach { it.distance = null }
+        deletedPosts.forEach {
+            it.distance = null
+            postRepo.delete(it)
+        }
         updateNextPosts(deletedPosts.last())
-        deletedPosts.forEach { postRepo.delete(it) }
     }
 
     private fun updateNextPosts(updatePost: Post) {
