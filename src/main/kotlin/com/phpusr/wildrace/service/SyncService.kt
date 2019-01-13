@@ -133,6 +133,61 @@ class SyncService(
         deletedPosts.forEach { postRepo.delete(it) }
     }
 
+    private fun updateNextPosts(updatePost: Post) {
+        val startPost = if (updatePost.number != null && updatePost.distance != null && updatePost.sumDistance != null) {
+            updatePost
+        } else {
+            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
+            postRepo.findRunningPage(pageable, null, updatePost.date).firstOrNull()
+        }
+        println("startPost: ${startPost}")
+
+        if (startPost == null) {
+            return
+        }
+
+        var currentNumber = startPost.number!!
+        var currentSumDistance = startPost.sumDistance!!
+        val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.ASC, "date"))
+        postRepo.findRunningPage(pageable, startPost.date).forEach { post ->
+            if (post.id == startPost.id) {
+                return
+            }
+
+            val number = ++currentNumber
+            val newSumDistance = currentSumDistance + post.distance!!
+
+            val parserOut = MessageParser(post.text).run()
+            val status: PostParserStatus
+            if (parserOut != null) {
+                if (parserOut.startSumNumber == currentSumDistance) {
+                    if (parserOut.endSumNumber == newSumDistance) {
+                        status = PostParserStatus.Success
+                    } else {
+                        status = PostParserStatus.ErrorSum
+                    }
+                } else {
+                    status = PostParserStatus.ErrorStartSum
+                }
+            } else {
+                status = PostParserStatus.ErrorParse
+            }
+
+            // Проверка: поменялось-ли выражение суммы в тексте
+            if (post.number != number || post.sumDistance != newSumDistance || post.statusId != status.id) {
+                post.number = number
+                post.sumDistance = newSumDistance
+                post.statusId = status.id
+
+                // Комментарий статуса обработки поста
+                val commentText = createCommentText(post, currentSumDistance, newSumDistance)
+                addStatusComment(post.id, commentText)
+            }
+
+            currentSumDistance = newSumDistance
+        }
+    }
+
     private fun findOrCreateProfile(postMap: Map<*, *>, profileList: MutableIterable<Profile>, profiles: List<*>, postDate: Date): Profile {
         val profileId = postMap["from_id"] as Long
         var profile = profileList.find{ it.id == profileId }
@@ -219,10 +274,6 @@ class SyncService(
     }
 
     private fun addStatusComment(id: Long, commentText: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    private fun updateNextPosts(post: Post) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
