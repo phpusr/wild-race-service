@@ -25,21 +25,37 @@ class SyncService(
         private val vkApiService: VKApiService
 ) {
 
+    /**
+     * Кол-во постов для скачивания за 1 раз
+     * Изменения в постах фиксируются только в последних 100
+     */
+    private val downloadPostsCount = 100
+    /**
+     * Кол-во последних постов для нахождения последних данных
+     * Предполагается, что последние 100 могут измениться
+     */
+    private val lastPostsCount = downloadPostsCount + 1
+    private val todayPostsCount = downloadPostsCount
+    private val nextPostsCount = downloadPostsCount
+    /** Интервал между запросами к VK */
+    private val syncBlockInterval = 1000L
+    /** Интервал между публикациями комментариев */
+    private val publishingCommentInterval = 300L
+
     fun syncPosts() {
         if (!configRepo.get().syncPosts) {
             return
         }
 
-        val DownloadCountPosts = 100
         var needSync = true
         while(needSync) {
             val countPosts = getCountPosts()
             val alreadyDownloadCount = postRepo.count()
             println(">> Download: ${alreadyDownloadCount}/${countPosts}")
             if (needSync) {
-                syncBlockPosts(countPosts, alreadyDownloadCount, DownloadCountPosts)
+                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
                 needSync = alreadyDownloadCount < countPosts
-                Thread.sleep(1000)
+                Thread.sleep(syncBlockInterval)
             }
         }
 
@@ -73,7 +89,9 @@ class SyncService(
         val vkPosts = (response["items"] as List<*>).reversed()
         removeDeletedPosts(vkPosts)
 
-        val lastDbPosts = postRepo.findRunningPage(PageRequest.of(0, 200, Sort(Sort.Direction.DESC, "date"))).toMutableList()
+        // Должно быть после removeDeletedPosts(), чтобы получить свежие данные
+        val pageable = PageRequest.of(0, lastPostsCount, Sort(Sort.Direction.DESC, "date"))
+        val lastDbPosts = postRepo.findRunningPage(pageable).toMutableList()
         val vkProfiles = response["profiles"] as List<*>
 
         vkPosts.forEach {
@@ -114,7 +132,7 @@ class SyncService(
     private fun removeDeletedPosts(vkPosts: List<Any?>) {
         val startDate = Date.from(ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val endDate = Date(startDate.time + 24 * 3600 * 1000 - 1)
-        val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.DESC, "date"))
+        val pageable = PageRequest.of(0, todayPostsCount, Sort(Sort.Direction.DESC, "date"))
         val todayPosts = postRepo.findRunningPage(pageable, startDate, endDate)
         val deletedPosts = todayPosts.filter { post ->
             vkPosts.find {
@@ -150,8 +168,9 @@ class SyncService(
 
         var currentNumber = startPost.number!!
         var currentSumDistance = startPost.sumDistance!!
-        val pageable = PageRequest.of(0, 1000, Sort(Sort.Direction.ASC, "date"))
-        postRepo.findRunningPage(pageable, startPost.date).forEach { post ->
+        val pageable = PageRequest.of(0, nextPostsCount, Sort(Sort.Direction.ASC, "date"))
+        val nextPosts = postRepo.findRunningPage(pageable, startPost.date)
+        nextPosts.forEach { post ->
             if (post.id == startPost.id) {
                 return@forEach
             }
@@ -306,7 +325,7 @@ class SyncService(
         }
 
         // Задержка перед добавлением комментария, чтобы не заблокировали пользователя
-        Thread.sleep(300)
+        Thread.sleep(publishingCommentInterval)
 
         vkApiService.wallAddComment(postId, commentText)
     }
