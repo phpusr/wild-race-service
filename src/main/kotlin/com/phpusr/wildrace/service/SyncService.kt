@@ -1,6 +1,7 @@
 package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.domain.Views
+import com.phpusr.wildrace.domain.data.Config
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
@@ -15,14 +16,18 @@ import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
 import com.phpusr.wildrace.util.WsSender
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.web.context.WebApplicationContext
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
 @Service
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 class SyncService(
         private val configRepo: ConfigRepo,
         private val postRepo: PostRepo,
@@ -52,8 +57,11 @@ class SyncService(
     private val postSender: (EventType, PostDto) -> Unit
         get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
 
+    private lateinit var config: Config
+
     fun syncPosts() {
-        if (!configRepo.get().syncPosts) {
+        config = configRepo.get()
+        if (!config.syncPosts) {
             return
         }
 
@@ -211,7 +219,7 @@ class SyncService(
                 post.statusId = status.id
                 postRepo.save(post)
                 println(" >> Save post after update next: ${post}")
-                postSender(EventType.Remove, PostDtoObject.create(post))
+                postSender(EventType.Remove, PostDtoObject.create(post, config))
 
                 // Комментарий статуса обработки поста
                 val commentText = createCommentText(post, currentSumDistance, newSumDistance)
@@ -295,7 +303,7 @@ class SyncService(
 
             postRepo.save(post)
             println(" >> Save post after analyze: ${post}")
-            postSender(eventType, PostDtoObject.create(post))
+            postSender(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
@@ -335,7 +343,7 @@ class SyncService(
     }
 
     private fun addStatusComment(postId: Long, commentText: String) {
-        if (!configRepo.get().commenting) {
+        if (!config.commenting) {
             return
         }
 

@@ -61,8 +61,13 @@
         },
         methods: {
             async sync() {
-                await postApi.sync();
-                alert(this.$t('sync.success'));
+                try {
+                    await postApi.sync();
+                    alert(this.$t('sync.success'));
+                } catch(e) {
+                    alert(e);
+                    console.log(e)
+                }
             }
         }
     }
