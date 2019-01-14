@@ -98,4 +98,9 @@ class PostController(
         return post.id
     }
 
+    @GetMapping("sync")
+    fun sync() {
+        syncService.syncPosts()
+    }
+
 }

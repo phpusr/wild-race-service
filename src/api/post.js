@@ -10,5 +10,6 @@ export default {
     getStat: () => api.get({id: 'getStat'}, {params: {test: 1}}),
     getLastSyncDate: () => api.get({id: 'getLastSyncDate'}),
     update: post => api.update({id: post.id}, post),
-    remove: id => api.remove({id})
+    remove: id => api.remove({id}),
+    sync: () => api.get({id: 'sync'})
 }

@@ -14,6 +14,10 @@
                 </v-btn>
 
                 <v-toolbar-items>
+                    <v-btn flat @click="sync">{{$t('sync.title')}}</v-btn>
+                </v-toolbar-items>
+
+                <v-toolbar-items>
                     <v-btn flat to="/config">{{$t('pages./config')}}</v-btn>
                 </v-toolbar-items>
 
@@ -41,6 +45,8 @@
 </template>
 
 <script>
+    import postApi from "./api/post"
+
     export default {
         name: 'app',
         data() {
@@ -51,6 +57,12 @@
         computed: {
             title() {
                 return this.$t('pages')[this.$route.path]
+            }
+        },
+        methods: {
+            async sync() {
+                await postApi.sync();
+                alert(this.$t('sync.success'));
             }
         }
     }

@@ -78,5 +78,9 @@ export default {
         commentAccessToken: 'Токен для комментирования',
         commentFromGroup: 'Комментирование от имени группы',
         publishStat: 'Авто-публикация статистики',
+    },
+    sync: {
+        title: 'Синхронизация',
+        success: 'Синхронизация прошла успешно'
     }
 }
