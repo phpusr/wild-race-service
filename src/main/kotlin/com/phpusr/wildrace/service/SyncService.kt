@@ -16,6 +16,7 @@ import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
 import com.phpusr.wildrace.util.WsSender
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.domain.PageRequest
@@ -36,6 +37,8 @@ class SyncService(
         private val vkApiService: VKApiService,
         private val wsSender: WsSender
 ) {
+
+    private val logger = LoggerFactory.getLogger(SyncService::class.java)
 
     /**
      * Кол-во постов для скачивания за 1 раз
@@ -59,7 +62,7 @@ class SyncService(
     private lateinit var lastDbPosts: MutableList<Post>
 
     fun syncPosts() {
-        println("-------- Start sync --------")
+        logger.debug("-------- Start sync --------")
         config = configRepo.get()
 
         if (!config.syncPosts) {
@@ -70,7 +73,7 @@ class SyncService(
         while(needSync) {
             val countPosts = getCountPosts()
             val alreadyDownloadCount = postRepo.count()
-            println(">> Download: ${alreadyDownloadCount}/${countPosts}")
+            logger.debug(">> Download: ${alreadyDownloadCount}/${countPosts}")
             if (needSync) {
                 syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
                 needSync = alreadyDownloadCount < countPosts
@@ -165,9 +168,9 @@ class SyncService(
             return
         }
 
-        println(">> Delete vkPosts: ${deletedPosts}")
+        logger.debug(">> Delete vkPosts: ${deletedPosts}")
         deletedPosts.forEach {
-            println(" -- Delete: ${it}")
+            logger.debug(" -- Delete: ${it}")
             it.number = null
             postRepo.delete(it)
             postSender(EventType.Remove, PostDtoObject.create(it))
@@ -183,7 +186,7 @@ class SyncService(
         } else {
             lastDbPosts.find{ it.number != null && it.date <= updatePost.date }
         }
-        println(" >> Update next, start: ${startPost}")
+        logger.debug(" Update next, start: ${startPost}")
 
         var currentNumber = startPost?.number ?: 0
         var currentSumDistance = startPost?.sumDistance ?: 0
@@ -219,7 +222,7 @@ class SyncService(
                 post.sumDistance = newSumDistance
                 post.statusId = status.id
                 postRepo.save(post)
-                println("  -- Update: ${post}")
+                logger.debug("  -- Update: ${post}")
                 postSender(EventType.Update, PostDtoObject.create(post, config))
 
                 // Комментарий статуса обработки поста
@@ -303,7 +306,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            println("${eventType.name} post after analyze: ${post}")
+            logger.debug("${eventType.name} post after analyze: ${post}")
             postSender(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста

@@ -13,6 +13,7 @@ import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
 import com.phpusr.wildrace.util.WsSender
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -29,6 +30,8 @@ class PostController(
         private val wsSender: WsSender,
         private val syncService: SyncService
 ) {
+
+    private val logger = LoggerFactory.getLogger(PostController::class.java)
 
     private val postSender: (EventType, PostDto) -> Unit
         get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
@@ -73,6 +76,7 @@ class PostController(
     @JsonView(Views.PostDtoREST::class)
     fun update(@RequestBody postDto: PostDto): PostDto? {
         val post = postRepo.findById(postDto.id).orElseThrow{ RuntimeException("post_not_found") }
+        logger.debug(">> Hand update post: ${post}")
         post.number = postDto.number
         post.statusId = postDto.statusId
         post.distance = postDto.distance
@@ -90,6 +94,7 @@ class PostController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable("id") post: Post): Long {
+        logger.debug(">> Hand delete post: ${post}")
         postRepo.deleteById(post.id)
         postSender(EventType.Remove, PostDtoObject.create(post))
         post.number = null
