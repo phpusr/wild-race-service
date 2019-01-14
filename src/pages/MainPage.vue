@@ -46,7 +46,6 @@
         }),
         created() {
             addHandler('/topic/activity', data => {
-                console.log(data) //TODO remove
                 if (data.objectType === 'Post') {
                     const index = this.posts.findIndex(el => el.id === data.body.id);
                     switch(data.eventType) {
