@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
+import java.util.function.BiConsumer
 
 @Service
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -32,7 +33,7 @@ class SyncService(
         private val tempDataRepo: TempDataRepo,
         private val profileRepo: ProfileRepo,
         private val vkApiService: VKApiService,
-        private val postSender: (EventType, PostDto) -> Unit
+        private val postSender: BiConsumer<EventType, PostDto>
 ) {
 
     private val logger = LoggerFactory.getLogger(SyncService::class.java)
@@ -167,7 +168,7 @@ class SyncService(
             logger.debug(" -- Delete: ${it}")
             it.number = null
             postRepo.delete(it)
-            postSender(EventType.Remove, PostDtoObject.create(it))
+            postSender.accept(EventType.Remove, PostDtoObject.create(it))
             lastDbPosts.remove(it)
         }
         updateNextPosts(deletedPosts.last())
@@ -217,7 +218,7 @@ class SyncService(
                 post.statusId = status.id
                 postRepo.save(post)
                 logger.debug("  -- Update: ${post}")
-                postSender(EventType.Update, PostDtoObject.create(post, config))
+                postSender.accept(EventType.Update, PostDtoObject.create(post, config))
 
                 // Комментарий статуса обработки поста
                 val commentText = createCommentText(post, currentSumDistance, newSumDistance)
@@ -301,7 +302,7 @@ class SyncService(
 
             postRepo.save(post)
             logger.debug("${eventType.name} post after analyze: ${post}")
-            postSender(eventType, PostDtoObject.create(post, config))
+            postSender.accept(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)

@@ -10,15 +10,16 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
+import java.util.function.BiConsumer
 
 @Component
 class WsSender(
         private val template: SimpMessagingTemplate,
         private val mapper: ObjectMapper
 ) {
-    fun <T> getSender(objectType: ObjectType, view: Class<*>): (EventType, T) -> Unit {
+    fun <T> getSender(objectType: ObjectType, view: Class<*>): BiConsumer<EventType, T> {
         val writer = mapper.setConfig(mapper.serializationConfig).writerWithView(view)
-        return { eventType: EventType, payload: T ->
+        return BiConsumer { eventType: EventType, payload: T ->
             val value = writer.writeValueAsString(payload)
             template.convertAndSend("/topic/activity", WsEvenDto(objectType, eventType, value))
         }
@@ -28,7 +29,7 @@ class WsSender(
 @Configuration
 class WsSenderConfiguration {
     @Bean
-    fun postSender(wsSender: WsSender): (EventType, PostDto) -> Unit {
+    fun postSender(wsSender: WsSender): BiConsumer<EventType, PostDto> {
         return wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
     }
 }

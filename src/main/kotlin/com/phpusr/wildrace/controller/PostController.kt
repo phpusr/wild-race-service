@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.function.BiConsumer
 
 @RestController
 @RequestMapping("post")
@@ -25,7 +26,7 @@ class PostController(
         private val statService: StatService,
         private val tempDataRepo: TempDataRepo,
         private val configRepo: ConfigRepo,
-        private val postSender: (EventType, PostDto) -> Unit,
+        private val postSender: BiConsumer<EventType, PostDto>,
         private val syncService: SyncService
 ) {
 
@@ -81,7 +82,7 @@ class PostController(
         postRepo.save(post)
 
         val updatePostDto = PostDtoObject.create(post, configRepo.get())
-        postSender(EventType.Update, updatePostDto)
+        postSender.accept(EventType.Update, updatePostDto)
         syncService.updateNextPosts(post)
 
         return updatePostDto
@@ -91,7 +92,7 @@ class PostController(
     fun delete(@PathVariable("id") post: Post): Long {
         logger.debug(">> Hand delete post: ${post}")
         postRepo.deleteById(post.id)
-        postSender(EventType.Remove, PostDtoObject.create(post))
+        postSender.accept(EventType.Remove, PostDtoObject.create(post))
         post.number = null
         syncService.updateNextPosts(post)
 
