@@ -66,7 +66,7 @@ class Post(
     var lastUpdate: Date? = null
 
     override fun toString(): String {
-        return "Post(id: ${id}, text: \"${if (text.length > 50) text.substring(0, 50) + "..." else text}\")"
+        return "Post(id: ${id}, number: ${number}, text: \"${if (text.length > 50) text.substring(0, 50) + "..." else text}\")"
     }
 }
 
@@ -78,7 +78,7 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
     fun findAll(pageable: Pageable, @Param("statusId") statusId: Int?, @Param("manualEditing") manualEditing: Boolean?): Page<Post>
 
     @EntityGraph(value = "Post.detail", type = EntityGraph.EntityGraphType.LOAD)
-    @Query("from Post p where number is not null AND distance is not null AND p.sumDistance is not null AND " +
+    @Query("from Post p where number is not null AND " +
             "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) AND " +
             "(:sDst is null OR p.sumDistance - distance >= :sDst) AND (:eDst is null OR p.sumDistance - distance <= :eDst)"
     )
@@ -92,7 +92,7 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
 
     @Query("select pr, count(p.id), sum(p.distance) as s " +
             "from Post p left join p.from pr " +
-            "where p.number is not null AND p.distance is not null AND p.sumDistance is not null AND " +
+            "where p.number is not null AND " +
             "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) " +
             "group by pr order by s desc"
     )

@@ -47,8 +47,6 @@ class SyncService(
      * Предполагается, что последние 100 могут измениться
      */
     private val lastPostsCount = downloadPostsCount + 1
-    private val todayPostsCount = downloadPostsCount
-    private val nextPostsCount = downloadPostsCount
     /** Интервал между запросами к VK */
     private val syncBlockInterval = 1000L
     /** Интервал между публикациями комментариев */
@@ -58,8 +56,10 @@ class SyncService(
         get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
 
     private lateinit var config: Config
+    private lateinit var lastDbPosts: MutableList<Post>
 
     fun syncPosts() {
+        println("-------- Start sync --------")
         config = configRepo.get()
         if (!config.syncPosts) {
             return
@@ -105,12 +105,10 @@ class SyncService(
         }
 
         val vkPosts = (response["items"] as List<*>).reversed()
-        removeDeletedPosts(vkPosts)
-
-        // Должно быть после removeDeletedPosts(), чтобы получить свежие данные
-        val pageable = PageRequest.of(0, lastPostsCount, Sort(Sort.Direction.DESC, "date"))
-        val lastDbPosts = postRepo.findRunningPage(pageable).toMutableList()
         val vkProfiles = response["profiles"] as List<*>
+
+        lastDbPosts = getLastPosts()
+        removeDeletedPosts(vkPosts)
 
         vkPosts.forEach {
             val vkPost = it as Map<*, *>
@@ -119,7 +117,6 @@ class SyncService(
             val textHash = Util.MD5(text)
             val eventType: EventType
             var dbPost = lastDbPosts.find { it.id == postId }
-            var isUpdate = false
 
             if (dbPost != null) {
                 // Если пост уже есть в базе и (он не менялся или было ручное ред-е), то переход к следующему
@@ -128,8 +125,6 @@ class SyncService(
                 }
 
                 eventType = EventType.Update
-                isUpdate = true
-                println(">> Post change: ${dbPost}")
             } else {
                 eventType = EventType.Create
                 val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
@@ -138,22 +133,26 @@ class SyncService(
                 dbPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
             }
 
-            val parserOut = analyzePostText(text, textHash, dbPost, lastDbPosts, eventType)
+            val parserOut = analyzePostText(text, textHash, dbPost, eventType)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
-            if (!isUpdate && parserOut) {
+            if (eventType == EventType.Create && parserOut) {
                 lastDbPosts.add(dbPost)
                 lastDbPosts.sortBy { it.date.time * -1 }
             }
         }
     }
 
+    private fun getLastPosts(): MutableList<Post> {
+        val pageable = PageRequest.of(0, lastPostsCount, Sort(Sort.Direction.DESC, "date"))
+        return postRepo.findAll(pageable, null, null).toMutableList()
+    }
+
     /** Удаление из БД удаленных постов */
     private fun removeDeletedPosts(vkPosts: List<Any?>) {
         val startDate = Date.from(ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val endDate = Date(startDate.time + 24 * 3600 * 1000 - 1)
-        val pageable = PageRequest.of(0, todayPostsCount, Sort(Sort.Direction.DESC, "date"))
-        val todayPosts = postRepo.findRunningPage(pageable, startDate, endDate)
+        val todayPosts = lastDbPosts.filter{ it.date >= startDate && it.date <= endDate }
         val deletedPosts = todayPosts.filter { post ->
             vkPosts.find {
                 val vkPost = it as Map<*, *>
@@ -168,31 +167,35 @@ class SyncService(
         println(">> Delete vkPosts: ${deletedPosts}")
         deletedPosts.forEach {
             println(" -- Delete: ${it}")
-            it.distance = null
+            it.number = null
             postRepo.delete(it)
             postSender(EventType.Remove, PostDtoObject.create(it))
+            lastDbPosts.remove(it)
         }
         updateNextPosts(deletedPosts.last())
     }
 
     fun updateNextPosts(updatePost: Post) {
-        val startPost = if (updatePost.number != null && updatePost.distance != null && updatePost.sumDistance != null) {
+        val startPost = if (updatePost.number != null) {
             updatePost
         } else {
-            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
-            postRepo.findRunningPage(pageable, null, updatePost.date).firstOrNull()
+            try {
+                lastDbPosts.size
+            } catch(ignored: UninitializedPropertyAccessException) {
+                lastDbPosts = getLastPosts()
+            }
+            lastDbPosts.find{ it.number != null && it.date <= updatePost.date }
         }
-        println(">> Update next, start: ${startPost}")
+        println(" >> Update next, start: ${startPost}")
 
         var currentNumber = startPost?.number ?: 0
         var currentSumDistance = startPost?.sumDistance ?: 0
-        val pageable = PageRequest.of(0, nextPostsCount, Sort(Sort.Direction.ASC, "date"))
-        val nextPosts = postRepo.findRunningPage(pageable, startPost?.date)
+        val nextPosts = if (startPost == null) {
+            lastDbPosts.asReversed().filter{ it.number != null }
+        } else {
+            lastDbPosts.asReversed().filter{ it.number != null && it.id != startPost.id && it.date >= startPost.date }
+        }
         nextPosts.forEach { post ->
-            if (post.id == startPost?.id) {
-                return@forEach
-            }
-
             val number = ++currentNumber
             val newSumDistance = currentSumDistance + post.distance!!
 
@@ -219,7 +222,7 @@ class SyncService(
                 post.sumDistance = newSumDistance
                 post.statusId = status.id
                 postRepo.save(post)
-                println(" -- Save post after update next: ${post}")
+                println("  -- Update: ${post}")
                 postSender(EventType.Update, PostDtoObject.create(post, config))
 
                 // Комментарий статуса обработки поста
@@ -258,7 +261,7 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, post: Post, lastPosts: List<Post>, eventType: EventType): Boolean {
+    private fun analyzePostText(text: String, textHash: String, post: Post, eventType: EventType): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
@@ -269,7 +272,7 @@ class SyncService(
         post.text = Util.removeBadChars(text) ?: ""
         post.textHash = textHash
         if (parserOut != null) {
-            val lastPost = lastPosts.find{ it.id != post.id && it.date <= post.date }
+            val lastPost = lastDbPosts.find{ it.number != null && it.id != post.id && it.date <= post.date }
             lastSumDistance = lastPost?.sumDistance ?: 0
             val lastPostNumber = lastPost?.number ?: 0
 
@@ -303,7 +306,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            println(" -- Save post after analyze: ${post}")
+            println("${eventType.name} post after analyze: ${post}")
             postSender(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста
