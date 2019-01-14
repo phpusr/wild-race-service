@@ -48,11 +48,12 @@
             addHandler('/topic/activity', data => {
                 console.log(data) //TODO remove
                 if (data.objectType === 'Post') {
+                    const index = this.posts.findIndex(el => el.id === data.body.id);
                     switch(data.eventType) {
                         case 'Create':
-                            const index = this.posts.findIndex(el => el.id === data.body.id);
                             if (index === -1) {
                                 this.posts.unshift(data.body);
+                                this.posts = this.posts.sort((a, b) => b.date - a.date)
                             } else {
                                 replaceObject(this.posts, data.body);
                             }

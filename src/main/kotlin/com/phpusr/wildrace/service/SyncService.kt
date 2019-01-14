@@ -61,6 +61,7 @@ class SyncService(
     fun syncPosts() {
         println("-------- Start sync --------")
         config = configRepo.get()
+
         if (!config.syncPosts) {
             return
         }
@@ -176,14 +177,10 @@ class SyncService(
     }
 
     fun updateNextPosts(updatePost: Post) {
+        initLateInitVars()
         val startPost = if (updatePost.number != null) {
             updatePost
         } else {
-            try {
-                lastDbPosts.size
-            } catch(ignored: UninitializedPropertyAccessException) {
-                lastDbPosts = getLastPosts()
-            }
             lastDbPosts.find{ it.number != null && it.date <= updatePost.date }
         }
         println(" >> Update next, start: ${startPost}")
@@ -360,6 +357,20 @@ class SyncService(
     private fun updateLastSyncDate() {
         val tempData = tempDataRepo.get()
         tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
+    }
+
+    private fun initLateInitVars() {
+        try {
+            config
+        } catch(ignored: UninitializedPropertyAccessException) {
+            config = configRepo.get()
+        }
+
+        try {
+            lastDbPosts
+        } catch(ignored: UninitializedPropertyAccessException) {
+            lastDbPosts = getLastPosts()
+        }
     }
 
 }
