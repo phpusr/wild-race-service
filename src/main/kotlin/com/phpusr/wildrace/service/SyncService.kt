@@ -167,6 +167,7 @@ class SyncService(
 
         println(">> Delete vkPosts: ${deletedPosts}")
         deletedPosts.forEach {
+            println(" -- Delete: ${it}")
             it.distance = null
             postRepo.delete(it)
             postSender(EventType.Remove, PostDtoObject.create(it))
@@ -218,8 +219,8 @@ class SyncService(
                 post.sumDistance = newSumDistance
                 post.statusId = status.id
                 postRepo.save(post)
-                println(" >> Save post after update next: ${post}")
-                postSender(EventType.Remove, PostDtoObject.create(post, config))
+                println(" -- Save post after update next: ${post}")
+                postSender(EventType.Update, PostDtoObject.create(post, config))
 
                 // Комментарий статуса обработки поста
                 val commentText = createCommentText(post, currentSumDistance, newSumDistance)
@@ -302,7 +303,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            println(" >> Save post after analyze: ${post}")
+            println(" -- Save post after analyze: ${post}")
             postSender(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста

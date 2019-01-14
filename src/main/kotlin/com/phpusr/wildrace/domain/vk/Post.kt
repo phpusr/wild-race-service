@@ -15,7 +15,7 @@ import javax.persistence.*
  */
 @Entity
 @NamedEntityGraph(name = "Post.detail", attributeNodes = [NamedAttributeNode("from")])
-data class Post(
+class Post(
         @field:Id
         val id: Long,
 
@@ -64,6 +64,10 @@ data class Post(
 
     /** Дата последнего редактирования */
     var lastUpdate: Date? = null
+
+    override fun toString(): String {
+        return "Post(id: ${id}, text: \"${if (text.length > 50) text.substring(0, 50) + "..." else text}\")"
+    }
 }
 
 interface PostRepo : PagingAndSortingRepository<Post, Long> {
