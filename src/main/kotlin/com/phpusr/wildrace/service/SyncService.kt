@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.domain.data.Config
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
@@ -9,13 +8,11 @@ import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
 import com.phpusr.wildrace.domain.vk.ProfileRepo
 import com.phpusr.wildrace.dto.EventType
-import com.phpusr.wildrace.dto.ObjectType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
-import com.phpusr.wildrace.util.WsSender
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
@@ -35,7 +32,7 @@ class SyncService(
         private val tempDataRepo: TempDataRepo,
         private val profileRepo: ProfileRepo,
         private val vkApiService: VKApiService,
-        private val wsSender: WsSender
+        private val postSender: (EventType, PostDto) -> Unit
 ) {
 
     private val logger = LoggerFactory.getLogger(SyncService::class.java)
@@ -54,9 +51,6 @@ class SyncService(
     private val syncBlockInterval = 1000L
     /** Интервал между публикациями комментариев */
     private val publishingCommentInterval = 300L
-
-    private val postSender: (EventType, PostDto) -> Unit
-        get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
 
     private lateinit var config: Config
     private lateinit var lastDbPosts: MutableList<Post>

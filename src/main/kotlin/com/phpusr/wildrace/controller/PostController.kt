@@ -7,12 +7,10 @@ import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.dto.EventType
-import com.phpusr.wildrace.dto.ObjectType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
-import com.phpusr.wildrace.util.WsSender
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -27,14 +25,11 @@ class PostController(
         private val statService: StatService,
         private val tempDataRepo: TempDataRepo,
         private val configRepo: ConfigRepo,
-        private val wsSender: WsSender,
+        private val postSender: (EventType, PostDto) -> Unit,
         private val syncService: SyncService
 ) {
 
     private val logger = LoggerFactory.getLogger(PostController::class.java)
-
-    private val postSender: (EventType, PostDto) -> Unit
-        get() = wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
 
     @GetMapping
     @JsonView(Views.PostDtoREST::class)
