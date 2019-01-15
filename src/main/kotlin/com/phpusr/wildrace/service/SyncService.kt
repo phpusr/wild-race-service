@@ -49,6 +49,7 @@ class SyncService(
         logger.debug("-------- Start sync --------")
 
         if (!configService.get().syncPosts) {
+            logger.debug(">> Sync is disabled")
             return
         }
 
