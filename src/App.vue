@@ -65,7 +65,7 @@
                     await postApi.sync();
                     alert(this.$t('sync.success'));
                 } catch(e) {
-                    alert(e);
+                    alert(`${e.status}: ${e.body.error} on "${e.url}"`);
                     console.log(e)
                 }
             }
