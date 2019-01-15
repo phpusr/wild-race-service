@@ -1,7 +1,5 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.data.Config
-import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
@@ -24,7 +22,7 @@ import java.util.function.BiConsumer
 
 @Service
 class SyncService(
-        private val configRepo: ConfigRepo,
+        private val configService: ConfigService,
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
         private val profileRepo: ProfileRepo,
@@ -52,19 +50,17 @@ class SyncService(
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
 
-        val config = configRepo.get()
-
-        if (!config.syncPosts) {
+        if (!configService.get().syncPosts) {
             return
         }
 
         var needSync = true
         while(needSync) {
-            val countPosts = getCountPosts(config)
+            val countPosts = getCountPosts()
             val alreadyDownloadCount = postRepo.count()
-            logger.debug(">> Download: ${alreadyDownloadCount}/${countPosts}")
+            logger.debug(">> Download: $alreadyDownloadCount/$countPosts")
             if (needSync) {
-                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount, config)
+                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
                 needSync = alreadyDownloadCount < countPosts
                 Thread.sleep(syncBlockInterval)
             }
@@ -73,8 +69,8 @@ class SyncService(
         updateLastSyncDate()
     }
 
-    private fun getCountPosts(config: Config): Long {
-        val result = vkApiService.wallGet(0, 1, false, config)
+    private fun getCountPosts(): Long {
+        val result = vkApiService.wallGet(0, 1, false)
 
         if (result == null) {
             throw Exception("Response is null")
@@ -83,14 +79,14 @@ class SyncService(
         return ((result["response"] as Map<*, *>)["count"] as Int).toLong()
     }
 
-    private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int, config: Config) {
+    private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {
         val offset = if (countPosts - alreadyDownloadCount > downloadCount) {
             countPosts - alreadyDownloadCount - downloadCount
         } else 0
 
         val dbProfiles = profileRepo.findAll()
 
-        val result = vkApiService.wallGet(offset, downloadCount, true, config)
+        val result = vkApiService.wallGet(offset, downloadCount, true)
         val response = result!!["response"] as Map<*, *>
 
         if ((response["count"] as Int).toLong() != countPosts) {
@@ -120,7 +116,7 @@ class SyncService(
                     return@forEach
                 }
 
-                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update, config)
+                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update)
                 return@forEach
             }
 
@@ -128,7 +124,7 @@ class SyncService(
             val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
             val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
 
-            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create, config)
+            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (parserOut) {
@@ -169,7 +165,8 @@ class SyncService(
         }
     }
 
-    private fun findOrCreateProfile(postMap: Map<*, *>, dbProfiles: MutableIterable<Profile>, vkProfiles: List<*>, postDate: Date): Profile {
+    private fun findOrCreateProfile(postMap: Map<*, *>, dbProfiles: MutableIterable<Profile>,
+                                    vkProfiles: List<*>, postDate: Date): Profile {
         val profileId = (postMap["from_id"] as Int).toLong()
         var dbProfile = dbProfiles.find { it.id == profileId }
         if (dbProfile == null) {
@@ -196,7 +193,8 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post, eventType: EventType, config: Config): Boolean {
+    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post,
+                                eventType: EventType): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
@@ -236,11 +234,11 @@ class SyncService(
 
             postRepo.save(post)
             logger.debug(" -- ${eventType.name} post after analyze: ${post}")
-            postSender.accept(eventType, PostDtoObject.create(post, config))
+            postSender.accept(eventType, PostDtoObject.create(post, configService.get()))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
-            addStatusComment(post.id, commentText, config)
+            addStatusComment(post.id, commentText)
         }
 
         return parserOut != null
@@ -274,15 +272,15 @@ class SyncService(
         return commentText.toString()
     }
 
-    private fun addStatusComment(postId: Long, commentText: String, config: Config) {
-        if (!config.commenting) {
+    private fun addStatusComment(postId: Long, commentText: String) {
+        if (!configService.get().commenting) {
             return
         }
 
         // Задержка перед добавлением комментария, чтобы не заблокировали пользователя
         Thread.sleep(publishingCommentInterval)
 
-        vkApiService.wallAddComment(postId, commentText, config)
+        vkApiService.wallAddComment(postId, commentText)
     }
 
     private fun updateLastSyncDate() {
@@ -307,9 +305,8 @@ class SyncService(
             startPost == null || it.id != startPost.id && it.date >= startPost.date
         }
 
-        val config = configRepo.get()
         nextPosts.forEach { post ->
-            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update, config)
+            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
             currentSumDistance = post.sumDistance!!
             currentPostNumber = post.number!!
         }

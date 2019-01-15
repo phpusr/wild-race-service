@@ -1,20 +1,19 @@
 package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.consts.Consts
-import com.phpusr.wildrace.domain.data.Config
-import com.phpusr.wildrace.domain.data.ConfigRepo
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class VKApiService(
-        private val configRepo: ConfigRepo,
+        private val configService: ConfigService,
         private val restService: RestService
 ) {
 
     private val Url = "https://api.vk.com/method"
 
-    fun wallGet(offset: Long, count: Int, extended: Boolean, config: Config = configRepo.get()): HashMap<*, *>? {
+    fun wallGet(offset: Long, count: Int, extended: Boolean): HashMap<*, *>? {
+        val config = configService.get()
         val params = mapOf(
                 "owner_id" to  config.groupId,
                 "offset" to offset,
@@ -29,7 +28,8 @@ class VKApiService(
         return response
     }
 
-    fun wallAddComment(postId: Long, text: String, config: Config = configRepo.get()) {
+    fun wallAddComment(postId: Long, text: String) {
+        val config = configService.get()
         val params = mapOf(
                 "owner_id" to  config.groupId,
                 "post_id" to postId,

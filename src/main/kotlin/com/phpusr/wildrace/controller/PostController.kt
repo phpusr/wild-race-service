@@ -2,13 +2,13 @@ package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
-import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
+import com.phpusr.wildrace.service.ConfigService
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
 import org.slf4j.LoggerFactory
@@ -25,7 +25,7 @@ class PostController(
         private val postRepo: PostRepo,
         private val statService: StatService,
         private val tempDataRepo: TempDataRepo,
-        private val configRepo: ConfigRepo,
+        private val configService: ConfigService,
         private val postSender: BiConsumer<EventType, PostDto>,
         private val syncService: SyncService
 ) {
@@ -40,7 +40,7 @@ class PostController(
             @RequestParam manualEditing: Boolean?
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
-        val config = configRepo.get()
+        val config = configService.get()
         val list = page.content.map { PostDtoObject.create(it, config) }
 
         return mapOf("list" to list, "totalElements" to page.totalElements)
@@ -81,7 +81,7 @@ class PostController(
         post.lastUpdate = Date()
         postRepo.save(post)
 
-        val updatePostDto = PostDtoObject.create(post, configRepo.get())
+        val updatePostDto = PostDtoObject.create(post, configService.get())
         postSender.accept(EventType.Update, updatePostDto)
         //TODO добавить параметр, который будет определять запуск
         syncService.updateNextPosts(post)
