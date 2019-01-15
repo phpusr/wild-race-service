@@ -54,11 +54,10 @@ class SyncService(
     private val publishingCommentInterval = 300L
 
     private lateinit var config: Config
-    private lateinit var lastDbPosts: MutableList<Post>
 
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
-        config = configRepo.get()
+        initLateInitVars()
 
         if (!config.syncPosts) {
             return
@@ -106,8 +105,8 @@ class SyncService(
         val vkPosts = (response["items"] as List<*>).reversed()
         val vkProfiles = response["profiles"] as List<*>
 
-        lastDbPosts = getLastPosts() //TODO возможно можно сделать локальным
-        removeDeletedPosts(vkPosts)
+        val lastDbPosts = getLastPosts()
+        removeDeletedPosts(vkPosts, lastDbPosts)
 
         vkPosts.forEach {
             val vkPost = it as Map<*, *>
@@ -150,7 +149,7 @@ class SyncService(
     }
 
     /** Удаление из БД удаленных постов */
-    private fun removeDeletedPosts(vkPosts: List<Any?>) {
+    private fun removeDeletedPosts(vkPosts: List<Any?>, lastDbPosts: MutableList<Post>) {
         val startDate = Date.from(ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val endDate = Date(startDate.time + 24 * 3600 * 1000 - 1)
         val todayPosts = lastDbPosts.filter{ it.date >= startDate && it.date <= endDate }
@@ -175,59 +174,26 @@ class SyncService(
         }
     }
 
-    //TODO изменить
     fun updateNextPosts(updatePost: Post) {
         initLateInitVars()
         val startPost = if (updatePost.number != null) {
             updatePost
         } else {
-            lastDbPosts.find{ it.number != null && it.date <= updatePost.date }
+            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.ASC, "date"))
+            postRepo.findRunningPage(pageable, updatePost.date).getOrNull(0)
         }
         logger.debug(" Update next, start: ${startPost}")
 
-        var currentNumber = startPost?.number ?: 0
-        var currentSumDistance = startPost?.sumDistance ?: 0
-        val nextPosts = if (startPost == null) {
-            lastDbPosts.asReversed().filter{ it.number != null }
-        } else {
-            lastDbPosts.asReversed().filter{ it.number != null && it.id != startPost.id && it.date >= startPost.date }
+        val startPostNumber = startPost?.number ?: 0
+        val startSumDistance = startPost?.sumDistance ?: 0
+
+        val pageable = PageRequest.of(0, Int.MAX_VALUE, Sort(Sort.Direction.ASC, "date"))
+        val nextPosts = postRepo.findRunningPage(pageable, updatePost.date).filter{
+            startPost != null && it.id != startPost.id && it.date >= startPost.date
         }
+
         nextPosts.forEach { post ->
-            val number = ++currentNumber
-            val newSumDistance = currentSumDistance + post.distance!!
-
-            // Обновление статуса
-            val status: PostParserStatus
-            val parserOut = MessageParser(post.text).run()
-            if (parserOut != null) {
-                if (parserOut.startSumNumber == currentSumDistance) {
-                    if (parserOut.endSumNumber == newSumDistance) {
-                        status = PostParserStatus.Success
-                    } else {
-                        status = PostParserStatus.ErrorSum
-                    }
-                } else {
-                    status = PostParserStatus.ErrorStartSum
-                }
-            } else {
-                status = PostParserStatus.ErrorParse
-            }
-
-            // Проверка: поменялось-ли выражение суммы в тексте
-            if (post.number != number || post.sumDistance != newSumDistance || post.statusId != status.id) {
-                post.number = number
-                post.sumDistance = newSumDistance
-                post.statusId = status.id
-                postRepo.save(post)
-                logger.debug("  -- Update: ${post}")
-                postSender.accept(EventType.Update, PostDtoObject.create(post, config))
-
-                // Комментарий статуса обработки поста
-                val commentText = createCommentText(post, currentSumDistance, newSumDistance)
-                addStatusComment(post.id, commentText)
-            }
-
-            currentSumDistance = newSumDistance
+            analyzePostText(post.text, post.textHash, startSumDistance, startPostNumber, post, EventType.Update)
         }
     }
 
@@ -357,12 +323,6 @@ class SyncService(
             config
         } catch(ignored: UninitializedPropertyAccessException) {
             config = configRepo.get()
-        }
-
-        try {
-            lastDbPosts
-        } catch(ignored: UninitializedPropertyAccessException) {
-            lastDbPosts = getLastPosts()
         }
     }
 

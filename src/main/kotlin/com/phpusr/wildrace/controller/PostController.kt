@@ -83,6 +83,7 @@ class PostController(
 
         val updatePostDto = PostDtoObject.create(post, configRepo.get())
         postSender.accept(EventType.Update, updatePostDto)
+        //TODO добавить параметр, который будет определять запуск
         syncService.updateNextPosts(post)
 
         return updatePostDto
@@ -94,6 +95,7 @@ class PostController(
         postRepo.deleteById(post.id)
         postSender.accept(EventType.Remove, PostDtoObject.create(post))
         post.number = null
+        //TODO добавить параметр, который будет определять запуск
         syncService.updateNextPosts(post)
 
         return post.id
