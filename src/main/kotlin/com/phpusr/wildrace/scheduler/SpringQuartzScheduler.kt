@@ -1,7 +1,6 @@
 package com.phpusr.wildrace.scheduler
 
 import org.quartz.JobDetail
-import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
@@ -9,13 +8,14 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
-import org.springframework.scheduling.quartz.JobDetailFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
-import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean
 import org.springframework.scheduling.quartz.SpringBeanJobFactory
 import javax.annotation.PostConstruct
 
 
+/**
+ * src: https://github.com/eugenp/tutorials/tree/master/spring-quartz
+ */
 @Configuration
 @ConditionalOnExpression("'\${using.spring.schedulerFactory}'=='true'")
 class SpringQuartzScheduler(private val applicationContext: ApplicationContext) {
@@ -24,7 +24,7 @@ class SpringQuartzScheduler(private val applicationContext: ApplicationContext) 
 
     @PostConstruct
     private fun init() {
-        logger.info("Hello world from Spring...")
+        logger.debug("SpringQuartzScheduler init")
     }
 
     @Bean
@@ -46,26 +46,4 @@ class SpringQuartzScheduler(private val applicationContext: ApplicationContext) 
         }
     }
 
-    @Bean
-    fun jobDetail(): JobDetailFactoryBean {
-        return JobDetailFactoryBean().apply {
-            setJobClass(SyncJob::class.java)
-            setName("Qrtz_Job_Detail")
-            setDescription("Invoke Sample Job service...")
-            setDurability(true)
-        }
-    }
-
-    @Bean
-    fun trigger(job: JobDetail): SimpleTriggerFactoryBean {
-        val frequencyInSec = 10L
-        logger.info("Configuring trigger to fire every {} seconds", frequencyInSec)
-
-        return SimpleTriggerFactoryBean().apply {
-            setJobDetail(job)
-            setRepeatInterval(frequencyInSec * 1000)
-            setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY)
-            setName("Qrtz_Trigger")
-        }
-    }
 }

@@ -2,7 +2,9 @@ package com.phpusr.wildrace.scheduler
 
 import org.quartz.Job
 import org.quartz.JobExecutionContext
+import org.quartz.SimpleTrigger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,3 +19,13 @@ class SyncJob : Job {
         logger.info("Next job scheduled @ {}", context?.nextFireTime)
     }
 }
+
+@Configuration
+class SyncJobConf : SyncJobConfAbstract(
+        name = "Sync_Job",
+        jobClass = SyncJob::class.java,
+        description = "Invoke Sample Job service...",
+        durability = true,
+        frequencyInSec = 10,
+        repeatCount = SimpleTrigger.REPEAT_INDEFINITELY
+)
