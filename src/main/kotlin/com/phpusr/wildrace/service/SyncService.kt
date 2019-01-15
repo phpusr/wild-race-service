@@ -106,7 +106,7 @@ class SyncService(
         val vkPosts = (response["items"] as List<*>).reversed()
         val vkProfiles = response["profiles"] as List<*>
 
-        lastDbPosts = getLastPosts()
+        lastDbPosts = getLastPosts() //TODO возможно можно сделать локальным
         removeDeletedPosts(vkPosts)
 
         vkPosts.forEach {
@@ -114,29 +114,31 @@ class SyncService(
             val postId = (vkPost["id"] as Int).toLong()
             val text = vkPost["text"] as String
             val textHash = Util.MD5(text)
-            val eventType: EventType
-            var dbPost = lastDbPosts.find { it.id == postId }
+            val dbPost = lastDbPosts.find { it.id == postId }
+            val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
+            val lastPost = lastDbPosts.find{ it.number != null && it.id != postId && it.date <= postDate }
+            val lastSumDistance = lastPost?.sumDistance ?: 0
+            val lastPostNumber = lastPost?.number ?: 0
 
             if (dbPost != null) {
                 // Если пост уже есть в базе и (он не менялся или было ручное ред-е), то переход к следующему
-                if (textHash == dbPost.textHash || dbPost.lastUpdate != null) {
+                if (textHash == dbPost.textHash && dbPost.startSum == lastSumDistance || dbPost.lastUpdate != null) {
                     return@forEach
                 }
 
-                eventType = EventType.Update
-            } else {
-                eventType = EventType.Create
-                val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
-                // Поиск или создание профиля пользователя
-                val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
-                dbPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
+                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update)
+                return@forEach
             }
 
-            val parserOut = analyzePostText(text, textHash, dbPost, eventType)
+            // Поиск или создание профиля пользователя
+            val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
+            val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
+
+            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
-            if (eventType == EventType.Create && parserOut) {
-                lastDbPosts.add(dbPost)
+            if (parserOut) {
+                lastDbPosts.add(newPost)
                 lastDbPosts.sortBy { it.date.time * -1 }
             }
         }
@@ -171,9 +173,9 @@ class SyncService(
             postSender.accept(EventType.Remove, PostDtoObject.create(it))
             lastDbPosts.remove(it)
         }
-        updateNextPosts(deletedPosts.last())
     }
 
+    //TODO изменить
     fun updateNextPosts(updatePost: Post) {
         initLateInitVars()
         val startPost = if (updatePost.number != null) {
@@ -256,21 +258,16 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, post: Post, eventType: EventType): Boolean {
+    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post, eventType: EventType): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
         val distance: Int?
-        val lastSumDistance: Int?
         val newSumDistance: Int?
 
         post.text = Util.removeBadChars(text) ?: ""
         post.textHash = textHash
         if (parserOut != null) {
-            val lastPost = lastDbPosts.find{ it.number != null && it.id != post.id && it.date <= post.date }
-            lastSumDistance = lastPost?.sumDistance ?: 0
-            val lastPostNumber = lastPost?.number ?: 0
-
             // Проверка суммы
             distance = parserOut.distance!!.sum()
             newSumDistance = lastSumDistance + distance
@@ -289,7 +286,6 @@ class SyncService(
             status = PostParserStatus.ErrorParse
             number = null
             distance = null
-            lastSumDistance = null
             newSumDistance = null
         }
 
@@ -307,7 +303,6 @@ class SyncService(
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
             addStatusComment(post.id, commentText)
-            updateNextPosts(post)
         }
 
         return parserOut != null
