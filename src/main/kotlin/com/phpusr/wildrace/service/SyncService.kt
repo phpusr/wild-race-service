@@ -36,7 +36,7 @@ class SyncService(
         private val postSender: BiConsumer<EventType, PostDto>
 ) {
 
-    private val logger = LoggerFactory.getLogger(SyncService::class.java)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * Кол-во постов для скачивания за 1 раз

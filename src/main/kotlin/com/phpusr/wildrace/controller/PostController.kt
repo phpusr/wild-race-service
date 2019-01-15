@@ -30,7 +30,7 @@ class PostController(
         private val syncService: SyncService
 ) {
 
-    private val logger = LoggerFactory.getLogger(PostController::class.java)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping
     @JsonView(Views.PostDtoREST::class)
