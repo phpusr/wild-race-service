@@ -9,12 +9,12 @@ class RestService {
 
     private val restTemplate = RestTemplate()
 
-    fun get(uri: String, params: Map<String, Any>): java.util.HashMap<*, *>? {
+    fun get(uri: String, params: Map<String, Any>) = get(uri, params, HashMap::class.java)
+
+    fun <T> get(uri: String, params: Map<String, Any>, responseClass: Class<T>): T {
         val query = params.map{ "${it.key}={${it.key}}" }.joinToString(separator = "&")
         val responseEntity = restTemplate.getForEntity("${uri}?${query}", String::class.java, params)
-        val map = ObjectMapper().readValue(responseEntity.body, HashMap::class.java)
-
-        return map
+        return ObjectMapper().readValue(responseEntity.body, responseClass)
     }
 
 }

@@ -8,6 +8,9 @@ import com.phpusr.wildrace.domain.vk.ProfileRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
+import com.phpusr.wildrace.dto.vk.VKGroup
+import com.phpusr.wildrace.dto.vk.VKPost
+import com.phpusr.wildrace.dto.vk.VKProfile
 import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
@@ -55,7 +58,7 @@ class SyncService(
 
         var needSync = true
         while(needSync) {
-            val countPosts = getCountPosts()
+            val countPosts = vkApiService.wallGet(0, 1, false).response.count
             val alreadyDownloadCount = postRepo.count()
             logger.debug(">> Download: $alreadyDownloadCount/$countPosts")
             if (needSync) {
@@ -68,16 +71,6 @@ class SyncService(
         updateLastSyncDate()
     }
 
-    private fun getCountPosts(): Long {
-        val result = vkApiService.wallGet(0, 1, false)
-
-        if (result == null) {
-            throw Exception("Response is null")
-        }
-
-        return ((result["response"] as Map<*, *>)["count"] as Int).toLong()
-    }
-
     private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {
         val offset = if (countPosts - alreadyDownloadCount > downloadCount) {
             countPosts - alreadyDownloadCount - downloadCount
@@ -85,26 +78,24 @@ class SyncService(
 
         val dbProfiles = profileRepo.findAll()
 
-        val result = vkApiService.wallGet(offset, downloadCount, true)
-        val response = result!!["response"] as Map<*, *>
+        val response = vkApiService.wallGet(offset, downloadCount, true).response
 
-        if ((response["count"] as Int).toLong() != countPosts) {
+        if (response.count != countPosts) {
             return
         }
 
-        val vkPosts = (response["items"] as List<*>).reversed()
-        val vkProfiles = response["profiles"] as List<*>
+        val vkPosts = response.items.reversed()
+        val vkProfiles = response.profiles
 
         val lastDbPosts = getLastPosts()
         removeDeletedPosts(vkPosts, lastDbPosts)
 
-        vkPosts.forEach {
-            val vkPost = it as Map<*, *>
-            val postId = (vkPost["id"] as Int).toLong()
-            val text = Util.removeBadChars(vkPost["text"] as String) ?: ""
+        vkPosts.forEach { vkPost ->
+            val postId = vkPost.id
+            val text = Util.removeBadChars(vkPost.text) ?: ""
             val textHash = Util.MD5(text)
             val dbPost = lastDbPosts.find { it.id == postId }
-            val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
+            val postDate = Date(vkPost.date * 1000)
             val lastPost = lastDbPosts.find{ it.number != null && it.id != postId && it.date <= postDate }
             val lastSumDistance = lastPost?.sumDistance ?: 0
             val lastPostNumber = lastPost?.number ?: 0
@@ -120,7 +111,7 @@ class SyncService(
             }
 
             // Поиск или создание профиля пользователя
-            val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
+            val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, response.groups, postDate)
             val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
 
             val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
@@ -139,15 +130,12 @@ class SyncService(
     }
 
     /** Удаление из БД удаленных постов */
-    private fun removeDeletedPosts(vkPosts: List<Any?>, lastDbPosts: MutableList<Post>) {
+    private fun removeDeletedPosts(vkPosts: List<VKPost>, lastDbPosts: MutableList<Post>) {
         // Поиск постов за последние сутки
         val startDate = Date(Date().time - 24 * 3600 * 1000)
         val lastDayPosts = lastDbPosts.filter{ it.date >= startDate }
         val deletedPosts = lastDayPosts.filter { post ->
-            vkPosts.find {
-                val vkPost = it as Map<*, *>
-                (vkPost["id"] as Int).toLong() == post.id
-            } == null
+            vkPosts.find { it.id == post.id } == null
         }
 
         if (deletedPosts.isEmpty()) {
@@ -164,26 +152,38 @@ class SyncService(
         }
     }
 
-    private fun findOrCreateProfile(postMap: Map<*, *>, dbProfiles: MutableIterable<Profile>,
-                                    vkProfiles: List<*>, postDate: Date): Profile {
-        val profileId = (postMap["from_id"] as Int).toLong()
+    private fun findOrCreateProfile(post: VKPost, dbProfiles: MutableIterable<Profile>,
+                                    vkProfiles: List<VKProfile>, vkGroups: List<VKGroup>, postDate: Date): Profile {
+        val profileId = post.from_id
         var dbProfile = dbProfiles.find { it.id == profileId }
         if (dbProfile == null) {
-            val vkProfile = vkProfiles.find {
-                val map = it as Map<*, *>
-                (map["id"] as Int).toLong() == profileId
+            dbProfile = Profile(profileId, postDate).apply {
+                firstName = "Unknown"
+                lastName = "Unknown"
             }
-            val profileMap = if (vkProfile == null) {
-                mapOf("first_name" to "Unknown", "lastName" to "Unknown")
+
+            val vkProfile = vkProfiles.find { it.id == profileId }
+            if (vkProfile != null) {
+                with(dbProfile) {
+                    firstName = vkProfile.first_name
+                    lastName = vkProfile.last_name
+                    sex = vkProfile.sex?.toInt()
+                    photo_50 = vkProfile.photo_50
+                    photo_100 = vkProfile.photo_100
+                }
             } else {
-                vkProfile as Map<*, *>
+                val vkGroup = vkGroups.find{ it.id == profileId }
+                if (vkGroup != null) {
+                    with(dbProfile) {
+                        firstName = vkGroup.name
+                        photo_50 = vkGroup.photo_50
+                        photo_100 = vkGroup.photo_100
+                        photo_200 = vkGroup.photo_200
+                    }
+
+                }
             }
-            dbProfile = Profile(profileId, postDate)
-            dbProfile.firstName = profileMap["first_name"] as String?
-            dbProfile.lastName = profileMap["lastName"] as String?
-            dbProfile.sex = profileMap["sex"] as Int?
-            dbProfile.photo_50 = profileMap["photo_50"] as String?
-            dbProfile.photo_100 = profileMap["photo_100"] as String?
+
             profileRepo.save(dbProfile)
             dbProfiles.plus(dbProfile)
         }

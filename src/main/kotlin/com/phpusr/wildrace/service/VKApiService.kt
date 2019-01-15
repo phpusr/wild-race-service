@@ -1,8 +1,8 @@
 package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.consts.Consts
+import com.phpusr.wildrace.dto.vk.WallGet
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class VKApiService(
@@ -12,7 +12,13 @@ class VKApiService(
 
     private val Url = "https://api.vk.com/method"
 
-    fun wallGet(offset: Long, count: Int, extended: Boolean): HashMap<*, *>? {
+    /**
+     * Возвращает посты со стены
+     * @param offset смещение относительно последнего поста
+     * @param count кол-во постов для скачивания
+     * @param extended если true возвращает массив профилей авторов постов
+     */
+    fun wallGet(offset: Long, count: Int, extended: Boolean): WallGet {
         val config = configService.get()
         val params = mapOf(
                 "owner_id" to  config.groupId,
@@ -23,9 +29,7 @@ class VKApiService(
                 "extended" to if (extended) 1 else 0,
                 "access_token" to config.commentAccessToken
         )
-        val response = restService.get("${Url}/wall.get", params)
-
-        return response
+        return restService.get("${Url}/wall.get", params, WallGet::class.java)
     }
 
     fun wallAddComment(postId: Long, text: String) {
@@ -38,7 +42,7 @@ class VKApiService(
                 "access_token" to config.commentAccessToken,
                 "from_group" to if (config.commentFromGroup) 1 else 0
         )
-        val response = restService.get("${Url}/wall.addComment", params)
+        restService.get("${Url}/wall.addComment", params)
     }
 
 }
