@@ -174,31 +174,6 @@ class SyncService(
         }
     }
 
-    fun updateNextPosts(updatePost: Post) {
-        initLateInitVars()
-        val startPost = if (updatePost.number != null) {
-            updatePost
-        } else {
-            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
-            postRepo.findRunningPage(pageable, null, updatePost.date).getOrNull(0)
-        }
-        logger.debug("> Update next, start: ${startPost}")
-
-        var currentPostNumber = startPost?.number ?: 0
-        var currentSumDistance = startPost?.sumDistance ?: 0
-
-        val pageable = PageRequest.of(0, Int.MAX_VALUE, Sort(Sort.Direction.ASC, "date"))
-        val nextPosts = postRepo.findRunningPage(pageable, updatePost.date).filter {
-            startPost == null || it.id != startPost.id && it.date >= startPost.date
-        }
-
-        nextPosts.forEach { post ->
-            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
-            currentSumDistance = post.sumDistance!!
-            currentPostNumber = post.number!!
-        }
-    }
-
     private fun findOrCreateProfile(postMap: Map<*, *>, dbProfiles: MutableIterable<Profile>, vkProfiles: List<*>, postDate: Date): Profile {
         val profileId = (postMap["from_id"] as Int).toLong()
         var dbProfile = dbProfiles.find { it.id == profileId }
@@ -318,6 +293,31 @@ class SyncService(
     private fun updateLastSyncDate() {
         val tempData = tempDataRepo.get()
         tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
+    }
+
+    fun updateNextPosts(updatePost: Post) {
+        initLateInitVars()
+        val startPost = if (updatePost.number != null) {
+            updatePost
+        } else {
+            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
+            postRepo.findRunningPage(pageable, null, updatePost.date).getOrNull(0)
+        }
+        logger.debug("> Update next, start: ${startPost}")
+
+        var currentPostNumber = startPost?.number ?: 0
+        var currentSumDistance = startPost?.sumDistance ?: 0
+
+        val pageable = PageRequest.of(0, Int.MAX_VALUE, Sort(Sort.Direction.ASC, "date"))
+        val nextPosts = postRepo.findRunningPage(pageable, updatePost.date).filter {
+            startPost == null || it.id != startPost.id && it.date >= startPost.date
+        }
+
+        nextPosts.forEach { post ->
+            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
+            currentSumDistance = post.sumDistance!!
+            currentPostNumber = post.number!!
+        }
     }
 
     private fun initLateInitVars() {
