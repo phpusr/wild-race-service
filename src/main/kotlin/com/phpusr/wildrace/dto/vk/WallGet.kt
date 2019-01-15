@@ -1,6 +1,9 @@
 package com.phpusr.wildrace.dto.vk
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.phpusr.wildrace.util.Util
+import java.util.*
 
 class WallGet {
     lateinit var response: WallGetResponse
@@ -18,8 +21,23 @@ class WallGetResponse {
 class VKPost {
     var id = -1L
     var from_id = -1L
-    var date = -1L
+    lateinit var date: Date
+        private set
     lateinit var text: String
+        private set
+    lateinit var textHash: String
+        private set
+
+    @JsonSetter("date")
+    fun date(value: Long) {
+        date = Date(value * 1000)
+    }
+
+    @JsonSetter
+    fun text(value: String) {
+        text = Util.removeBadChars(value) ?: ""
+        textHash = Util.MD5(text)
+    }
 }
 
 @JsonIgnoreProperties("screen_name", "online")

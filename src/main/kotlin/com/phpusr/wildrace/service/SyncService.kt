@@ -13,7 +13,6 @@ import com.phpusr.wildrace.dto.vk.VKPost
 import com.phpusr.wildrace.dto.vk.VKProfile
 import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
-import com.phpusr.wildrace.util.Util
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -92,29 +91,26 @@ class SyncService(
 
         vkPosts.forEach { vkPost ->
             val postId = vkPost.id
-            val text = Util.removeBadChars(vkPost.text) ?: ""
-            val textHash = Util.MD5(text)
             val dbPost = lastDbPosts.find { it.id == postId }
-            val postDate = Date(vkPost.date * 1000)
-            val lastPost = lastDbPosts.find{ it.number != null && it.id != postId && it.date <= postDate }
+            val lastPost = lastDbPosts.find{ it.number != null && it.id != postId && it.date <= vkPost.date }
             val lastSumDistance = lastPost?.sumDistance ?: 0
             val lastPostNumber = lastPost?.number ?: 0
 
             if (dbPost != null) {
                 // Если пост уже есть в базе и (он не менялся или было ручное ред-е), то переход к следующему
-                if (textHash == dbPost.textHash && dbPost.startSum == lastSumDistance || dbPost.lastUpdate != null) {
+                if (vkPost.textHash == dbPost.textHash && dbPost.startSum == lastSumDistance || dbPost.lastUpdate != null) {
                     return@forEach
                 }
 
-                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update)
+                analyzePostText(vkPost.text, vkPost.textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update)
                 return@forEach
             }
 
             // Поиск или создание профиля пользователя
-            val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, response.groups, postDate)
-            val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
+            val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, response.groups)
+            val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, vkPost.date)
 
-            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
+            val parserOut = analyzePostText(vkPost.text, vkPost.textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (parserOut) {
@@ -142,22 +138,22 @@ class SyncService(
             return
         }
 
-        logger.debug(">> Delete vkPosts: ${deletedPosts}")
-        deletedPosts.forEach {
-            logger.debug(" -- Delete: ${it}")
-            it.number = null
-            postRepo.delete(it)
-            postSender.accept(EventType.Remove, PostDtoObject.create(it))
-            lastDbPosts.remove(it)
+        logger.debug(">> Delete vkPosts: $deletedPosts")
+        deletedPosts.forEach { post ->
+            logger.debug(" -- Delete: $post")
+            post.number = null
+            postRepo.delete(post)
+            postSender.accept(EventType.Remove, PostDtoObject.create(post))
+            lastDbPosts.remove(post)
         }
     }
 
-    private fun findOrCreateProfile(post: VKPost, dbProfiles: MutableIterable<Profile>,
-                                    vkProfiles: List<VKProfile>, vkGroups: List<VKGroup>, postDate: Date): Profile {
-        val profileId = post.from_id
+    private fun findOrCreateProfile(vkPost: VKPost, dbProfiles: MutableIterable<Profile>,
+                                    vkProfiles: List<VKProfile>, vkGroups: List<VKGroup>): Profile {
+        val profileId = vkPost.from_id
         var dbProfile = dbProfiles.find { it.id == profileId }
         if (dbProfile == null) {
-            dbProfile = Profile(profileId, postDate).apply {
+            dbProfile = Profile(profileId, vkPost.date).apply {
                 firstName = "Unknown"
                 lastName = "Unknown"
             }
@@ -232,7 +228,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            logger.debug(" -- ${eventType.name} post after analyze: ${post}")
+            logger.debug(" -- ${eventType.name} post after analyze: $post")
             postSender.accept(eventType, PostDtoObject.create(post, configService.get()))
 
             // Комментарий статуса обработки поста
@@ -294,7 +290,7 @@ class SyncService(
             val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
             postRepo.findRunningPage(pageable, null, updatePost.date).getOrNull(0)
         }
-        logger.debug("> Update next, start: ${startPost}")
+        logger.debug("> Update next, start: $startPost")
 
         var currentPostNumber = startPost?.number ?: 0
         var currentSumDistance = startPost?.sumDistance ?: 0

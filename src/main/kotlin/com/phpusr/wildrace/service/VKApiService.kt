@@ -10,7 +10,7 @@ class VKApiService(
         private val restService: RestService
 ) {
 
-    private val Url = "https://api.vk.com/method"
+    private val url = "https://api.vk.com/method"
 
     /**
      * Возвращает посты со стены
@@ -29,7 +29,7 @@ class VKApiService(
                 "extended" to if (extended) 1 else 0,
                 "access_token" to config.commentAccessToken
         )
-        return restService.get("${Url}/wall.get", params, WallGet::class.java)
+        return restService.get("$url/wall.get", params, WallGet::class.java)
     }
 
     fun wallAddComment(postId: Long, text: String) {
@@ -42,7 +42,7 @@ class VKApiService(
                 "access_token" to config.commentAccessToken,
                 "from_group" to if (config.commentFromGroup) 1 else 0
         )
-        restService.get("${Url}/wall.addComment", params)
+        restService.get("$url/wall.addComment", params)
     }
 
 }
