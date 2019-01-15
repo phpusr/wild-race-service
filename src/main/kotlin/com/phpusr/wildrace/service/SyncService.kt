@@ -1,5 +1,6 @@
 package com.phpusr.wildrace.service
 
+import com.phpusr.wildrace.domain.data.Config
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
@@ -51,17 +52,19 @@ class SyncService(
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
 
-        if (!configRepo.get().syncPosts) {
+        val config = configRepo.get()
+
+        if (!config.syncPosts) {
             return
         }
 
         var needSync = true
         while(needSync) {
-            val countPosts = getCountPosts()
+            val countPosts = getCountPosts(config)
             val alreadyDownloadCount = postRepo.count()
             logger.debug(">> Download: ${alreadyDownloadCount}/${countPosts}")
             if (needSync) {
-                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
+                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount, config)
                 needSync = alreadyDownloadCount < countPosts
                 Thread.sleep(syncBlockInterval)
             }
@@ -70,8 +73,8 @@ class SyncService(
         updateLastSyncDate()
     }
 
-    private fun getCountPosts(): Long {
-        val result = vkApiService.wallGet(0, 1, false)
+    private fun getCountPosts(config: Config): Long {
+        val result = vkApiService.wallGet(0, 1, false, config)
 
         if (result == null) {
             throw Exception("Response is null")
@@ -80,14 +83,14 @@ class SyncService(
         return ((result["response"] as Map<*, *>)["count"] as Int).toLong()
     }
 
-    private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {
+    private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int, config: Config) {
         val offset = if (countPosts - alreadyDownloadCount > downloadCount) {
             countPosts - alreadyDownloadCount - downloadCount
         } else 0
 
         val dbProfiles = profileRepo.findAll()
 
-        val result = vkApiService.wallGet(offset, downloadCount, true)
+        val result = vkApiService.wallGet(offset, downloadCount, true, config)
         val response = result!!["response"] as Map<*, *>
 
         if ((response["count"] as Int).toLong() != countPosts) {
@@ -117,7 +120,7 @@ class SyncService(
                     return@forEach
                 }
 
-                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update)
+                analyzePostText(text, textHash, lastSumDistance, lastPostNumber, dbPost, EventType.Update, config)
                 return@forEach
             }
 
@@ -125,7 +128,7 @@ class SyncService(
             val dbProfile = findOrCreateProfile(vkPost, dbProfiles, vkProfiles, postDate)
             val newPost = Post(postId, PostParserStatus.Success.id, dbProfile, postDate)
 
-            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
+            val parserOut = analyzePostText(text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create, config)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (parserOut) {
@@ -193,7 +196,7 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post, eventType: EventType): Boolean {
+    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post, eventType: EventType, config: Config): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
@@ -233,11 +236,11 @@ class SyncService(
 
             postRepo.save(post)
             logger.debug(" -- ${eventType.name} post after analyze: ${post}")
-            postSender.accept(eventType, PostDtoObject.create(post, configRepo.get()))
+            postSender.accept(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
-            addStatusComment(post.id, commentText)
+            addStatusComment(post.id, commentText, config)
         }
 
         return parserOut != null
@@ -271,15 +274,15 @@ class SyncService(
         return commentText.toString()
     }
 
-    private fun addStatusComment(postId: Long, commentText: String) {
-        if (!configRepo.get().commenting) {
+    private fun addStatusComment(postId: Long, commentText: String, config: Config) {
+        if (!config.commenting) {
             return
         }
 
         // Задержка перед добавлением комментария, чтобы не заблокировали пользователя
         Thread.sleep(publishingCommentInterval)
 
-        vkApiService.wallAddComment(postId, commentText)
+        vkApiService.wallAddComment(postId, commentText, config)
     }
 
     private fun updateLastSyncDate() {
@@ -304,8 +307,9 @@ class SyncService(
             startPost == null || it.id != startPost.id && it.date >= startPost.date
         }
 
+        val config = configRepo.get()
         nextPosts.forEach { post ->
-            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
+            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update, config)
             currentSumDistance = post.sumDistance!!
             currentPostNumber = post.number!!
         }
