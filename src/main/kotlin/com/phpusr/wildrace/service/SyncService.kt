@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
 import java.util.function.BiConsumer
 
@@ -141,10 +139,10 @@ class SyncService(
 
     /** Удаление из БД удаленных постов */
     private fun removeDeletedPosts(vkPosts: List<Any?>, lastDbPosts: MutableList<Post>) {
-        val startDate = Date.from(ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant())
-        val endDate = Date(startDate.time + 24 * 3600 * 1000 - 1)
-        val todayPosts = lastDbPosts.filter{ it.date >= startDate && it.date <= endDate }
-        val deletedPosts = todayPosts.filter { post ->
+        // Поиск постов за последние сутки
+        val startDate = Date(Date().time - 24 * 3600 * 1000)
+        val lastDayPosts = lastDbPosts.filter{ it.date >= startDate }
+        val deletedPosts = lastDayPosts.filter { post ->
             vkPosts.find {
                 val vkPost = it as Map<*, *>
                 (vkPost["id"] as Int).toLong() == post.id
