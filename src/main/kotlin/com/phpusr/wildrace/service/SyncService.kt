@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.data.Config
 import com.phpusr.wildrace.domain.data.ConfigRepo
 import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
@@ -14,19 +13,15 @@ import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Scope
-import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.web.context.WebApplicationContext
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.function.BiConsumer
 
 @Service
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 class SyncService(
         private val configRepo: ConfigRepo,
         private val postRepo: PostRepo,
@@ -53,13 +48,10 @@ class SyncService(
     /** Интервал между публикациями комментариев */
     private val publishingCommentInterval = 300L
 
-    private lateinit var config: Config
-
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
-        initLateInitVars()
 
-        if (!config.syncPosts) {
+        if (!configRepo.get().syncPosts) {
             return
         }
 
@@ -241,7 +233,7 @@ class SyncService(
 
             postRepo.save(post)
             logger.debug(" -- ${eventType.name} post after analyze: ${post}")
-            postSender.accept(eventType, PostDtoObject.create(post, config))
+            postSender.accept(eventType, PostDtoObject.create(post, configRepo.get()))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
@@ -280,7 +272,7 @@ class SyncService(
     }
 
     private fun addStatusComment(postId: Long, commentText: String) {
-        if (!config.commenting) {
+        if (!configRepo.get().commenting) {
             return
         }
 
@@ -296,7 +288,6 @@ class SyncService(
     }
 
     fun updateNextPosts(updatePost: Post) {
-        initLateInitVars()
         val startPost = if (updatePost.number != null) {
             updatePost
         } else {
@@ -317,14 +308,6 @@ class SyncService(
             analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
             currentSumDistance = post.sumDistance!!
             currentPostNumber = post.number!!
-        }
-    }
-
-    private fun initLateInitVars() {
-        try {
-            config
-        } catch(ignored: UninitializedPropertyAccessException) {
-            config = configRepo.get()
         }
     }
 
