@@ -29,46 +29,43 @@ class SpringQuartzScheduler(private val applicationContext: ApplicationContext) 
 
     @Bean
     fun springBeanJobFactory(): SpringBeanJobFactory {
-        val jobFactory = AutoWiringSpringBeanJobFactory()
         logger.debug("Configuring Job factory")
-        jobFactory.setApplicationContext(applicationContext)
-        return jobFactory
+        return AutoWiringSpringBeanJobFactory().apply {
+            setApplicationContext(applicationContext)
+        }
     }
 
     @Bean
     fun scheduler(trigger: Trigger, job: JobDetail): SchedulerFactoryBean {
-        val schedulerFactory = SchedulerFactoryBean()
-        schedulerFactory.setConfigLocation(ClassPathResource("quartz.properties"))
-
         logger.debug("Setting the Scheduler up")
-        schedulerFactory.setJobFactory(springBeanJobFactory())
-        schedulerFactory.setJobDetails(job)
-        schedulerFactory.setTriggers(trigger)
-
-        return schedulerFactory
+        return SchedulerFactoryBean().apply {
+            setConfigLocation(ClassPathResource("quartz.properties"))
+            setJobFactory(springBeanJobFactory())
+            setJobDetails(job)
+            setTriggers(trigger)
+        }
     }
 
     @Bean
     fun jobDetail(): JobDetailFactoryBean {
-        val jobDetailFactory = JobDetailFactoryBean()
-        jobDetailFactory.setJobClass(SyncJob::class.java)
-        jobDetailFactory.setName("Qrtz_Job_Detail")
-        jobDetailFactory.setDescription("Invoke Sample Job service...")
-        jobDetailFactory.setDurability(true)
-        return jobDetailFactory
+        return JobDetailFactoryBean().apply {
+            setJobClass(SyncJob::class.java)
+            setName("Qrtz_Job_Detail")
+            setDescription("Invoke Sample Job service...")
+            setDurability(true)
+        }
     }
 
     @Bean
     fun trigger(job: JobDetail): SimpleTriggerFactoryBean {
-        val trigger = SimpleTriggerFactoryBean()
-        trigger.setJobDetail(job)
-
         val frequencyInSec = 10L
         logger.info("Configuring trigger to fire every {} seconds", frequencyInSec)
 
-        trigger.setRepeatInterval(frequencyInSec * 1000)
-        trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY)
-        trigger.setName("Qrtz_Trigger")
-        return trigger
+        return SimpleTriggerFactoryBean().apply {
+            setJobDetail(job)
+            setRepeatInterval(frequencyInSec * 1000)
+            setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY)
+            setName("Qrtz_Trigger")
+        }
     }
 }
