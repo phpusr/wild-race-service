@@ -111,7 +111,7 @@ class SyncService(
         vkPosts.forEach {
             val vkPost = it as Map<*, *>
             val postId = (vkPost["id"] as Int).toLong()
-            val text = vkPost["text"] as String
+            val text = Util.removeBadChars(vkPost["text"] as String) ?: ""
             val textHash = Util.MD5(text)
             val dbPost = lastDbPosts.find { it.id == postId }
             val postDate = Date((vkPost["date"] as Int).toLong() * 1000)
@@ -179,21 +179,23 @@ class SyncService(
         val startPost = if (updatePost.number != null) {
             updatePost
         } else {
-            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.ASC, "date"))
-            postRepo.findRunningPage(pageable, updatePost.date).getOrNull(0)
+            val pageable = PageRequest.of(0, 1, Sort(Sort.Direction.DESC, "date"))
+            postRepo.findRunningPage(pageable, null, updatePost.date).getOrNull(0)
         }
-        logger.debug(" Update next, start: ${startPost}")
+        logger.debug("> Update next, start: ${startPost}")
 
-        val startPostNumber = startPost?.number ?: 0
-        val startSumDistance = startPost?.sumDistance ?: 0
+        var currentPostNumber = startPost?.number ?: 0
+        var currentSumDistance = startPost?.sumDistance ?: 0
 
         val pageable = PageRequest.of(0, Int.MAX_VALUE, Sort(Sort.Direction.ASC, "date"))
-        val nextPosts = postRepo.findRunningPage(pageable, updatePost.date).filter{
-            startPost != null && it.id != startPost.id && it.date >= startPost.date
+        val nextPosts = postRepo.findRunningPage(pageable, updatePost.date).filter {
+            startPost == null || it.id != startPost.id && it.date >= startPost.date
         }
 
         nextPosts.forEach { post ->
-            analyzePostText(post.text, post.textHash, startSumDistance, startPostNumber, post, EventType.Update)
+            analyzePostText(post.text, post.textHash, currentSumDistance, currentPostNumber, post, EventType.Update)
+            currentSumDistance = post.sumDistance!!
+            currentPostNumber = post.number!!
         }
     }
 
@@ -231,7 +233,7 @@ class SyncService(
         val distance: Int?
         val newSumDistance: Int?
 
-        post.text = Util.removeBadChars(text) ?: ""
+        post.text = text
         post.textHash = textHash
         if (parserOut != null) {
             // Проверка суммы
@@ -263,7 +265,7 @@ class SyncService(
             post.statusId = status.id
 
             postRepo.save(post)
-            logger.debug("${eventType.name} post after analyze: ${post}")
+            logger.debug(" -- ${eventType.name} post after analyze: ${post}")
             postSender.accept(eventType, PostDtoObject.create(post, config))
 
             // Комментарий статуса обработки поста
