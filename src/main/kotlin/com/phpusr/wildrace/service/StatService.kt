@@ -1,8 +1,10 @@
 package com.phpusr.wildrace.service
 
+import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
+import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
 import org.springframework.data.domain.PageRequest
@@ -13,10 +15,15 @@ import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.function.BiConsumer
 import kotlin.NoSuchElementException
 
 @Service
-class StatService(private val postRepo: PostRepo) {
+class StatService(
+        private val postRepo: PostRepo,
+        private val tempDataRepo: TempDataRepo,
+        private val statSender: BiConsumer<EventType, Map<String, Any>>
+) {
 
     fun calcStat(typeForm: String?, startRange: String?, endRange: String?): StatDto {
         val stat = StatDto()
@@ -121,6 +128,23 @@ class StatService(private val postRepo: PostRepo) {
         }
 
         return Duration.of(endDate.time - startDate.time, ChronoUnit.MILLIS).toDays().toInt() + 1
+    }
+
+    fun getStat(): Map<String, Any> {
+        val lastPost = getOneRunning(Sort.Direction.DESC)
+
+        return mapOf(
+                "sumDistance" to (lastPost?.sumDistance ?: 0),
+                "numberOfRuns" to (lastPost?.number ?: 0),
+                "numberOfPosts" to postRepo.count()
+        )
+    }
+
+    fun updateStat() {
+        val tempData = tempDataRepo.get()
+        tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
+
+        statSender.accept(EventType.Update, getStat())
     }
 
 }

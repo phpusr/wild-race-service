@@ -39,9 +39,9 @@
             page: 0,
             infiniteId: +new Date(),
             stat: {
-                numberOfRuns: 0,
                 sumDistance: 0,
-                total: 0
+                numberOfRuns: 0,
+                numberOfPosts: 0
             }
         }),
         created() {
@@ -57,27 +57,24 @@
                             } else {
                                 replaceObject(this.posts, data.body);
                             }
-                            this.updateStat();
                             break;
                         case 'Update':
                             replaceObject(this.posts, data.body);
-                            this.updateStat();
                             break;
                         case 'Remove':
                             if (deleteObject(this.posts, data.body.id)) {
                                 this.totalElements--;
-                                this.updateStat();
                             }
                             break;
                         default:
                             throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
                     }
+                } if (data.objectType === 'Stat') {
+                    this.stat = data.body;
                 } else {
                     throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
                 }
             });
-
-            this.updateStat();
         },
         beforeRouteUpdate (to, from, next) {
             next();
@@ -107,10 +104,6 @@
                 } else {
                     $state.complete();
                 }
-            },
-            async updateStat() {
-                const {body} = await postApi.getStat();
-                this.stat = body;
             }
         },
         computed: {

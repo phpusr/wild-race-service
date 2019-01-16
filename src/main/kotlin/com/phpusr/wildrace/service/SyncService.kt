@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.domain.vk.Profile
@@ -24,7 +23,7 @@ import java.util.function.BiConsumer
 class SyncService(
         private val configService: ConfigService,
         private val postRepo: PostRepo,
-        private val tempDataRepo: TempDataRepo,
+        private val statService: StatService,
         private val profileRepo: ProfileRepo,
         private val vkApiService: VKApiService,
         private val postSender: BiConsumer<EventType, PostDto>
@@ -67,7 +66,7 @@ class SyncService(
             }
         }
 
-        updateLastSyncDate()
+        statService.updateStat()
     }
 
     private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {
@@ -276,11 +275,6 @@ class SyncService(
         Thread.sleep(publishingCommentInterval)
 
         vkApiService.wallAddComment(postId, commentText)
-    }
-
-    private fun updateLastSyncDate() {
-        val tempData = tempDataRepo.get()
-        tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
     }
 
     fun updateNextPosts(updatePost: Post) {

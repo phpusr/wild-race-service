@@ -32,4 +32,9 @@ class WsSenderConfiguration {
     fun postSender(wsSender: WsSender): BiConsumer<EventType, PostDto> {
         return wsSender.getSender(ObjectType.Post, Views.PostDtoREST::class.java)
     }
+
+    @Bean
+    fun statSender(wsSender: WsSender): BiConsumer<EventType, Map<String, Any>> {
+        return wsSender.getSender(ObjectType.Stat, Views.Id::class.java)
+    }
 }
