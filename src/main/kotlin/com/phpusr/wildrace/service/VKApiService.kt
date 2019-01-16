@@ -29,7 +29,7 @@ class VKApiService(
                 "extended" to if (extended) 1 else 0,
                 "access_token" to config.commentAccessToken
         )
-        return restService.get("$url/wall.get", params, WallGet::class.java)
+        return restService.get("$url/wall.get", params, WallGet::class)
     }
 
     fun wallAddComment(postId: Long, text: String) {
