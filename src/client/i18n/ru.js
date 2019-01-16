@@ -45,7 +45,8 @@ export default {
         manualEditing: 'Ручная правка',
         lastSyncDate: 'Последняя синхронизация',
         noMoreMessages: '',
-        noResults: 'Нет данных'
+        noResults: 'Нет данных',
+        updateNextPosts: 'Обновлять следущие посты'
     },
     stat: {
         distanceRange: 'Диапазон расстояний',

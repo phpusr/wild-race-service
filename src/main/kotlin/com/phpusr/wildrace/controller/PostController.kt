@@ -2,14 +2,12 @@ package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Views
-import com.phpusr.wildrace.domain.data.TempDataRepo
 import com.phpusr.wildrace.domain.vk.Post
 import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.ConfigService
-import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
@@ -23,8 +21,6 @@ import java.util.function.BiConsumer
 @RequestMapping("post")
 class PostController(
         private val postRepo: PostRepo,
-        private val statService: StatService,
-        private val tempDataRepo: TempDataRepo,
         private val configService: ConfigService,
         private val postSender: BiConsumer<EventType, PostDto>,
         private val syncService: SyncService
@@ -54,33 +50,37 @@ class PostController(
 
     @PutMapping("{id}")
     @JsonView(Views.PostDtoREST::class)
-    fun update(@RequestBody postDto: PostDto): PostDto? {
+    fun update(@RequestBody postDto: PostDto, @RequestParam(defaultValue = "false") updateNextPosts: Boolean): PostDto {
         val post = postRepo.findById(postDto.id).orElseThrow{ RuntimeException("post_not_found") }
-        logger.debug(">> Hand update post: ${post}")
-        post.number = postDto.number
-        post.statusId = postDto.statusId
-        post.distance = postDto.distance
-        post.sumDistance = postDto.sumDistance
-        post.editReason = postDto.editReason
-        post.lastUpdate = Date()
+        logger.debug(">> Hand update post: $post")
+        post.apply {
+            number = postDto.number
+            statusId = postDto.statusId
+            distance = postDto.distance
+            sumDistance = postDto.sumDistance
+            editReason = postDto.editReason
+            lastUpdate = Date()
+        }
         postRepo.save(post)
 
         val updatePostDto = PostDtoObject.create(post, configService.get())
         postSender.accept(EventType.Update, updatePostDto)
-        //TODO добавить параметр, который будет определять запуск
-        syncService.updateNextPosts(post)
+        if (updateNextPosts) {
+            syncService.updateNextPosts(post)
+        }
 
         return updatePostDto
     }
 
     @DeleteMapping("{id}")
-    fun delete(@PathVariable("id") post: Post): Long {
+    fun delete(@PathVariable("id") post: Post, @RequestParam(defaultValue = "false") updateNextPosts: Boolean): Long {
         logger.debug(">> Hand delete post: ${post}")
         postRepo.deleteById(post.id)
         postSender.accept(EventType.Remove, PostDtoObject.create(post))
         post.number = null
-        //TODO добавить параметр, который будет определять запуск
-        syncService.updateNextPosts(post)
+        if (updateNextPosts) {
+            syncService.updateNextPosts(post)
+        }
 
         return post.id
     }

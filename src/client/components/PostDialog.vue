@@ -28,6 +28,10 @@
                             v-model="post.editReason"
                             :label="$t('post.editReason')"
                     />
+                    <v-checkbox
+                            v-model="updateNextPosts"
+                            :label="$t('post.updateNextPosts')"
+                    />
                 </v-form>
             </v-card-text>
 
@@ -59,6 +63,7 @@
             return {
                 valid: false,
                 post: {},
+                updateNextPosts: false
             }
         },
         created() {
@@ -87,12 +92,12 @@
                 this.post = body;
             },
             async update() {
-                await postApi.update(this.post);
+                await postApi.update(this.post, this.updateNextPosts);
                 this.goToMainPage();
             },
             async remove() {
                 if (confirm(this.$t('default.confirmDelete'))) {
-                    await postApi.remove(this.post.id);
+                    await postApi.remove(this.post.id, this.updateNextPosts);
                     this.goToMainPage();
                 }
             },
