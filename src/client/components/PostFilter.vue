@@ -56,7 +56,12 @@
         },
         methods: {
             changeQuery(name, value) {
-                const query = { ...this.$route.query, [name]: value || undefined };
+                const query = { ...this.$route.query };
+                if (value) {
+                    query[name] = value;
+                } else {
+                    delete query[name];
+                }
                 this.$router.push({ path: '/', query });
             }
         }
