@@ -46,12 +46,6 @@ class PostController(
         return mapOf("list" to list, "totalElements" to page.totalElements)
     }
 
-    //TODO прислать при загрузке страницы
-    @GetMapping("getStat")
-    fun getStat() = statService.getStat()
-    @GetMapping("getLastSyncDate")
-    fun getLastSyncDate() = tempDataRepo.get().lastSyncDate.time
-
     @GetMapping("{id}")
     @JsonView(Views.PostDtoREST::class)
     fun get(@PathVariable("id") post: Post): PostDto {
