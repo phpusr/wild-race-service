@@ -15,8 +15,20 @@ export function connectToWS() {
         handlers.forEach(h => stompClient.subscribe(h.id, message =>
             h.handler(JSON.parse(message.body))
         ));
+        handlers.splice(0, handlers.length);
         messages.forEach(m => stompClient.send(m.action, m.json));
+        messages.splice(0, messages.length);
+
+        socket.onerror = socketFail;
+        socket.onclose = socketFail;
     });
+}
+
+function socketFail() {
+    connected = false;
+    if (confirm('Error connect to ws. Reload page?')) {
+        location.reload();
+    }
 }
 
 export function addHandler(id, handler) {
