@@ -42,18 +42,11 @@
 
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
-    import dateFormat from "date-format"
-    import postApi from '../api/post'
+    import {mapState} from 'vuex'
 
     export default {
-        data: () => ({
-            lastSyncDate: null
-        }),
-        async created() {
-            const {body} = await postApi.getLastSyncDate();
-            this.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(body));
-        },
         computed: {
+            ...mapState(['lastSyncDate']),
             statuses() {
                 const statuses = this.$t('post.statuses');
                 return Object.keys(statuses).map(key => (

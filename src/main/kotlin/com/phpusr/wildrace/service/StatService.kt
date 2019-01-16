@@ -22,7 +22,8 @@ import kotlin.NoSuchElementException
 class StatService(
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
-        private val statSender: BiConsumer<EventType, Map<String, Any>>
+        private val statSender: BiConsumer<EventType, Map<String, Any>>,
+        private val lastSyncDateSender: BiConsumer<EventType, Long>
 ) {
 
     fun calcStat(typeForm: String?, startRange: String?, endRange: String?): StatDto {
@@ -143,7 +144,7 @@ class StatService(
     fun updateStat() {
         val tempData = tempDataRepo.get()
         tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
-
+        lastSyncDateSender.accept(EventType.Update, tempData.lastSyncDate.time)
         statSender.accept(EventType.Update, getStat())
     }
 

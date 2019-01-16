@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {deleteObject, replaceObject} from "../util/collections";
+import dateFormat from "date-format"
 
 Vue.use(Vuex);
 
@@ -14,7 +15,8 @@ export default new Vuex.Store({
                 numberOfRuns: 0,
                 numberOfPosts: 0
             },
-        }
+        },
+        lastSyncDate: null
     },
     getters: {},
     mutations: {
@@ -48,6 +50,9 @@ export default new Vuex.Store({
         },
         updatePostStatMutation(state, stat) {
             state.post.stat = stat;
+        },
+        updateLastSyncDateMutation(state, date) {
+            state.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(date));
         }
     },
     actions: {}

@@ -37,4 +37,9 @@ class WsSenderConfiguration {
     fun statSender(wsSender: WsSender): BiConsumer<EventType, Map<String, Any>> {
         return wsSender.getSender(ObjectType.Stat, Views.Id::class.java)
     }
+
+    @Bean
+    fun lastSyncDateSender(wsSender: WsSender): BiConsumer<EventType, Long> {
+        return wsSender.getSender(ObjectType.LastSyncDate, Views.Id::class.java)
+    }
 }

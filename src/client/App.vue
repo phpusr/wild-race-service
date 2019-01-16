@@ -62,7 +62,8 @@
             }
         },
         methods: {
-            ...mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation']),
+            ...mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation',
+                'updateLastSyncDateMutation']),
             async sync() {
                 try {
                     await postApi.sync();
@@ -74,22 +75,25 @@
         },
         created() {
             addHandler('/topic/activity', data => {
+                const body = data.body;
                 if (data.objectType === 'Post') {
                     switch(data.eventType) {
                         case 'Create':
-                            this.addPostMutation(data.body);
+                            this.addPostMutation(body);
                             break;
                         case 'Update':
-                            this.updatePostMutation(data.body);
+                            this.updatePostMutation(body);
                             break;
                         case 'Remove':
-                            this.removePostMutation(data.body);
+                            this.removePostMutation(body);
                             break;
                         default:
                             throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
                     }
                 } else if (data.objectType === 'Stat') {
-                    this.updatePostStatMutation(data.body);
+                    this.updatePostStatMutation(body);
+                } else if (data.objectType === 'LastSyncDate') {
+                    this.updateLastSyncDateMutation(body);
                 } else {
                     throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
                 }
