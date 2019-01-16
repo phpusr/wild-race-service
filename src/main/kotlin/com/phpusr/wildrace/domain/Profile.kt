@@ -1,8 +1,7 @@
-package com.phpusr.wildrace.domain.vk
+package com.phpusr.wildrace.domain
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.consts.Consts
-import com.phpusr.wildrace.domain.Views
 import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.Range
 import org.springframework.data.repository.CrudRepository

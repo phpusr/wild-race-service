@@ -1,9 +1,9 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.vk.Post
-import com.phpusr.wildrace.domain.vk.PostRepo
-import com.phpusr.wildrace.domain.vk.Profile
-import com.phpusr.wildrace.domain.vk.ProfileRepo
+import com.phpusr.wildrace.domain.Post
+import com.phpusr.wildrace.domain.PostRepo
+import com.phpusr.wildrace.domain.Profile
+import com.phpusr.wildrace.domain.ProfileRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject

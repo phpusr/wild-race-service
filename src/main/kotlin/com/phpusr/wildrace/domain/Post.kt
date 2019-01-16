@@ -1,4 +1,4 @@
-package com.phpusr.wildrace.domain.vk
+package com.phpusr.wildrace.domain
 
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.domain.Page

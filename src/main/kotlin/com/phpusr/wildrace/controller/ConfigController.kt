@@ -1,6 +1,6 @@
 package com.phpusr.wildrace.controller
 
-import com.phpusr.wildrace.domain.data.Config
+import com.phpusr.wildrace.domain.Config
 import com.phpusr.wildrace.service.ConfigService
 import org.springframework.web.bind.annotation.*
 

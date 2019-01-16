@@ -1,6 +1,6 @@
 package com.phpusr.wildrace.controller
 
-import com.phpusr.wildrace.domain.data.TempDataRepo
+import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.StatService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

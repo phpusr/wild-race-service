@@ -1,7 +1,7 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.data.Config
-import com.phpusr.wildrace.domain.data.ConfigRepo
+import com.phpusr.wildrace.domain.Config
+import com.phpusr.wildrace.domain.ConfigRepo
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,4 +1,4 @@
-package com.phpusr.wildrace.domain.data
+package com.phpusr.wildrace.domain
 
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

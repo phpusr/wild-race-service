@@ -1,9 +1,9 @@
 package com.phpusr.wildrace.controller
 
 import com.fasterxml.jackson.annotation.JsonView
+import com.phpusr.wildrace.domain.Post
+import com.phpusr.wildrace.domain.PostRepo
 import com.phpusr.wildrace.domain.Views
-import com.phpusr.wildrace.domain.vk.Post
-import com.phpusr.wildrace.domain.vk.PostRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
