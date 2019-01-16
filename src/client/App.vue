@@ -21,11 +21,9 @@
 </template>
 
 <script>
-    import {mapMutations} from "vuex"
-    import {addHandler} from "./util/ws"
-    import {isEmptyObject} from "./util/collections"
     import NavigationDrawer from "./components/NavigationDrawer"
     import Toolbar from "./components/Toolbar"
+    import {activityHandler, methods} from "./util/topicActivityHandler";
 
     export default {
         name: 'app',
@@ -38,35 +36,9 @@
                 return this.$t('pages')[this.$route.path]
             }
         },
-        methods: mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation',
-            'updateLastSyncDateMutation']),
+        methods,
         created() {
-            addHandler('/topic/activity', data => {
-                const body = data.body;
-                if (data.objectType === 'Post') {
-                    switch(data.eventType) {
-                        case 'Create':
-                            if (isEmptyObject(this.$route.query)) {
-                                this.addPostMutation(body);
-                            }
-                            break;
-                        case 'Update':
-                            this.updatePostMutation(body);
-                            break;
-                        case 'Remove':
-                            this.removePostMutation(body);
-                            break;
-                        default:
-                            throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
-                    }
-                } else if (data.objectType === 'Stat') {
-                    this.updatePostStatMutation(body);
-                } else if (data.objectType === 'LastSyncDate') {
-                    this.updateLastSyncDateMutation(body);
-                } else {
-                    throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
-                }
-            });
+            activityHandler(this);
         }
     }
 </script>
