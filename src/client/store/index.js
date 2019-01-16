@@ -5,18 +5,18 @@ import dateFormat from "date-format"
 
 Vue.use(Vuex);
 
+function formatDate(date) {
+    return dateFormat('hh:mm dd.MM.yyyy', new Date(date))
+}
+
 export default new Vuex.Store({
     state: {
         post: {
             posts: [],
             totalElements: 0,
-            stat: {
-                sumDistance: 0,
-                numberOfRuns: 0,
-                numberOfPosts: 0
-            },
+            stat: document.frontendData.stat,
         },
-        lastSyncDate: null
+        lastSyncDate: formatDate(document.frontendData.lastSyncDate)
     },
     getters: {},
     mutations: {
@@ -52,7 +52,7 @@ export default new Vuex.Store({
             state.post.stat = stat;
         },
         updateLastSyncDateMutation(state, date) {
-            state.lastSyncDate = dateFormat('hh:mm dd.MM.yyyy', new Date(date));
+            state.lastSyncDate = formatDate(date);
         }
     },
     actions: {}
