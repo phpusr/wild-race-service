@@ -101,8 +101,7 @@ class StatService(private val postRepo: PostRepo) {
         }
 
         val newRunners = runners.filter {
-            val joinDate = it.profile.joinDate
-            joinDate != null && joinDate >= startDate
+            it.profile.joinDate >= startDate
         }.map{ it.profile }.sortedBy { it.joinDate }
 
         stat.countNewRunners = newRunners.size

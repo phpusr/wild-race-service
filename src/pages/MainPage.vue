@@ -52,7 +52,8 @@
                         case 'Create':
                             if (index === -1) {
                                 this.posts.unshift(data.body);
-                                this.posts = this.posts.sort((a, b) => b.date - a.date)
+                                this.posts = this.posts.sort((a, b) => b.date - a.date);
+                                this.totalElements++;
                             } else {
                                 replaceObject(this.posts, data.body);
                             }
