@@ -8,7 +8,7 @@
                 <v-flex xs12>
                     <v-select
                             :label="$t('post.status')"
-                            :value="this.$route.query.statusId"
+                            :value="$route.query.statusId"
                             @change="changeQuery('statusId', $event)"
                             :items="statuses"
                             solo
@@ -25,7 +25,7 @@
                 <v-flex xs12>
                     <v-checkbox
                             :label="$t('post.manualEditing')"
-                            :value="$route.query.manualEditing"
+                            :input-value="$route.query.manualEditing === 'true'"
                             @change="changeQuery('manualEditing', $event)"
                     />
                 </v-flex>

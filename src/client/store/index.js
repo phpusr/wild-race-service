@@ -25,7 +25,7 @@ export default new Vuex.Store({
             const index = data.posts.findIndex(el => el.id === post.id);
             if (index === -1) {
                 data.posts.unshift(post);
-                data.posts = this.posts.sort((a, b) => b.date - a.date);
+                data.posts.sort((a, b) => b.date - a.date);
                 data.totalElements++;
             } else {
                 replaceObject(data.posts, post);

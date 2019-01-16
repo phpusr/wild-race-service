@@ -40,13 +40,13 @@
             next();
 
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
-                this.resetPostsMutation();
+                this.resetData();
             }
         },
         methods: {
             ...mapMutations(['addPostsMutation', 'resetPostsMutation']),
             resetData() {
-                this.posts = [];
+                this.resetPostsMutation();
                 this.page = 0;
                 this.infiniteId += 1;
             },
