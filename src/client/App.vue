@@ -2,29 +2,7 @@
     <div id="app">
         <v-app>
             <navigation-drawer :drawer="drawer" />
-            <v-toolbar app dark clipped-left>
-                <v-toolbar-side-icon @click.stop="drawer = !drawer" />
-                <v-btn flat to="/" class="text-capitalize">
-                    <v-toolbar-title>
-                        <span class="font-weight-regular">Wild</span>
-                        <span class="font-weight-bold">Race</span>
-                    </v-toolbar-title>
-                </v-btn>
-
-                <v-toolbar-items>
-                    <v-btn flat @click="sync">{{$t('sync.title')}}</v-btn>
-                </v-toolbar-items>
-
-                <v-toolbar-items>
-                    <v-btn flat to="/config">{{$t('pages./config')}}</v-btn>
-                </v-toolbar-items>
-
-                <v-toolbar-items>
-                    <v-btn flat to="/stat">{{$t('pages./stat')}}</v-btn>
-                </v-toolbar-items>
-
-                <v-spacer />
-            </v-toolbar>
+            <toolbar @click="drawer = !drawer" />
             <v-content>
                 <v-container fluid class="pa-1">
                     <v-flex md6 offset-md3 class="mt-3">
@@ -43,15 +21,15 @@
 </template>
 
 <script>
-    import postApi from "./api/post"
     import {mapMutations} from "vuex"
     import {addHandler} from "./util/ws"
     import {isEmptyObject} from "./util/collections"
     import NavigationDrawer from "./components/NavigationDrawer"
+    import Toolbar from "./components/Toolbar"
 
     export default {
         name: 'app',
-        components: {NavigationDrawer},
+        components: {NavigationDrawer, Toolbar},
         data: () => ({
             drawer: false
         }),
@@ -60,20 +38,8 @@
                 return this.$t('pages')[this.$route.path]
             }
         },
-        methods: {
-            ...mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation',
-                'updateLastSyncDateMutation']),
-            async sync() {
-                if (confirm(this.$t('sync.confirm'))) {
-                    try {
-                        await postApi.sync();
-                        alert(this.$t('sync.success'));
-                    } catch(e) {
-                        alert(`${e.status}: ${e.body.error} on "${e.url}"`);
-                    }
-                }
-            }
-        },
+        methods: mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation',
+            'updateLastSyncDateMutation']),
         created() {
             addHandler('/topic/activity', data => {
                 const body = data.body;
@@ -104,7 +70,3 @@
         }
     }
 </script>
-
-<style>
-
-</style>
