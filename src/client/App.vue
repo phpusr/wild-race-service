@@ -46,6 +46,8 @@
 
 <script>
     import postApi from "./api/post"
+    import {mapMutations} from "vuex"
+    import {addHandler} from "./util/ws";
 
     export default {
         name: 'app',
@@ -60,15 +62,38 @@
             }
         },
         methods: {
+            ...mapMutations(['addPostMutation', 'updatePostMutation', 'removePostMutation', 'updatePostStatMutation']),
             async sync() {
                 try {
                     await postApi.sync();
                     alert(this.$t('sync.success'));
                 } catch(e) {
                     alert(`${e.status}: ${e.body.error} on "${e.url}"`);
-                    console.log(e)
                 }
             }
+        },
+        created() {
+            addHandler('/topic/activity', data => {
+                if (data.objectType === 'Post') {
+                    switch(data.eventType) {
+                        case 'Create':
+                            this.addPostMutation(data.body);
+                            break;
+                        case 'Update':
+                            this.updatePostMutation(data.body);
+                            break;
+                        case 'Remove':
+                            this.removePostMutation(data.body);
+                            break;
+                        default:
+                            throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
+                    }
+                } else if (data.objectType === 'Stat') {
+                    this.updatePostStatMutation(data.body);
+                } else {
+                    throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
+                }
+            });
         }
     }
 </script>

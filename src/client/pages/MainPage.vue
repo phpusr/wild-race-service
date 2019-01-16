@@ -14,7 +14,7 @@
             </v-layout>
 
             <v-layout column>
-                <post v-for="post in posts" :post="post" :key="post.id" />
+                <post v-for="p in post.posts" :post="p" :key="p.id" />
                 <infinite-loading :identifier="infiniteId"  @infinite="infiniteHandler">
                     <div slot="no-more">{{$t('post.noMoreMessages')}}</div>
                     <div slot="no-results">{{$t('post.noResults')}}</div>
@@ -26,64 +26,25 @@
 
 <script>
     import Post from '../components/Post'
-    import {addHandler} from '../util/ws'
-    import {deleteObject, replaceObject} from '../util/collections'
     import InfiniteLoading from 'vue-infinite-loading'
     import postApi from '../api/post'
+    import {mapMutations, mapState} from 'vuex'
 
     export default {
         components: {Post, InfiniteLoading},
         data: () => ({
-            posts: [],
-            totalElements: 0,
             page: 0,
-            infiniteId: +new Date(),
-            stat: {
-                sumDistance: 0,
-                numberOfRuns: 0,
-                numberOfPosts: 0
-            }
+            infiniteId: +new Date()
         }),
-        created() {
-            addHandler('/topic/activity', data => {
-                if (data.objectType === 'Post') {
-                    const index = this.posts.findIndex(el => el.id === data.body.id);
-                    switch(data.eventType) {
-                        case 'Create':
-                            if (index === -1) {
-                                this.posts.unshift(data.body);
-                                this.posts = this.posts.sort((a, b) => b.date - a.date);
-                                this.totalElements++;
-                            } else {
-                                replaceObject(this.posts, data.body);
-                            }
-                            break;
-                        case 'Update':
-                            replaceObject(this.posts, data.body);
-                            break;
-                        case 'Remove':
-                            if (deleteObject(this.posts, data.body.id)) {
-                                this.totalElements--;
-                            }
-                            break;
-                        default:
-                            throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
-                    }
-                } if (data.objectType === 'Stat') {
-                    this.stat = data.body;
-                } else {
-                    throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
-                }
-            });
-        },
         beforeRouteUpdate (to, from, next) {
             next();
 
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
-                this.resetData();
+                this.resetPostsMutation();
             }
         },
         methods: {
+            ...mapMutations(['addPostsMutation', 'resetPostsMutation']),
             resetData() {
                 this.posts = [];
                 this.page = 0;
@@ -95,11 +56,10 @@
                         ...params,
                         page: this.page,
                 });
-                const {list, totalElements} = body;
-                this.totalElements = totalElements;
+                const {list} = body;
+                this.addPostsMutation(body);
                 if (list.length) {
                     this.page += 1;
-                    this.posts.push(...list);
                     $state.loaded();
                 } else {
                     $state.complete();
@@ -107,11 +67,14 @@
             }
         },
         computed: {
+            ...mapState(['post']),
             statTitles() {
-                const numberOfPostsString = (this.totalElements === this.stat.numberOfPosts) ? this.stat.numberOfPosts : `${this.totalElements} / ${this.stat.numberOfPosts}`;
+                const data = this.post;
+                const stat = data.stat;
+                const numberOfPostsString = (data.totalElements === stat.numberOfPosts) ? stat.numberOfPosts : `${data.totalElements} / ${stat.numberOfPosts}`;
                 return [
-                    {title: this.$t('post.totalSumDistance'), value: this.stat.sumDistance},
-                    {title: this.$t('post.numberOfRuns'), value: this.stat.numberOfRuns},
+                    {title: this.$t('post.totalSumDistance'), value: stat.sumDistance},
+                    {title: this.$t('post.numberOfRuns'), value: stat.numberOfRuns},
                     {title: this.$t('post.numberOfPosts'), value: numberOfPostsString}
                 ]
             },

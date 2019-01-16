@@ -7,6 +7,7 @@ import VueI18n from 'vue-i18n'
 import router from './router'
 import messages from './i18n'
 import {connectToWS} from './util/ws'
+import store from './store'
 
 import 'vuetify/dist/vuetify.min.css'
 
@@ -26,5 +27,6 @@ const i18n = new VueI18n({
 new Vue({
     render: h => h(App),
     router,
-    i18n
+    i18n,
+    store
 }).$mount('#app');
