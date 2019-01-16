@@ -142,8 +142,7 @@ class StatService(
     }
 
     fun updateStat() {
-        val tempData = tempDataRepo.get()
-        tempDataRepo.save(tempData.copy(lastSyncDate = Date()))
+        val tempData = tempDataRepo.save(tempDataRepo.get().copy(lastSyncDate = Date()))
         lastSyncDateSender.accept(EventType.Update, tempData.lastSyncDate.time)
         statSender.accept(EventType.Update, getStat())
     }
