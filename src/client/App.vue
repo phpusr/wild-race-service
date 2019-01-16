@@ -1,9 +1,7 @@
 <template>
     <div id="app">
         <v-app>
-            <v-navigation-drawer v-model="drawer" clipped app dark>
-                <router-view name="menu" />
-            </v-navigation-drawer>
+            <navigation-drawer :drawer="drawer" />
             <v-toolbar app dark clipped-left>
                 <v-toolbar-side-icon @click.stop="drawer = !drawer" />
                 <v-btn flat to="/" class="text-capitalize">
@@ -49,14 +47,14 @@
     import {mapMutations} from "vuex"
     import {addHandler} from "./util/ws"
     import {isEmptyObject} from "./util/collections"
+    import NavigationDrawer from "./components/NavigationDrawer"
 
     export default {
         name: 'app',
-        data() {
-            return {
-                drawer: false,
-            }
-        },
+        components: {NavigationDrawer},
+        data: () => ({
+            drawer: false
+        }),
         computed: {
             title() {
                 return this.$t('pages')[this.$route.path]
