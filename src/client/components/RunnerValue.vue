@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    import ProfileLink from '../components/ProfileLink'
+    import ProfileLink from './ProfileLink'
 
     export default {
         components: {ProfileLink},

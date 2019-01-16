@@ -52,7 +52,7 @@
 </template>
 
 <script>
-    import DatePicker from '../components/DatePicker'
+    import DatePicker from './DatePicker'
 
     const DistanceTab = 'distance';
     const DateTab = 'date';
