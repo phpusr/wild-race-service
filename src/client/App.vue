@@ -47,7 +47,8 @@
 <script>
     import postApi from "./api/post"
     import {mapMutations} from "vuex"
-    import {addHandler} from "./util/ws";
+    import {addHandler} from "./util/ws"
+    import {isEmptyObject} from "./util/collections"
 
     export default {
         name: 'app',
@@ -79,7 +80,9 @@
                 if (data.objectType === 'Post') {
                     switch(data.eventType) {
                         case 'Create':
-                            this.addPostMutation(body);
+                            if (isEmptyObject(this.$route.query)) {
+                                this.addPostMutation(body);
+                            }
                             break;
                         case 'Update':
                             this.updatePostMutation(body);

@@ -6,7 +6,7 @@ import dateFormat from "date-format"
 Vue.use(Vuex);
 
 function formatDate(date) {
-    return dateFormat('hh:mm dd.MM.yyyy', new Date(date))
+    return dateFormat('hh:mm:ss (dd.MM.yyyy)', new Date(date));
 }
 
 export default new Vuex.Store({
@@ -45,7 +45,7 @@ export default new Vuex.Store({
         },
         removePostMutation(state, post) {
             if (deleteObject(state.post.posts, post.id)) {
-                this.totalElements--;
+                state.post.totalElements--;
             }
         },
         updatePostStatMutation(state, stat) {
