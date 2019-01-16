@@ -36,13 +36,6 @@
             page: 0,
             infiniteId: +new Date()
         }),
-        beforeRouteUpdate (to, from, next) {
-            next();
-
-            if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
-                this.resetData();
-            }
-        },
         methods: {
             ...mapMutations(['addPostsMutation', 'resetPostsMutation']),
             resetData() {
@@ -83,7 +76,17 @@
                     ['grid-list-' + this.$vuetify.breakpoint.name]: true
                 };
             }
-        }
+        },
+        created() {
+            this.resetData();
+        },
+        beforeRouteUpdate (to, from, next) {
+            next();
+
+            if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
+                this.resetData();
+            }
+        },
     }
 </script>
 
