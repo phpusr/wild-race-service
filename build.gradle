@@ -56,7 +56,4 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// Web Socket
 	compile("org.springframework.boot:spring-boot-starter-websocket")
-	// Quartz
-	implementation('org.springframework:spring-context-support')
-	compile("org.quartz-scheduler:quartz:2.2.3")
 }
