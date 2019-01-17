@@ -56,4 +56,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// Web Socket
 	compile("org.springframework.boot:spring-boot-starter-websocket")
+	// Security
+	compile('org.springframework.boot:spring-boot-starter-security')
+
 }
