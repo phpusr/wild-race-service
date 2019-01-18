@@ -21,9 +21,7 @@ class WebSecurityConfig(
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
-            .antMatchers("/post/sync")
-                .hasRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/wild-race-ws/**", "/", "/post", "/post/*")
+            .antMatchers(HttpMethod.GET, "/favicon.ico", "/wild-race-ws/**", "/", "/post")
                 .permitAll()
             .anyRequest()
                 .hasRole("ADMIN")
