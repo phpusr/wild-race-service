@@ -64,8 +64,8 @@ export default new Vuex.Store({
     },
     actions: {
         async loginAction({commit}, {username, password}) {
-            const user = await loginApi.login(username, password);
-            commit('setUserMutation', user);
+            const response = await loginApi.login(username, password);
+            commit('setUserMutation', response.body);
         },
         async logoutAction({commit}) {
             await loginApi.logout();

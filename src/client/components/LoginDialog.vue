@@ -1,7 +1,6 @@
 <template>
     <v-dialog v-model="show" persistent scrollable width="500">
         <v-btn slot="activator" color="info">
-            <v-icon left>account_circle</v-icon>
             {{$t('user.login')}}
         </v-btn>
 
@@ -20,6 +19,7 @@
                             :append-icon="showPassword ? 'visibility_off' : 'visibility'"
                             :type="showPassword ? 'text' : 'password'"
                             @click:append="showPassword = !showPassword"
+                            @keyup.enter="login"
                     />
                 </v-form>
             </v-card-text>
