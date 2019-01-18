@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {deleteObject, replaceObject} from "../util/collections";
+import {deleteObject, replaceObject} from "../util/collections"
 import dateFormat from "date-format"
+import loginApi from '../api/login'
 
 Vue.use(Vuex);
 
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     getters: {},
     mutations: {
+        setUserMutation(state, user) {
+            state.user = user;
+        },
         addPostMutation(state, post) {
             const data = state.post;
             const index = data.posts.findIndex(el => el.id === post.id);
@@ -58,5 +62,10 @@ export default new Vuex.Store({
             state.lastSyncDate = formatDate(date);
         }
     },
-    actions: {}
+    actions: {
+        async loginAction({commit}, loginData) {
+            const user = await loginApi.login(loginData);
+            commit('setUserMutation', user);
+        }
+    }
 })

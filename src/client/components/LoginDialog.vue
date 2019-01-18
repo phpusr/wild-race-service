@@ -40,6 +40,8 @@
 </template>
 
 <script>
+    import {mapActions} from 'vuex'
+
     export default {
         data: () => ({
             show: false,
@@ -48,8 +50,15 @@
             showPassword: false
         }),
         methods: {
-            login() {
-
+            ...mapActions(['loginAction']),
+            async login() {
+                try {
+                    await this.loginAction(this.user);
+                } catch(e) {
+                    if (e.status === 401) {
+                        alert(this.$t('user.loginNotFound'));
+                    }
+                }
             }
         }
     }

@@ -27,7 +27,8 @@ export default {
         login: 'Войти',
         loginTitle: 'Введите данные',
         username: 'Логин',
-        password: 'Пароль'
+        password: 'Пароль',
+        loginNotFound: 'Не найден пользователь с таким логином и паролем'
     },
     post: {
         totalSumDistance: 'Всего пробежали (км)',
