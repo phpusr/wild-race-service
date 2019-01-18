@@ -59,6 +59,7 @@
                         alert(this.$t('user.loginNotFound'));
                     }
                 }
+                this.show = false;
             }
         }
     }
