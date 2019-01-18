@@ -74,7 +74,7 @@ class PostController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable("id") post: Post, @RequestParam(defaultValue = "false") updateNextPosts: Boolean): Long {
-        logger.debug(">> Hand delete post: ${post}")
+        logger.debug(">> Hand delete post: $post")
         postRepo.deleteById(post.id)
         postSender.accept(EventType.Remove, PostDtoObject.create(post))
         post.number = null
