@@ -54,12 +54,12 @@
             async login() {
                 try {
                     await this.loginAction(this.user);
+                    this.show = false;
                 } catch(e) {
                     if (e.status === 401) {
                         alert(this.$t('user.loginNotFound'));
                     }
                 }
-                this.show = false;
             }
         }
     }
