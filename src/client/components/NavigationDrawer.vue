@@ -6,12 +6,15 @@
                     <v-list class="pa-0">
                         <v-list-tile v-if="user" avatar>
                             <v-list-tile-avatar>
-                                <img src="https://randomuser.me/api/portraits/men/3.jpg">
+                                <img src="https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png" />
                             </v-list-tile-avatar>
 
                             <v-list-tile-content>
                                 <v-list-tile-title>phpusr</v-list-tile-title>
                             </v-list-tile-content>
+                            <v-btn flat icon>
+                                <v-icon @click="logoutAction">exit_to_app</v-icon>
+                            </v-btn>
                         </v-list-tile>
 
                         <v-list-tile v-else>
@@ -41,7 +44,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapActions, mapState} from 'vuex'
     import LoginDialog from './LoginDialog'
 
     export default {
@@ -49,6 +52,7 @@
         props: {
             drawer: Boolean
         },
-        computed: mapState(['user', 'lastSyncDate'])
+        computed: mapState(['user', 'lastSyncDate']),
+        methods: mapActions(['logoutAction'])
     }
 </script>
