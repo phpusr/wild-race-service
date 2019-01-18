@@ -23,6 +23,12 @@ export default {
         trainings: 'тр.',
         trainingsPerDay: 'тр/д'
     },
+    user: {
+        login: 'Войти',
+        loginTitle: 'Введите данные',
+        username: 'Логин',
+        password: 'Пароль'
+    },
     post: {
         totalSumDistance: 'Всего пробежали (км)',
         numberOfRuns: 'Количество пробежек',

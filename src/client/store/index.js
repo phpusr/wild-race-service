@@ -9,14 +9,17 @@ function formatDate(date) {
     return dateFormat('hh:mm:ss (dd.MM.yyyy)', new Date(date));
 }
 
+const {user, stat, lastSyncDate} = document.frontendData;
+
 export default new Vuex.Store({
     state: {
+        user,
         post: {
             posts: [],
             totalElements: 0,
-            stat: document.frontendData.stat,
+            stat,
         },
-        lastSyncDate: formatDate(document.frontendData.lastSyncDate)
+        lastSyncDate: formatDate(lastSyncDate)
     },
     getters: {},
     mutations: {

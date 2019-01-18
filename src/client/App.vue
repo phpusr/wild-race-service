@@ -29,7 +29,7 @@
         name: 'app',
         components: {NavigationDrawer, Toolbar},
         data: () => ({
-            drawer: false
+            drawer: !false
         }),
         computed: {
             title() {

@@ -10,13 +10,7 @@
 
         <v-toolbar-items>
             <v-btn flat @click="sync">{{$t('sync.title')}}</v-btn>
-        </v-toolbar-items>
-
-        <v-toolbar-items>
             <v-btn flat to="/config">{{$t('pages./config')}}</v-btn>
-        </v-toolbar-items>
-
-        <v-toolbar-items>
             <v-btn flat to="/stat">{{$t('pages./stat')}}</v-btn>
         </v-toolbar-items>
 
