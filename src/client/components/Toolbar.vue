@@ -9,8 +9,8 @@
         </v-btn>
 
         <v-toolbar-items>
-            <v-btn flat @click="sync">{{$t('sync.title')}}</v-btn>
-            <v-btn flat to="/config">{{$t('pages./config')}}</v-btn>
+            <v-btn v-if="userIsAdmin" flat @click="sync">{{$t('sync.title')}}</v-btn>
+            <v-btn v-if="userIsAdmin" flat to="/config">{{$t('pages./config')}}</v-btn>
             <v-btn flat to="/stat">{{$t('pages./stat')}}</v-btn>
         </v-toolbar-items>
 
@@ -20,8 +20,10 @@
 
 <script>
     import postApi from "../api/post"
+    import {mapGetters} from "vuex"
 
     export default {
+        computed: mapGetters(['userIsAdmin']),
         methods: {
             async sync() {
                 if (confirm(this.$t('sync.confirm'))) {

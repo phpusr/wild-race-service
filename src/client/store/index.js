@@ -22,7 +22,16 @@ export default new Vuex.Store({
         },
         lastSyncDate: formatDate(lastSyncDate)
     },
-    getters: {},
+    getters: {
+        userIsAdmin: state => {
+            if (state.user === null) {
+                return null
+            }
+            const roles = state.user.authorities.map(it => it.authority);
+
+            return roles.includes("ROLE_ADMIN")
+        }
+    },
     mutations: {
         setUserMutation(state, user) {
             state.user = user;
