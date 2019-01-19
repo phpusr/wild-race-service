@@ -7,7 +7,6 @@ import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
 import com.phpusr.wildrace.enum.StatType
 import com.phpusr.wildrace.util.Util
-import org.springframework.core.env.Environment
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -28,7 +27,7 @@ class StatService(
         private val statLogRepo: StatLogRepo,
         private val configService: ConfigService,
         private val vkApiService: VKApiService,
-        private val environment: Environment
+        private val environmentService: EnvironmentService
 ) {
 
     fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
@@ -158,8 +157,7 @@ class StatService(
     }
 
     private fun createPostText(stat: StatDto): String {
-        //TODO
-        val isDevelopmentEnv = !environment.activeProfiles.contains("prod")
+        val isDevelopmentEnv = environmentService.isDevelopment()
 
         //TODO добавить вывод города
         val s = with(stat) {
