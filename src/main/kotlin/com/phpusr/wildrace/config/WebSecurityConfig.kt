@@ -25,6 +25,7 @@ class WebSecurityConfig(
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET, "/favicon.ico", "/wild-race-ws/**", "/", "/post", "/stat")
                 .permitAll()
+            .antMatchers("/test*").permitAll() //TODO
             .anyRequest()
                 .hasRole("ADMIN")
 

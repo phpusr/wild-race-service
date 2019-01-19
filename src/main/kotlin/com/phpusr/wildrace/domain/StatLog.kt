@@ -33,5 +33,5 @@ class StatLog(
 }
 
 interface StatLogRepo : CrudRepository<StatLog, Long> {
-    fun findFirstOrderByPublishDateDesc(): StatLog?
+    fun findFirstByOrderByPublishDateDesc(): StatLog?
 }

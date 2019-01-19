@@ -18,9 +18,11 @@ class RestService {
         return responseEntity.body ?: throw RuntimeException("Response body is null")
     }
 
-    fun post(uri: String, params: Map<String, Any>): HashMap<*, *> {
+    fun post(uri: String, params: Map<String, Any>) = post(uri, params, HashMap::class)
+
+    fun <T : Any> post(uri: String, params: Map<String, Any>, responseClass: KClass<T>): T {
         val query = params.map{ "${it.key}={${it.key}}" }.joinToString(separator = "&")
-        val responseEntity = restTemplate.postForEntity("$uri?$query", null, HashMap::class.java, params)
+        val responseEntity = restTemplate.postForEntity("$uri?$query", null, responseClass.java, params)
 
         return responseEntity.body ?: throw RuntimeException("Response body is null")
     }

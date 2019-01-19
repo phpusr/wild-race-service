@@ -150,11 +150,8 @@ class StatService(
     }
 
     fun publishStatPost(stat: StatDto) {
-        val response = vkApiService.wallPost(createPostText(stat))
-        val postId = (response["response"] as Map<*, *>)["post_id"] as String?
-        if (postId != null) {
-            statLogRepo.save(stat.createStatLog(postId.toLong()))
-        }
+        val postId = vkApiService.wallPost(createPostText(stat)).response.post_id
+        statLogRepo.save(stat.createStatLog(postId))
     }
 
     private fun createPostText(stat: StatDto): String {
@@ -203,7 +200,7 @@ class StatService(
             str.append("\n")
 
             // Добавление ссылки на предыдущий пост со статистикой
-            val lastLog = statLogRepo.findFirstOrderByPublishDateDesc()
+            val lastLog = statLogRepo.findFirstByOrderByPublishDateDesc()
             if (lastLog != null) {
                 str.append("\nПредыдущий пост со статистикой: ${lastLog.getVKLink(configService.get())}\n")
             }

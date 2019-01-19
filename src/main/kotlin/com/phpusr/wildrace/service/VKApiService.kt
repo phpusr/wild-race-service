@@ -2,6 +2,7 @@ package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.dto.vk.WallGet
+import com.phpusr.wildrace.dto.vk.WallPost
 import org.springframework.stereotype.Service
 
 @Service
@@ -45,7 +46,7 @@ class VKApiService(
         restService.get("$url/wall.addComment", params)
     }
 
-    fun wallPost(message: String): HashMap<*, *> {
+    fun wallPost(message: String): WallPost {
         val config = configService.get()
         val params = mapOf(
                 "owner_id" to  config.groupId,
@@ -55,7 +56,7 @@ class VKApiService(
                 "access_token" to config.commentAccessToken,
                 "from_group" to if (config.commentFromGroup) 1 else 0
         )
-        return restService.post("$url/wall.post", params)
+        return restService.post("$url/wall.post", params, WallPost::class)
     }
 
 }
