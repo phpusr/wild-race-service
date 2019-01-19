@@ -26,4 +26,8 @@ object Util {
         }
         return sb.toString()
     }
+
+    fun floatRoundToString(value: Float, precision: Int): String? {
+        return java.lang.String.format("%.${precision}f", value)
+    }
 }

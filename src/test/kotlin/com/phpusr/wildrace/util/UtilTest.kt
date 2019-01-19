@@ -21,4 +21,12 @@ class UtilTest {
         test("5 + 10 = 15", "B10D8CBFE98FC91ED3F2E184FACD677B")
     }
 
+    @Test
+    fun floatRoundToStringTest() {
+        Assert.assertEquals(Util.floatRoundToString(0.123456f, 2), "0.12")
+        Assert.assertEquals(Util.floatRoundToString(0.123456f, 3), "0.123")
+        Assert.assertEquals(Util.floatRoundToString(123.123456f, 3), "123.123")
+        Assert.assertEquals(Util.floatRoundToString(0.0f, 2), "0.00")
+    }
+
 }

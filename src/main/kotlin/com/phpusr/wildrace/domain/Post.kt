@@ -32,7 +32,7 @@ class Post(
         val date: Date
 ) {
     //TODO remove in Postgres
-    val version: Long = 0L
+    private val version: Long = 0L
 
     /** Порядковый номер */
     var number: Int? = null

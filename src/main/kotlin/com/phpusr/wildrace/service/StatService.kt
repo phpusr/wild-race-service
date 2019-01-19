@@ -1,13 +1,11 @@
 package com.phpusr.wildrace.service
 
-import com.phpusr.wildrace.domain.Post
-import com.phpusr.wildrace.domain.PostRepo
-import com.phpusr.wildrace.domain.Profile
-import com.phpusr.wildrace.domain.TempDataRepo
+import com.phpusr.wildrace.domain.*
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
 import com.phpusr.wildrace.enum.StatType
+import com.phpusr.wildrace.util.Util
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -24,7 +22,10 @@ class StatService(
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
         private val statSender: BiConsumer<EventType, Map<String, Any>>,
-        private val lastSyncDateSender: BiConsumer<EventType, Long>
+        private val lastSyncDateSender: BiConsumer<EventType, Long>,
+        private val statLogRepo: StatLogRepo,
+        private val configService: ConfigService,
+        private val vkApiService: VKApiService
 ) {
 
     fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
@@ -146,6 +147,74 @@ class StatService(
         val tempData = tempDataRepo.save(tempDataRepo.get().copy(lastSyncDate = Date()))
         lastSyncDateSender.accept(EventType.Update, tempData.lastSyncDate.time)
         statSender.accept(EventType.Update, getStat())
+    }
+
+    fun publishStatPost(stat: StatDto) {
+        val response = vkApiService.wallPost(createPostText(stat))
+        val postId = (response["response"] as Map<*, *>)["post_id"] as String?
+        if (postId != null) {
+            statLogRepo.save(stat.createStatLog(postId.toLong()))
+        }
+    }
+
+    private fun createPostText(stat: StatDto): String {
+        //TODO добавить вывод города
+        val s = with(stat) {
+            val newRunnersString = if (newRunners.isNotEmpty()) {
+                newRunners.map { it.vkLinkForPost }.joinToString(", ")
+            } else "В этот раз без новичков"
+            val segment = if (startDistance != null && endDistance != null) {
+                "$startDistance-$endDistance"
+            } else {
+                val dfPost = SimpleDateFormat()
+                "(${dfPost.format(stat.startDate)}-${dfPost.format(endDate)})"
+            }
+
+            val str = StringBuilder()
+            str.append("СТАТИСТИКА\n")
+            if (endDistance != null) {
+                str.append("Отметка в $endDistance км преодолена!\n")
+            }
+            if (newRunners.isNotEmpty()) {
+                str.append("Поприветствуем наших новичков:\n")
+            }
+            str.append("$newRunnersString${if (newRunners.size < countNewRunners) "..." else "."}\n")
+
+            str.append("\n\nНаши итоги в цифрах:\n")
+            str.append("1. Количество дней бега:\n")
+            str.append("- Всего - $daysCountAll дн.\n")
+            str.append("- Отрезок $segment - $daysCountInterval дн.\n")
+            str.append("2. Километраж:\n")
+            str.append("- Средний в день - ${Util.floatRoundToString(distancePerDayAvg, 1)} км/д\n")
+            str.append("- Средняя длина одной пробежки - ${Util.floatRoundToString(distancePerTrainingAvg,1)} км/тр\n")
+            str.append("3. Тренировки:\n")
+            str.append("- Всего - $trainingCountAll тр.\n")
+            str.append("- Среднее в день - ${Util.floatRoundToString(trainingCountPerDayAvg, 1)} тр.\n")
+            str.append("- Максимум от одного человека - ${trainingMaxOneMan.numberOfRuns} тр. (${trainingMaxOneMan.profile.vkLinkForPost})\n")
+            str.append("4. Бегуны:\n")
+            str.append("- Всего отметилось - $runnersCountAll чел.\n")
+            str.append("- Отметилось на отрезке $segment - $runnersCountInterval чел.\n")
+            str.append("- Новых на отрезке ${segment} - ${newRunners.size} чел.\n")
+            str.append("5. Топ 5 бегунов на отрезке:\n")
+            str.append(topIntervalRunners.map { "- ${it.profile.vkLinkForPost} (${it.sumDistance} км)" }.joinToString("\n"))
+            str.append("\n")
+            str.append("6. Топ 5 бегунов за все время:\n")
+            str.append(topAllRunners.map { "- ${it.profile.vkLinkForPost} (${it.sumDistance} км)" }.joinToString("\n"))
+            str.append("\n")
+
+            // Добавление ссылки на предыдущий пост со статистикой
+            val lastLog = statLogRepo.findFirstOrderByPublishDateDesc()
+            if (lastLog != null) {
+                str.append("\nПредыдущий пост со статистикой: ${lastLog.getVKLink(configService.get())}\n")
+            }
+            //TODO ссылка на источник статистики
+
+            str.append("\nВсем отличного бега!\n")
+
+            str.append("\n#ДикийЗабегСтатистика\n")
+        }
+
+        return s.toString()
     }
 
 }

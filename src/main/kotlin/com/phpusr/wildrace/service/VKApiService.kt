@@ -45,4 +45,17 @@ class VKApiService(
         restService.get("$url/wall.addComment", params)
     }
 
+    fun wallPost(message: String): HashMap<*, *> {
+        val config = configService.get()
+        val params = mapOf(
+                "owner_id" to  config.groupId,
+                "message" to message,
+                "signed" to 1,
+                "v" to Consts.VK_API_Version,
+                "access_token" to config.commentAccessToken,
+                "from_group" to if (config.commentFromGroup) 1 else 0
+        )
+        return restService.post("$url/wall.post", params)
+    }
+
 }

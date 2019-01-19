@@ -23,7 +23,7 @@ class Profile(
 ) {
 
     //TODO remove in Postgres
-    val version: Long = 0L
+    private val version: Long = 0L
 
     /** Дата последней синхронизации с VK */
     var lastSync: Date? = null
@@ -113,6 +113,11 @@ class Profile(
     @get:JsonView(Views.ProfileREST::class)
     val vkLink
         get() = "${Consts.VKLink}/id${id}"
+
+    val vkLinkForPost: String
+        get() {
+            TODO("developmentEnv ? firstAndLastNames : \"[id\${id}|\${firstAndLastNames}]\"")
+        }
 
 }
 

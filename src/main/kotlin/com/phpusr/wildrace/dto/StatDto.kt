@@ -2,7 +2,10 @@ package com.phpusr.wildrace.dto
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Profile
+import com.phpusr.wildrace.domain.StatLog
 import com.phpusr.wildrace.domain.Views
+import com.phpusr.wildrace.enum.StatType
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -35,11 +38,11 @@ class StatDto {
 
     /** Километраж - средний в день */
     val distancePerDayAvg: Float
-        get() = if (daysCountAll == 0) 0F else distanceAll.toFloat() / daysCountAll
+        get() = if (daysCountAll == 0) 0f else distanceAll.toFloat() / daysCountAll
 
     /** Километраж - средняя длина одной пробежки */
     val distancePerTrainingAvg: Float
-        get() = if (trainingCountAll == 0) 0F else distanceAll.toFloat() / trainingCountAll
+        get() = if (trainingCountAll == 0) 0f else distanceAll.toFloat() / trainingCountAll
 
     /** Километраж - максимум от 1-го человека */
     lateinit var distanceMaxOneMan: RunnerDto
@@ -49,8 +52,8 @@ class StatDto {
     var trainingCountAll: Int = 0
 
     /** Тренировки - среднее в день */
-    val trainingCountPerDayAvgFunction
-        get() = if (daysCountAll == 0) 0 else trainingCountAll / daysCountAll
+    val trainingCountPerDayAvg
+        get() = if (daysCountAll == 0) 0f else trainingCountAll.toFloat() / daysCountAll
 
     /** Тренировки - максимум от 1-го человека */
     lateinit var trainingMaxOneMan: RunnerDto
@@ -73,5 +76,17 @@ class StatDto {
 
     /** Топ бегунов на отрезке */
     lateinit var topIntervalRunners: List<RunnerDto>
+
+    private fun getStatType(): StatType {
+        return if (startDistance != null && endDistance != null) StatType.Distance else StatType.Date
+    }
+
+    fun createStatLog(postId: Long): StatLog {
+        val df = SimpleDateFormat()
+        val statType = getStatType()
+        val startValue = if (statType == StatType.Distance) startDistance!!.toString() else df.format(startDate)
+        val endValue = if (statType == StatType.Distance) endDistance!!.toString() else df.format(endDate)
+        return StatLog(postId, Date(), statType, startValue, endValue)
+    }
 
 }

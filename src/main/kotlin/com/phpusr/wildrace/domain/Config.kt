@@ -5,8 +5,6 @@ import org.hibernate.validator.constraints.Length
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 
 /**
@@ -15,7 +13,6 @@ import javax.persistence.Id
 @Entity
 class Config(
         @field:Id
-        @field:GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
 
         /** Синхронизация постов */

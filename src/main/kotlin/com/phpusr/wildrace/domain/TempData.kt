@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 
 /**
@@ -14,7 +12,6 @@ import javax.persistence.Id
 @Entity
 data class TempData(
         @field:Id
-        @field:GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
 
         val lastSyncDate: Date
