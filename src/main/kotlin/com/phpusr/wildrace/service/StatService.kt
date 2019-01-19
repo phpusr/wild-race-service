@@ -7,6 +7,7 @@ import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
+import com.phpusr.wildrace.enum.StatTypeOfForm
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -26,10 +27,10 @@ class StatService(
         private val lastSyncDateSender: BiConsumer<EventType, Long>
 ) {
 
-    fun calcStat(typeForm: String?, startRange: String?, endRange: String?): StatDto {
+    fun calcStat(typeOfForm: StatTypeOfForm?, startRange: String?, endRange: String?): StatDto {
         val stat = StatDto()
 
-        if (typeForm == "date") {
+        if (typeOfForm == StatTypeOfForm.Date) {
             val df = SimpleDateFormat("yyyy-MM-dd")
             try {
                 stat.startDate = df.parse(startRange)
@@ -38,7 +39,7 @@ class StatService(
                 // Change time at end of day
                 stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
             } catch (ignored: ParseException) {}
-        } else if (typeForm == "distance") {
+        } else if (typeOfForm == StatTypeOfForm.Distance) {
             stat.startDistance = startRange?.toIntOrNull()
             stat.endDistance = endRange?.toIntOrNull()
         }

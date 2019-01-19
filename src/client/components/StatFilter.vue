@@ -1,7 +1,7 @@
 <template>
     <v-layout>
         <v-flex>
-            <v-tabs v-model="activeTab" color="cyan" dark slider-color="yellow">
+            <v-tabs v-model="activeTabIndex" color="cyan" dark slider-color="yellow">
                 <v-tab ripple>{{ $t('stat.distanceRange') }}</v-tab>
                 <v-tab ripple>{{ $t('stat.dateRange') }}</v-tab>
 
@@ -54,29 +54,30 @@
 <script>
     import DatePicker from './DatePicker'
 
-    const DistanceTab = 'distance';
-    const DateTab = 'date';
+    const DistanceTab = {id: 0, name: 'distance', tabIndex: 0, isDistanceTab: true};
+    const DateTab = {id: 1, name: 'date', tabIndex: 1, isDateTab: true};
 
     export default {
         components: {DatePicker},
         data() {
-            const {typeForm, startRange, endRange} = this.$route.params;
+            const {typeOfForm, startRange, endRange} = this.$route.params;
+            const activeTab = typeOfForm === DistanceTab.name ? DistanceTab : DateTab;
             return {
                 menu: false,
-                activeTab: typeForm === DistanceTab ? 0 : 1,
-                startDistance: typeForm === DistanceTab ? +startRange : null,
-                endDistance: typeForm === DistanceTab ? +endRange : null,
-                startDate: typeForm === DateTab ? startRange : null,
-                endDate: typeForm === DateTab ? endRange : null
+                activeTabIndex: activeTab.tabIndex,
+                startDistance: activeTab.isDistanceTab  ? +startRange : null,
+                endDistance: activeTab.isDistanceTab ? +endRange : null,
+                startDate: activeTab.isDateTab ? startRange : null,
+                endDate: activeTab.isDateTab ? endRange : null
             }
         },
         methods: {
             recount() {
-                const isDistanceTab = this.activeTab === 0;
-                const startRange = isDistanceTab ? this.startDistance : this.startDate;
-                const endRange = isDistanceTab ? this.endDistance : this.endDate;
+                const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab;
+                const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate;
+                const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
                 const params = {
-                    typeForm: isDistanceTab ? DistanceTab : DateTab,
+                    typeOfForm: activeTab.id,
                     startRange: startRange || '-',
                     endRange: endRange || '-'
                 };
