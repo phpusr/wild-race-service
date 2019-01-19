@@ -1,11 +1,11 @@
 <template>
     <v-flex>
-        <v-card max-height="300">
+        <v-card :max-height="maxHeight">
             <v-card-title primary-title>
                 <v-flex>
                     <v-layout align-start>
                         <v-avatar class="elevation-2">
-                            <img :src="post.from.photo_50" />
+                            <img :src="post.from.photo_50" alt="Profile avatar" />
                         </v-avatar>
                         <div class="ml-2">
                             <h3>
@@ -24,7 +24,7 @@
                             <span>{{$t('post.manualEditing')}}</span>
                         </v-tooltip>
 
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-btn icon @click="postEditHandler">
                             <v-icon>edit</v-icon>
                         </v-btn>
@@ -34,7 +34,10 @@
                     <div class="mt-3 font-italic" v-html="textOfPost" />
                 </v-flex>
             </v-card-title>
-            <div v-if="post.editReason" class="blue-grey lighten-4 pa-2">
+            <v-card-actions v-if="largeTextOfPost">
+                <v-btn flat color="orange" @click="expandPost">{{textExpandPostButton}}</v-btn>
+            </v-card-actions>
+            <div v-if="post.editReason" class="orange lighten-4 pa-2">
                 <span class="font-weight-medium">{{$t('post.editReason')}}:</span>
                 {{post.editReason}}
             </div>
@@ -46,19 +49,32 @@
     import PostParserStatus from './PostParserStatus'
     import dateFormat from 'date-format'
 
+    const maxLength = 170;
+    const maxHeight = 500;
+
     export default {
         components: {PostParserStatus},
         props: {
             post: Object
         },
+        data: () => ({
+            maxHeight
+        }),
         computed: {
             date() {
                 return dateFormat('hh:mm dd.MM.yyyy', new Date(this.post.date));
             },
+            largeTextOfPost() {
+                return this.post.text.length > maxLength;
+            },
+            textExpandPostButton() {
+                return this.$t(this.maxHeight ? 'post.expand' : 'post.squeeze');
+            },
             textOfPost() {
-                const maxLength = 170;
                 let {text} = this.post;
-                text = text.length > maxLength ? text.substr(0, maxLength) + '...' : text;
+                if (this.maxHeight) {
+                    text = text.length > maxLength ? text.substr(0, maxLength) + '...' : text;
+                }
                 return text.replace(/\n/g, "<br/>");
             }
         },
@@ -68,6 +84,9 @@
                     path: `/post/${this.post.id}/edit`,
                     query: this.$route.query
                 });
+            },
+            expandPost() {
+                this.maxHeight = this.maxHeight ? null : maxHeight;
             }
         }
     }

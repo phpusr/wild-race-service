@@ -53,7 +53,9 @@ export default {
         lastSyncDate: 'Последняя синхронизация',
         noMoreMessages: '',
         noResults: 'Нет данных',
-        updateNextPosts: 'Обновлять следущие посты'
+        updateNextPosts: 'Обновлять следущие посты',
+        expand: 'Показать полностью',
+        squeeze: 'Скрыть'
     },
     stat: {
         distanceRange: 'Диапазон расстояний',
