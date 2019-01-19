@@ -114,10 +114,9 @@ class Profile(
     val vkLink
         get() = "${Consts.VKLink}/id${id}"
 
-    val vkLinkForPost: String
-        get() {
-            TODO("developmentEnv ? firstAndLastNames : \"[id\${id}|\${firstAndLastNames}]\"")
-        }
+    fun getVKLinkForPost(isDevelopmentEnv: Boolean): String {
+        return if (isDevelopmentEnv) firstAndLastName else "@id$id ($firstAndLastName)"
+    }
 
 }
 

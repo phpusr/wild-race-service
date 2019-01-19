@@ -1,6 +1,7 @@
 package com.phpusr.wildrace.dto
 
 import com.fasterxml.jackson.annotation.JsonView
+import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.Profile
 import com.phpusr.wildrace.domain.StatLog
 import com.phpusr.wildrace.domain.Views
@@ -82,7 +83,7 @@ class StatDto {
     }
 
     fun createStatLog(postId: Long): StatLog {
-        val df = SimpleDateFormat()
+        val df = SimpleDateFormat(Consts.JSDateFormat)
         val statType = getStatType()
         val startValue = if (statType == StatType.Distance) startDistance!!.toString() else df.format(startDate)
         val endValue = if (statType == StatType.Distance) endDistance!!.toString() else df.format(endDate)

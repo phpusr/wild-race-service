@@ -25,7 +25,8 @@ class StatLog(
 
 ) {
     //TODO remove in Postgres
-    private val version: Long = 0L
+    private val version = 0L
+    private val postId = -1L
 
     fun getVKLink(config: Config): String {
         return "${Consts.VKLink}/public${config.groupId * -1}?w=wall${config.groupId}_$id/all"

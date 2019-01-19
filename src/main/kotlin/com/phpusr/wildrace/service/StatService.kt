@@ -1,11 +1,13 @@
 package com.phpusr.wildrace.service
 
+import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.*
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
 import com.phpusr.wildrace.enum.StatType
 import com.phpusr.wildrace.util.Util
+import org.springframework.core.env.Environment
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -25,14 +27,15 @@ class StatService(
         private val lastSyncDateSender: BiConsumer<EventType, Long>,
         private val statLogRepo: StatLogRepo,
         private val configService: ConfigService,
-        private val vkApiService: VKApiService
+        private val vkApiService: VKApiService,
+        private val environment: Environment
 ) {
 
     fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
         val stat = StatDto()
 
         if (statType == StatType.Date) {
-            val df = SimpleDateFormat("yyyy-MM-dd")
+            val df = SimpleDateFormat(Consts.JSDateFormat)
             try {
                 stat.startDate = df.parse(startRange)
             } catch (ignored: ParseException) {}
@@ -155,15 +158,18 @@ class StatService(
     }
 
     private fun createPostText(stat: StatDto): String {
+        //TODO
+        val isDevelopmentEnv = !environment.activeProfiles.contains("prod")
+
         //TODO добавить вывод города
         val s = with(stat) {
             val newRunnersString = if (newRunners.isNotEmpty()) {
-                newRunners.map { it.vkLinkForPost }.joinToString(", ")
+                newRunners.map { it.getVKLinkForPost(isDevelopmentEnv) }.joinToString(", ")
             } else "В этот раз без новичков"
             val segment = if (startDistance != null && endDistance != null) {
                 "$startDistance-$endDistance"
             } else {
-                val dfPost = SimpleDateFormat()
+                val dfPost = SimpleDateFormat(Consts.PostDateFormat)
                 "(${dfPost.format(stat.startDate)}-${dfPost.format(endDate)})"
             }
 
@@ -187,16 +193,16 @@ class StatService(
             str.append("3. Тренировки:\n")
             str.append("- Всего - $trainingCountAll тр.\n")
             str.append("- Среднее в день - ${Util.floatRoundToString(trainingCountPerDayAvg, 1)} тр.\n")
-            str.append("- Максимум от одного человека - ${trainingMaxOneMan.numberOfRuns} тр. (${trainingMaxOneMan.profile.vkLinkForPost})\n")
+            str.append("- Максимум от одного человека - ${trainingMaxOneMan.numberOfRuns} тр. (${trainingMaxOneMan.profile.getVKLinkForPost(isDevelopmentEnv)})\n")
             str.append("4. Бегуны:\n")
             str.append("- Всего отметилось - $runnersCountAll чел.\n")
             str.append("- Отметилось на отрезке $segment - $runnersCountInterval чел.\n")
             str.append("- Новых на отрезке ${segment} - ${newRunners.size} чел.\n")
             str.append("5. Топ 5 бегунов на отрезке:\n")
-            str.append(topIntervalRunners.map { "- ${it.profile.vkLinkForPost} (${it.sumDistance} км)" }.joinToString("\n"))
+            str.append(topIntervalRunners.map { "- ${it.profile.getVKLinkForPost(isDevelopmentEnv)} (${it.sumDistance} км)" }.joinToString("\n"))
             str.append("\n")
             str.append("6. Топ 5 бегунов за все время:\n")
-            str.append(topAllRunners.map { "- ${it.profile.vkLinkForPost} (${it.sumDistance} км)" }.joinToString("\n"))
+            str.append(topAllRunners.map { "- ${it.profile.getVKLinkForPost(isDevelopmentEnv)} (${it.sumDistance} км)" }.joinToString("\n"))
             str.append("\n")
 
             // Добавление ссылки на предыдущий пост со статистикой
