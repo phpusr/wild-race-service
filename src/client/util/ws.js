@@ -19,14 +19,14 @@ export function connectToWS() {
         messages.forEach(m => stompClient.send(m.action, m.json));
         messages.splice(0, messages.length);
 
-        socket.onerror = socketFail;
-        socket.onclose = socketFail;
+        socket.onerror = socketFail.bind(this, 'Error');
+        socket.onclose = socketFail.bind(this, 'Close');
     });
 }
 
-function socketFail() {
+function socketFail(cause) {
     connected = false;
-    if (confirm('Error connect to ws. Reload page?')) {
+    if (confirm(`${cause} connect to ws. Reload page?`)) {
         location.reload();
     }
 }
