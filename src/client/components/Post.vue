@@ -1,6 +1,6 @@
 <template>
     <v-flex>
-        <v-card>
+        <v-card max-height="300">
             <v-card-title primary-title>
                 <v-flex>
                     <v-layout align-start>
@@ -31,7 +31,7 @@
                     </v-layout>
                     <div v-if="post.distance" class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
                     <div class="display-1 green--text">{{post.sumDistance}}</div>
-                    <div class="mt-3 font-italic">{{post.text}}</div>
+                    <div class="mt-3 font-italic" v-html="textOfPost" />
                 </v-flex>
             </v-card-title>
             <div v-if="post.editReason" class="blue-grey lighten-4 pa-2">
@@ -54,6 +54,12 @@
         computed: {
             date() {
                 return dateFormat('hh:mm dd.MM.yyyy', new Date(this.post.date));
+            },
+            textOfPost() {
+                const maxLength = 170;
+                let {text} = this.post;
+                text = text.length > maxLength ? text.substr(0, maxLength) + '...' : text;
+                return text.replace(/\n/g, "<br/>");
             }
         },
         methods: {
