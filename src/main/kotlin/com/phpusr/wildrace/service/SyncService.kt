@@ -149,20 +149,21 @@ class SyncService(
         if (dbProfile == null) {
             dbProfile = Profile(profileId, vkPost.date).apply {
                 firstName = "Unknown"
-                lastName = "Unknown"
             }
 
-            val vkProfile = vkProfiles.find { it.id == profileId }
-            if (vkProfile != null) {
-                with(dbProfile) {
-                    firstName = vkProfile.first_name
-                    lastName = vkProfile.last_name
-                    sex = vkProfile.sex?.toInt()
-                    photo_50 = vkProfile.photo_50
-                    photo_100 = vkProfile.photo_100
+            if (profileId >= 0) {
+                val vkProfile = vkProfiles.find { it.id == profileId }
+                if (vkProfile != null) {
+                    with(dbProfile) {
+                        firstName = vkProfile.first_name
+                        lastName = vkProfile.last_name
+                        sex = vkProfile.sex?.toInt()
+                        photo_50 = vkProfile.photo_50
+                        photo_100 = vkProfile.photo_100
+                    }
                 }
             } else {
-                val vkGroup = vkGroups.find{ it.id == profileId }
+                val vkGroup = vkGroups.find{ it.id == profileId * -1 }
                 if (vkGroup != null) {
                     with(dbProfile) {
                         firstName = vkGroup.name
