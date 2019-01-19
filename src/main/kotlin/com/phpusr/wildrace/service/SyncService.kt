@@ -57,11 +57,15 @@ class SyncService(
             if (needSync) {
                 syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
                 needSync = alreadyDownloadCount < countPosts
-                Thread.sleep(syncBlockInterval)
+                if (needSync) {
+                    Thread.sleep(syncBlockInterval)
+                }
             }
         }
 
         statService.updateStat()
+
+        logger.debug("-------- End sync --------")
     }
 
     private fun syncBlockPosts(countPosts: Long, alreadyDownloadCount: Long, downloadCount: Int) {

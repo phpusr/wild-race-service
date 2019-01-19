@@ -21,18 +21,16 @@
 <script>
     import postApi from "../api/post"
     import {mapGetters} from "vuex"
+    import {fetchHandler} from "../util"
 
     export default {
         computed: mapGetters(["userIsAdmin"]),
         methods: {
-            async sync() {
+            sync() {
                 if (confirm(this.$t("sync.confirm"))) {
-                    try {
-                        await postApi.sync();
-                        alert(this.$t("sync.success"));
-                    } catch(e) {
-                        alert(`${e.status}: ${e.body.error} on "${e.url}"`);
-                    }
+                    postApi.sync()
+                        .then(() => alert(this.$t("sync.success")))
+                        .catch(fetchHandler);
                 }
             }
         },

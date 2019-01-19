@@ -56,6 +56,7 @@
 <script>
     import DatePicker from "./DatePicker"
     import statApi from "../api/stat"
+    import {fetchHandler} from "../util"
 
     const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true};
     const DateTab = {name: "date", tabIndex: 1, isDateTab: true};
@@ -89,13 +90,14 @@
             recount() {
                 this.$router.push({name: "stat", params: this.params});
             },
-            async publishPost() {
+            publishPost() {
                 if (!confirm(this.$t("stat.confirmPublish"))) {
                     return
                 }
 
-                const response = await statApi.publishPost(this.params);
-                alert(this.$t("stat.successPublishPost", {id: response.body}));
+                statApi.publishPost(this.params)
+                    .then(response => alert(this.$t("stat.successPublishPost", {id: response.body})))
+                    .catch(fetchHandler)
             }
         }
     }

@@ -24,7 +24,7 @@ export default new Vuex.Store({
     },
     getters: {
         userIsAdmin: state => {
-            if (state.user === null) {
+            if (state.user == null) {
                 return null
             }
             const roles = state.user.authorities.map(it => it.authority);
