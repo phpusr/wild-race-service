@@ -28,14 +28,18 @@
                             v-model="post.editReason"
                             :label="$t('post.editReason')"
                     />
-                    <v-checkbox
-                            v-model="updateNextPosts"
-                            :label="$t('post.updateNextPosts')"
-                    />
+
                 </v-form>
             </v-card-text>
 
             <v-divider/>
+
+            <v-card-actions class="py-0">
+                <v-checkbox
+                        v-model="updateNextPosts"
+                        :label="$t('post.updateNextPosts')"
+                />
+            </v-card-actions>
 
             <v-card-actions>
                 <v-btn color="error" @click="remove">

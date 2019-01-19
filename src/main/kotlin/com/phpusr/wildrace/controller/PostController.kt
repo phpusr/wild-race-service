@@ -8,6 +8,7 @@ import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.service.ConfigService
+import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
@@ -23,7 +24,8 @@ class PostController(
         private val postRepo: PostRepo,
         private val configService: ConfigService,
         private val postSender: BiConsumer<EventType, PostDto>,
-        private val syncService: SyncService
+        private val syncService: SyncService,
+        private val statService: StatService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -68,6 +70,7 @@ class PostController(
         if (updateNextPosts) {
             syncService.updateNextPosts(post)
         }
+        statService.updateStat()
 
         return updatePostDto
     }
@@ -81,6 +84,7 @@ class PostController(
         if (updateNextPosts) {
             syncService.updateNextPosts(post)
         }
+        statService.updateStat()
 
         return post.id
     }
