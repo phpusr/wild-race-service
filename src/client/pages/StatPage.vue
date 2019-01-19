@@ -73,6 +73,7 @@
     import StatCard from '../components/StatCard'
     import ProfileLink from '../components/ProfileLink'
     import RunnerValue from '../components/RunnerValue'
+    import statApi from '../api/stat'
 
     export default {
         components: {StatFilter, StatCard, ProfileLink, RunnerValue},
@@ -93,11 +94,10 @@
             this.fetchData();
         },
         methods: {
-            fetchData() {
+            async fetchData() {
                 const {params} = this.$route;
-                this.$http.get('/stat', {params}).then(response =>
-                    this.stat = response.body
-                );
+                const response = await statApi.get(params);
+                this.stat = response.body;
             }
         }
     }

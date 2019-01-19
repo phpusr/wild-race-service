@@ -21,8 +21,8 @@
 
                                 <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
 
-                                <v-btn @click="recount(false)">{{ $t('stat.recount') }}</v-btn>
-                                <v-btn @click="recount(true)" color="info">{{ $t('stat.publish') }}</v-btn>
+                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="publishPost" color="info">{{ $t('stat.publish') }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -42,8 +42,8 @@
                                     <date-picker v-model="endDate" />
                                 </v-flex>
 
-                                <v-btn @click="recount(false)">{{ $t('stat.recount') }}</v-btn>
-                                <v-btn @click="recount(true)" color="info">{{ $t('stat.publish') }}</v-btn>
+                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="publishPost" color="info">{{ $t('stat.publish') }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -55,9 +55,10 @@
 
 <script>
     import DatePicker from './DatePicker'
+    import statApi from '../api/stat'
 
-    const DistanceTab = {id: 0, name: 'distance', tabIndex: 0, isDistanceTab: true};
-    const DateTab = {id: 1, name: 'date', tabIndex: 1, isDateTab: true};
+    const DistanceTab = {name: 'distance', tabIndex: 0, isDistanceTab: true};
+    const DateTab = {name: 'date', tabIndex: 1, isDateTab: true};
 
     export default {
         components: {DatePicker},
@@ -72,23 +73,28 @@
                 endDate: activeTab.isDateTab ? endRange : null
             }
         },
-        methods: {
-            recount(publishPost) {
-                if (publishPost && !confirm(this.$t('stat.confirmPublish'))) {
-                    return
-                }
-
+        computed: {
+            params() {
                 const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab;
                 const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate;
                 const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
-                const params = {
-                    type: activeTab.id,
+                return {
+                    type: activeTab.name,
                     startRange: startRange || '-',
                     endRange: endRange || '-',
-                    publishPost
-                };
+                }
+            }
+        },
+        methods: {
+            recount() {
+                this.$router.push({name: 'stat', params: this.params});
+            },
+            publishPost() {
+                if (!confirm(this.$t('stat.confirmPublish'))) {
+                    return
+                }
 
-                this.$router.push({name: 'stat', params});
+                statApi.get({...this.params, publishPost: true});
             }
         }
     }

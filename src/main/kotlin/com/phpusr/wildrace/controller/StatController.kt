@@ -40,7 +40,7 @@ class StatController(private val statService: StatService) {
         webDataBinder.registerCustomEditor(StatType::class.java, object : PropertyEditorSupport() {
             override fun setAsText(text: String?) {
                 value = if (text != null && text != "") {
-                    StatType.values().find{ it.ordinal == text.toInt() }
+                    StatType.values().find{ it.name.toLowerCase() == text }
                 } else null
             }
         })
