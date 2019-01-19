@@ -5,13 +5,11 @@ import org.junit.Test
 
 class MessageParserTest {
 
-    fun assertNullResult(message: String) {
-        val result = MessageParser("321 + 12.8 = 500").run()
-
-        Assert.assertNull(result)
+    private fun assertNullResult(message: String) {
+        Assert.assertNull(MessageParser(message).run())
     }
 
-    fun assertResult(message: String, startSumNumber: Int, distance: List<Int>, endSumNumber: Int) {
+    private fun assertResult(message: String, startSumNumber: Int, distance: List<Int>, endSumNumber: Int) {
         val result = MessageParser(message).run()
 
         Assert.assertEquals(startSumNumber, result!!.startSumNumber)
