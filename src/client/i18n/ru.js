@@ -61,6 +61,7 @@ export default {
         recount: 'Пересчет',
         publish: 'Опубликовать в ВК',
         confirmPublish: 'Вы действительно хотите опубликовать пост в ВК?',
+        successPublishPost: 'Пост успешно опубликован под ID: {id}',
         topAllRunners: 'Топ бегунов за все время',
         topIntervalRunners: 'Топ бегунов на отрезке',
         daysCount: 'Количество дней бега',

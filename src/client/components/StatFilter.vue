@@ -89,12 +89,13 @@
             recount() {
                 this.$router.push({name: 'stat', params: this.params});
             },
-            publishPost() {
+            async publishPost() {
                 if (!confirm(this.$t('stat.confirmPublish'))) {
                     return
                 }
 
-                statApi.get({...this.params, publishPost: true});
+                const response = await statApi.publishPost(this.params);
+                alert(this.$t('stat.successPublishPost', {id: response.body}));
             }
         }
     }

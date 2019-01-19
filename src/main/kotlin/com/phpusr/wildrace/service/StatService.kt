@@ -151,9 +151,11 @@ class StatService(
         statSender.accept(EventType.Update, getStat())
     }
 
-    fun publishStatPost(stat: StatDto) {
+    fun publishStatPost(stat: StatDto): Long {
         val postId = vkApiService.wallPost(createPostText(stat)).response.post_id
         statLogRepo.save(stat.createStatLog(postId))
+
+        return postId
     }
 
     private fun createPostText(stat: StatDto): String {
