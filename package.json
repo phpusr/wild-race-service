@@ -38,7 +38,8 @@
       "eslint:recommended"
     ],
     "rules": {
-      "semi": [2, "never"]
+      "semi": [1, "never"],
+      "quotes": [1, "double"]
     },
     "parserOptions": {
       "parser": "babel-eslint"
