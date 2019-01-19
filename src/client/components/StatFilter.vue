@@ -77,7 +77,7 @@
                 const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate;
                 const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
                 const params = {
-                    typeOfForm: activeTab.id,
+                    type: activeTab.id,
                     startRange: startRange || '-',
                     endRange: endRange || '-'
                 };

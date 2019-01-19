@@ -1,6 +1,6 @@
 package com.phpusr.wildrace.enum
 
-enum class StatTypeOfForm {
+enum class StatType {
     Distance,
     Date
 }
