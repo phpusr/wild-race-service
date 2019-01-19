@@ -58,7 +58,7 @@
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.trainings')">
                         <div>- {{ $t('stat.trainingCountAll') }} - {{ stat.trainingCountAll }} {{ $t('default.trainings') }}</div>
-                        <div>- {{ $t('stat.trainingCountPerDayAvgFunction') }} - {{ stat.trainingCountPerDayAvgFunction.toFixed(1) }} {{ $t('default.trainingsPerDay') }}</div>
+                        <div>- {{ $t('stat.trainingCountPerDayAvgFunction') }} - {{ stat.trainingCountPerDayAvg.toFixed(1) }} {{ $t('default.trainingsPerDay') }}</div>
                         <div>- {{ $t('stat.trainingMaxOneMan') }} - <runner-value v-bind="stat.trainingMaxOneMan" number /></div>
                     </stat-card>
                 </v-flex>
@@ -80,7 +80,7 @@
             stat: {
                 distancePerDayAvg: 0.0,
                 distancePerTrainingAvg: 0.0,
-                trainingCountPerDayAvgFunction: 0.0,
+                trainingCountPerDayAvg: 0.0,
                 newRunners: []
             }
         }),

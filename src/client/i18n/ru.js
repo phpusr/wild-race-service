@@ -59,6 +59,8 @@ export default {
         distanceRange: 'Диапазон расстояний',
         dateRange: 'Диапазон дат',
         recount: 'Пересчет',
+        publish: 'Опубликовать в ВК',
+        confirmPublish: 'Вы действительно хотите опубликовать пост в ВК?',
         topAllRunners: 'Топ бегунов за все время',
         topIntervalRunners: 'Топ бегунов на отрезке',
         daysCount: 'Количество дней бега',

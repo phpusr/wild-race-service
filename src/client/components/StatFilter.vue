@@ -21,7 +21,8 @@
 
                                 <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
 
-                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="recount(false)">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="recount(true)" color="info">{{ $t('stat.publish') }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -41,7 +42,8 @@
                                     <date-picker v-model="endDate" />
                                 </v-flex>
 
-                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="recount(false)">{{ $t('stat.recount') }}</v-btn>
+                                <v-btn @click="recount(true)" color="info">{{ $t('stat.publish') }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -61,9 +63,8 @@
         components: {DatePicker},
         data() {
             const {typeOfForm, startRange, endRange} = this.$route.params;
-            const activeTab = typeOfForm === DistanceTab.name ? DistanceTab : DateTab;
+            const activeTab = typeOfForm === DateTab.name ? DateTab : DistanceTab;
             return {
-                menu: false,
                 activeTabIndex: activeTab.tabIndex,
                 startDistance: activeTab.isDistanceTab  ? +startRange : null,
                 endDistance: activeTab.isDistanceTab ? +endRange : null,
@@ -72,14 +73,19 @@
             }
         },
         methods: {
-            recount() {
+            recount(publishPost) {
+                if (publishPost && !confirm(this.$t('stat.confirmPublish'))) {
+                    return
+                }
+
                 const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab;
                 const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate;
                 const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
                 const params = {
                     type: activeTab.id,
                     startRange: startRange || '-',
-                    endRange: endRange || '-'
+                    endRange: endRange || '-',
+                    publishPost
                 };
 
                 this.$router.push({name: 'stat', params});

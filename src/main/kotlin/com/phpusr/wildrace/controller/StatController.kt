@@ -19,7 +19,7 @@ class StatController(private val statService: StatService) {
     @GetMapping
     @JsonView(Views.StatDtoREST::class)
     fun getData(
-            @AuthenticationPrincipal user: UserDetails,
+            @AuthenticationPrincipal user: UserDetails?,
             @RequestParam type: StatType?,
             @RequestParam startRange: String?,
             @RequestParam endRange: String?,

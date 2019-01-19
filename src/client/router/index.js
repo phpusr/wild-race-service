@@ -22,7 +22,7 @@ export default new VueRouter({ routes: [
         path: '/stat',
         component: StatPage,
         children: [
-            { name: 'stat', path: ':typeOfForm/:startRange/:endRange' },
+            { name: 'stat', path: ':type/:startRange/:endRange/:publishPost' },
         ]
     },
     {
