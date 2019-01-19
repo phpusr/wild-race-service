@@ -16,8 +16,8 @@
             <v-layout column>
                 <post v-for="p in post.posts" :post="p" :key="p.id" />
                 <infinite-loading :identifier="infiniteId"  @infinite="infiniteHandler">
-                    <div slot="no-more">{{$t('post.noMoreMessages')}}</div>
-                    <div slot="no-results">{{$t('post.noResults')}}</div>
+                    <div slot="no-more">{{$t("post.noMoreMessages")}}</div>
+                    <div slot="no-results">{{$t("post.noResults")}}</div>
                 </infinite-loading>
             </v-layout>
         </v-container>
@@ -25,10 +25,10 @@
 </template>
 
 <script>
-    import Post from '../components/Post'
-    import InfiniteLoading from 'vue-infinite-loading'
-    import postApi from '../api/post'
-    import {mapMutations, mapState} from 'vuex'
+    import Post from "../components/Post"
+    import InfiniteLoading from "vue-infinite-loading"
+    import postApi from "../api/post"
+    import {mapMutations, mapState} from "vuex"
 
     export default {
         components: {Post, InfiniteLoading},
@@ -37,7 +37,7 @@
             infiniteId: +new Date()
         }),
         methods: {
-            ...mapMutations(['addPostsMutation', 'resetPostsMutation']),
+            ...mapMutations(["addPostsMutation", "resetPostsMutation"]),
             resetData() {
                 this.resetPostsMutation();
                 this.page = 0;
@@ -60,20 +60,20 @@
             }
         },
         computed: {
-            ...mapState(['post']),
+            ...mapState(["post"]),
             statTitles() {
                 const data = this.post;
                 const stat = data.stat;
                 const numberOfPostsString = (data.totalElements === stat.numberOfPosts) ? stat.numberOfPosts : `${data.totalElements} / ${stat.numberOfPosts}`;
                 return [
-                    {title: this.$t('post.totalSumDistance'), value: stat.sumDistance},
-                    {title: this.$t('post.numberOfRuns'), value: stat.numberOfRuns},
-                    {title: this.$t('post.numberOfPosts'), value: numberOfPostsString}
+                    {title: this.$t("post.totalSumDistance"), value: stat.sumDistance},
+                    {title: this.$t("post.numberOfRuns"), value: stat.numberOfRuns},
+                    {title: this.$t("post.numberOfPosts"), value: numberOfPostsString}
                 ]
             },
             containerConfig() {
                 return {
-                    ['grid-list-' + this.$vuetify.breakpoint.name]: true
+                    ["grid-list-" + this.$vuetify.breakpoint.name]: true
                 };
             }
         },

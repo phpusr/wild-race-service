@@ -1,13 +1,13 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue"
+import Vuex from "vuex"
 import {deleteObject, replaceObject} from "../util/collections"
 import dateFormat from "date-format"
-import loginApi from '../api/login'
+import loginApi from "../api/login"
 
 Vue.use(Vuex);
 
 function formatDate(date) {
-    return dateFormat('hh:mm:ss (dd.MM.yyyy)', new Date(date));
+    return dateFormat("hh:mm:ss (dd.MM.yyyy)", new Date(date));
 }
 
 const {user, stat, lastSyncDate} = document.frontendData;
@@ -74,11 +74,11 @@ export default new Vuex.Store({
     actions: {
         async loginAction({commit}, {username, password}) {
             const response = await loginApi.login(username, password);
-            commit('setUserMutation', response.body);
+            commit("setUserMutation", response.body);
         },
         async logoutAction({commit}) {
             await loginApi.logout();
-            commit('setUserMutation');
+            commit("setUserMutation");
         }
     }
 })

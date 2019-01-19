@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="show" persistent scrollable width="500">
         <v-card>
-            <v-card-title class="headline grey lighten-2">{{$t('post.editDialogTitle')}}</v-card-title>
+            <v-card-title class="headline grey lighten-2">{{$t("post.editDialogTitle")}}</v-card-title>
 
             <v-card-text>
                 <v-form v-model="valid">
@@ -44,15 +44,15 @@
             <v-card-actions>
                 <v-btn color="error" @click="remove">
                     <v-icon :left="smAndUp">delete</v-icon>
-                    <span v-if="smAndUp">{{$t('default.deleteButton')}}</span>
+                    <span v-if="smAndUp">{{$t("default.deleteButton")}}</span>
                 </v-btn>
                 <v-spacer/>
                 <v-btn color="primary" @click="update">
                     <v-icon :left="smAndUp">save</v-icon>
-                    <span v-if="smAndUp">{{$t('default.saveButton')}}</span>
+                    <span v-if="smAndUp">{{$t("default.saveButton")}}</span>
                 </v-btn>
                 <v-btn @click="goToMainPage">
-                    {{$t('default.cancelButton')}}
+                    {{$t("default.cancelButton")}}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -81,7 +81,7 @@
                 return !!this.postId
             },
             statuses() {
-                const statuses = this.$t('post.statuses');
+                const statuses = this.$t("post.statuses");
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key] }
                 ))
@@ -100,13 +100,13 @@
                 this.goToMainPage();
             },
             remove() {
-                if (confirm(this.$t('default.confirmDelete'))) {
+                if (confirm(this.$t("default.confirmDelete"))) {
                     postApi.remove(this.post.id, this.updateNextPosts);
                     this.goToMainPage();
                 }
             },
             goToMainPage() {
-                this.$router.push({ path: '/', query: this.$route.query });
+                this.$router.push({ path: "/", query: this.$route.query });
             }
         }
     }

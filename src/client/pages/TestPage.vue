@@ -53,10 +53,10 @@
 </template>
 
 <script>
-    import dateFormat from 'date-format'
+    import dateFormat from "date-format"
 
-    const ruDatePattern = 'dd.MM.yyyy';
-    const isoDatePattern = 'yyyy-MM-dd';
+    const ruDatePattern = "dd.MM.yyyy";
+    const isoDatePattern = "yyyy-MM-dd";
     export default {
 
         data: () => ({

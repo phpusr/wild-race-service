@@ -1,5 +1,5 @@
-import SockJS from 'sockjs-client'
-import {Stomp} from '@stomp/stompjs'
+import SockJS from "sockjs-client"
+import {Stomp} from "@stomp/stompjs"
 
 let stompClient = null;
 let connected = false;
@@ -7,7 +7,7 @@ const handlers = [];
 const messages = [];
 
 export function connectToWS() {
-    const socket = new SockJS('/wild-race-ws');
+    const socket = new SockJS("/wild-race-ws");
     stompClient = Stomp.over(socket);
     stompClient.debug = () => {};
     stompClient.connect({}, () => {
@@ -19,8 +19,8 @@ export function connectToWS() {
         messages.forEach(m => stompClient.send(m.action, m.json));
         messages.splice(0, messages.length);
 
-        socket.onerror = socketFail.bind(this, 'Error');
-        socket.onclose = socketFail.bind(this, 'Close');
+        socket.onerror = socketFail.bind(this, "Error");
+        socket.onclose = socketFail.bind(this, "Close");
     });
 }
 

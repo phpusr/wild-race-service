@@ -26,14 +26,14 @@
     import {activityHandler, methods} from "./util/topicActivityHandler";
 
     export default {
-        name: 'app',
+        name: "app",
         components: {NavigationDrawer, Toolbar},
         data: () => ({
             drawer: !false
         }),
         computed: {
             title() {
-                return this.$t('pages')[this.$route.path]
+                return this.$t("pages")[this.$route.path]
             }
         },
         methods,

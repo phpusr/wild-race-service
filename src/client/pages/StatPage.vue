@@ -26,40 +26,40 @@
 
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.daysCount')">
-                        <div>- {{ $t('stat.daysCountAll') }} - {{ stat.daysCountAll }} {{ $t('default.days') }}</div>
-                        <div>- {{ $t('stat.daysCountInterval') }} - {{ stat.daysCountInterval }} {{ $t('default.days') }}</div>
+                        <div>- {{ $t("stat.daysCountAll") }} - {{ stat.daysCountAll }} {{ $t("default.days") }}</div>
+                        <div>- {{ $t("stat.daysCountInterval") }} - {{ stat.daysCountInterval }} {{ $t("default.days") }}</div>
                     </stat-card>
                 </v-flex>
 
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.distance')">
-                        <div>- {{ $t('stat.distancePerDayAvg') }} - {{ stat.distancePerDayAvg.toFixed(1) }} {{ $t('default.kmPerDay') }}</div>
-                        <div>- {{ $t('stat.distancePerTrainingAvg') }} - {{ stat.distancePerTrainingAvg.toFixed(1) }} {{ $t('default.kmPerTraining') }}</div>
-                        <div>- {{ $t('stat.distanceMaxOneMan') }} - <runner-value v-bind="stat.distanceMaxOneMan" /></div>
+                        <div>- {{ $t("stat.distancePerDayAvg") }} - {{ stat.distancePerDayAvg.toFixed(1) }} {{ $t("default.kmPerDay") }}</div>
+                        <div>- {{ $t("stat.distancePerTrainingAvg") }} - {{ stat.distancePerTrainingAvg.toFixed(1) }} {{ $t("default.kmPerTraining") }}</div>
+                        <div>- {{ $t("stat.distanceMaxOneMan") }} - <runner-value v-bind="stat.distanceMaxOneMan" /></div>
                     </stat-card>
                 </v-flex>
 
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.runners')">
-                        <div>- {{ $t('stat.runnersCountAll') }} - {{ stat.runnersCountAll }} {{ $t('default.people') }}</div>
-                        <div>- {{ $t('stat.runnersCountInterval') }} - {{ stat.runnersCountInterval }} {{ $t('default.peoplePerDay') }}</div>
+                        <div>- {{ $t("stat.runnersCountAll") }} - {{ stat.runnersCountAll }} {{ $t("default.people") }}</div>
+                        <div>- {{ $t("stat.runnersCountInterval") }} - {{ stat.runnersCountInterval }} {{ $t("default.peoplePerDay") }}</div>
                         <div>
-                            <span>- {{ $t('stat.newRunners') }} - {{ stat.countNewRunners }} {{ $t('default.people') }} {{ '(' }}</span>
+                            <span>- {{ $t("stat.newRunners") }} - {{ stat.countNewRunners }} {{ $t("default.people") }} {{ "(" }}</span>
                             <span v-for="(r, index) in stat.newRunners" :key="r.id">
                                 <profile-link v-bind="r" />
                                 <span v-if="index < stat.newRunners.length - 1">, </span>
                             </span>
                             <span v-if="stat.newRunners.length < stat.countNewRunners"> ...</span>
-                            {{ ')' }}
+                            {{ ")" }}
                         </div>
                     </stat-card>
                 </v-flex>
 
                 <v-flex d-flex xs6>
                     <stat-card :title="$t('stat.trainings')">
-                        <div>- {{ $t('stat.trainingCountAll') }} - {{ stat.trainingCountAll }} {{ $t('default.trainings') }}</div>
-                        <div>- {{ $t('stat.trainingCountPerDayAvgFunction') }} - {{ stat.trainingCountPerDayAvg.toFixed(1) }} {{ $t('default.trainingsPerDay') }}</div>
-                        <div>- {{ $t('stat.trainingMaxOneMan') }} - <runner-value v-bind="stat.trainingMaxOneMan" number /></div>
+                        <div>- {{ $t("stat.trainingCountAll") }} - {{ stat.trainingCountAll }} {{ $t("default.trainings") }}</div>
+                        <div>- {{ $t("stat.trainingCountPerDayAvgFunction") }} - {{ stat.trainingCountPerDayAvg.toFixed(1) }} {{ $t("default.trainingsPerDay") }}</div>
+                        <div>- {{ $t("stat.trainingMaxOneMan") }} - <runner-value v-bind="stat.trainingMaxOneMan" number /></div>
                     </stat-card>
                 </v-flex>
 
@@ -69,11 +69,11 @@
 </template>
 
 <script>
-    import StatFilter from '../components/StatFilter'
-    import StatCard from '../components/StatCard'
-    import ProfileLink from '../components/ProfileLink'
-    import RunnerValue from '../components/RunnerValue'
-    import statApi from '../api/stat'
+    import StatFilter from "../components/StatFilter"
+    import StatCard from "../components/StatCard"
+    import ProfileLink from "../components/ProfileLink"
+    import RunnerValue from "../components/RunnerValue"
+    import statApi from "../api/stat"
 
     export default {
         components: {StatFilter, StatCard, ProfileLink, RunnerValue},

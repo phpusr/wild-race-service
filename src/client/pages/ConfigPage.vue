@@ -40,11 +40,11 @@
 
 
             <div v-if="show">
-                <v-btn to="/config/edit">{{$t('default.editButton')}}</v-btn>
+                <v-btn to="/config/edit">{{$t("default.editButton")}}</v-btn>
             </div>
             <div v-else>
-                <v-btn :disabled="!valid" @click="save" color="primary">{{$t('default.saveButton')}}</v-btn>
-                <v-btn @click="cancel" primary>{{$t('default.cancelButton')}}</v-btn>
+                <v-btn :disabled="!valid" @click="save" color="primary">{{$t("default.saveButton")}}</v-btn>
+                <v-btn @click="cancel" primary>{{$t("default.cancelButton")}}</v-btn>
             </div>
         </v-form>
     </v-flex>
@@ -55,24 +55,24 @@
         data: () => ({
             valid: true,
             config: {},
-            requiredRules: [v => !!v || 'Filed is required']
+            requiredRules: [v => !!v || "Filed is required"]
         }),
         created() {
-            this.$http.get('/config').then(response =>
+            this.$http.get("/config").then(response =>
                 this.config = response.body
             );
         },
         computed: {
             show() {
-                return this.$route.path === '/config'
+                return this.$route.path === "/config"
             }
         },
         methods: {
             save() {
                 if (this.$refs.form.validate()) {
-                    this.$http.put('/config', this.config).then(response => {
+                    this.$http.put("/config", this.config).then(response => {
                         this.config = response.body;
-                        this.$router.push('/config');
+                        this.$router.push("/config");
                     });
                 }
             },

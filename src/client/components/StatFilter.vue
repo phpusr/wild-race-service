@@ -2,8 +2,8 @@
     <v-layout>
         <v-flex>
             <v-tabs v-model="activeTabIndex" color="cyan" dark slider-color="yellow">
-                <v-tab ripple>{{ $t('stat.distanceRange') }}</v-tab>
-                <v-tab ripple>{{ $t('stat.dateRange') }}</v-tab>
+                <v-tab ripple>{{ $t("stat.distanceRange") }}</v-tab>
+                <v-tab ripple>{{ $t("stat.dateRange") }}</v-tab>
 
                 <v-tab-item>
                     <v-card flat>
@@ -19,10 +19,10 @@
                                     <v-text-field v-model="endDistance" mask="##########" solo @keyup.enter="recount" />
                                 </v-flex>
 
-                                <span class="mx-3 mt-2 headline">{{ $t('default.km') }}</span>
+                                <span class="mx-3 mt-2 headline">{{ $t("default.km") }}</span>
 
-                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
-                                <v-btn @click="publishPost" color="info">{{ $t('stat.publish') }}</v-btn>
+                                <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                <v-btn @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -42,8 +42,8 @@
                                     <date-picker v-model="endDate" />
                                 </v-flex>
 
-                                <v-btn @click="recount">{{ $t('stat.recount') }}</v-btn>
-                                <v-btn @click="publishPost" color="info">{{ $t('stat.publish') }}</v-btn>
+                                <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                <v-btn @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -54,11 +54,11 @@
 </template>
 
 <script>
-    import DatePicker from './DatePicker'
-    import statApi from '../api/stat'
+    import DatePicker from "./DatePicker"
+    import statApi from "../api/stat"
 
-    const DistanceTab = {name: 'distance', tabIndex: 0, isDistanceTab: true};
-    const DateTab = {name: 'date', tabIndex: 1, isDateTab: true};
+    const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true};
+    const DateTab = {name: "date", tabIndex: 1, isDateTab: true};
 
     export default {
         components: {DatePicker},
@@ -80,22 +80,22 @@
                 const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
                 return {
                     type: activeTab.name,
-                    startRange: startRange || '-',
-                    endRange: endRange || '-',
+                    startRange: startRange || "-",
+                    endRange: endRange || "-",
                 }
             }
         },
         methods: {
             recount() {
-                this.$router.push({name: 'stat', params: this.params});
+                this.$router.push({name: "stat", params: this.params});
             },
             async publishPost() {
-                if (!confirm(this.$t('stat.confirmPublish'))) {
+                if (!confirm(this.$t("stat.confirmPublish"))) {
                     return
                 }
 
                 const response = await statApi.publishPost(this.params);
-                alert(this.$t('stat.successPublishPost', {id: response.body}));
+                alert(this.$t("stat.successPublishPost", {id: response.body}));
             }
         }
     }

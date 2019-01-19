@@ -1,11 +1,11 @@
 <template>
     <v-dialog v-model="show" persistent scrollable width="500">
         <v-btn slot="activator" color="info">
-            {{$t('user.login')}}
+            {{$t("user.login")}}
         </v-btn>
 
         <v-card>
-            <v-card-title class="headline grey lighten-2">{{$t('user.loginTitle')}}</v-card-title>
+            <v-card-title class="headline grey lighten-2">{{$t("user.loginTitle")}}</v-card-title>
 
             <v-card-text>
                 <v-alert
@@ -38,10 +38,10 @@
             <v-card-actions>
                 <v-spacer/>
                 <v-btn color="primary" @click="login">
-                    {{$t('user.login')}}
+                    {{$t("user.login")}}
                 </v-btn>
                 <v-btn @click="cancel">
-                    {{$t('default.cancelButton')}}
+                    {{$t("default.cancelButton")}}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex'
+    import {mapActions} from "vuex"
 
     export default {
         data: () => ({
@@ -60,7 +60,7 @@
             alertMessage: null
         }),
         methods: {
-            ...mapActions(['loginAction']),
+            ...mapActions(["loginAction"]),
             async login() {
                 try {
                     await this.loginAction(this.user);
@@ -68,7 +68,7 @@
                     this.alertMessage = null;
                 } catch(e) {
                     if (e.status === 401) {
-                        this.alertMessage = this.$t('user.loginNotFound');
+                        this.alertMessage = this.$t("user.loginNotFound");
                     } else {
                         this.alertMessage = `${e.status}: ${e.statusText}`
                     }

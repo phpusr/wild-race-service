@@ -1,15 +1,15 @@
-import Vue from 'vue'
-import './api/resource'
-import App from './App.vue'
-import Vuetify from 'vuetify'
-import VueRouter from 'vue-router'
-import VueI18n from 'vue-i18n'
-import router from './router'
-import messages from './i18n'
-import {connectToWS} from './util/ws'
-import store from './store'
+import Vue from "vue"
+import "./api/resource"
+import App from "./App.vue"
+import Vuetify from "vuetify"
+import VueRouter from "vue-router"
+import VueI18n from "vue-i18n"
+import router from "./router"
+import messages from "./i18n"
+import {connectToWS} from "./util/ws"
+import store from "./store"
 
-import 'vuetify/dist/vuetify.min.css'
+import "vuetify/dist/vuetify.min.css"
 
 connectToWS();
 
@@ -20,7 +20,7 @@ Vue.use(VueRouter);
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-    locale: 'ru',
+    locale: "ru",
     messages,
 });
 
@@ -29,4 +29,4 @@ new Vue({
     router,
     i18n,
     store
-}).$mount('#app');
+}).$mount("#app");

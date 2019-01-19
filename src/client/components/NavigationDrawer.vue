@@ -29,7 +29,7 @@
                 <v-layout row wrap>
                     <v-flex xs12>
                         <span class="subheading grey--text text--lighten-1">
-                            <span class="font-weight-medium">{{$t('post.lastSyncDate')}}: </span>
+                            <span class="font-weight-medium">{{$t("post.lastSyncDate")}}: </span>
                             <span>{{lastSyncDate}}</span>
                         </span>
                     </v-flex>
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-    import {mapActions, mapState} from 'vuex'
-    import LoginDialog from './LoginDialog'
+    import {mapActions, mapState} from "vuex"
+    import LoginDialog from "./LoginDialog"
 
     export default {
         components: {LoginDialog},
@@ -49,9 +49,9 @@
             drawer: Boolean
         },
         data: () => ({
-            defaultAvatar: 'https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png'
+            defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png"
         }),
-        computed: mapState(['user', 'lastSyncDate']),
-        methods: mapActions(['logoutAction'])
+        computed: mapState(["user", "lastSyncDate"]),
+        methods: mapActions(["logoutAction"])
     }
 </script>

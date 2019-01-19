@@ -21,7 +21,7 @@
                             <v-btn icon class="blue-grey lighten-4" slot="activator">
                                 <v-icon>how_to_reg</v-icon>
                             </v-btn>
-                            <span>{{$t('post.manualEditing')}}</span>
+                            <span>{{$t("post.manualEditing")}}</span>
                         </v-tooltip>
 
                         <v-spacer />
@@ -38,7 +38,7 @@
                 <v-btn flat color="orange" @click="expandPost">{{textExpandPostButton}}</v-btn>
             </v-card-actions>
             <div v-if="post.editReason" class="orange lighten-4 pa-2">
-                <span class="font-weight-medium">{{$t('post.editReason')}}:</span>
+                <span class="font-weight-medium">{{$t("post.editReason")}}:</span>
                 {{post.editReason}}
             </div>
         </v-card>
@@ -46,8 +46,8 @@
 </template>
 
 <script>
-    import PostParserStatus from './PostParserStatus'
-    import dateFormat from 'date-format'
+    import PostParserStatus from "./PostParserStatus"
+    import dateFormat from "date-format"
 
     const maxLength = 170;
     const maxHeight = 500;
@@ -62,18 +62,18 @@
         }),
         computed: {
             date() {
-                return dateFormat('hh:mm dd.MM.yyyy', new Date(this.post.date));
+                return dateFormat("hh:mm dd.MM.yyyy", new Date(this.post.date));
             },
             largeTextOfPost() {
                 return this.post.text.length > maxLength;
             },
             textExpandPostButton() {
-                return this.$t(this.maxHeight ? 'post.expand' : 'post.squeeze');
+                return this.$t(this.maxHeight ? "post.expand" : "post.squeeze");
             },
             textOfPost() {
                 let {text} = this.post;
                 if (this.maxHeight) {
-                    text = text.length > maxLength ? text.substr(0, maxLength) + '...' : text;
+                    text = text.length > maxLength ? text.substr(0, maxLength) + "..." : text;
                 }
                 return text.replace(/\n/g, "<br/>");
             }

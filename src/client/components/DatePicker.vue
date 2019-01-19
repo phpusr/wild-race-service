@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import dateFormat from 'date-format'
+    import dateFormat from "date-format"
 
     export default {
         data: () => ({
@@ -39,18 +39,18 @@
         },
         computed: {
             viewFormattedDate() {
-                if (!this.value || this.value === '-') {
+                if (!this.value || this.value === "-") {
                     return null;
                 }
 
-                return dateFormat(this.$t('default.datePattern'), this.dateObject);
+                return dateFormat(this.$t("default.datePattern"), this.dateObject);
             },
             isoFormattedDate() {
-                if (!this.value || this.value === '-') {
+                if (!this.value || this.value === "-") {
                     return null;
                 }
 
-                return dateFormat(this.$t('default.isoDatePattern'), this.dateObject);
+                return dateFormat(this.$t("default.isoDatePattern"), this.dateObject);
             },
             dateObject() {
                 return this.number ? new Date(this.value) : this.parseIsoDateString(this.value);
@@ -59,11 +59,11 @@
         methods: {
             input(inputIsoDateString) {
                 const returnDate = this.number ? this.parseIsoDateString(inputIsoDateString).getTime() : inputIsoDateString;
-                this.$emit('input', returnDate);
+                this.$emit("input", returnDate);
                 this.menu = false;
             },
             parseIsoDateString(dateString) {
-                return new Date(dateString + 'T00:00:00');
+                return new Date(dateString + "T00:00:00");
             }
         }
     }

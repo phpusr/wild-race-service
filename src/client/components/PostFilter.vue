@@ -1,7 +1,7 @@
 <template>
     <v-layout row wrap>
         <v-flex class="mb-2" xs12>
-            <span class="headline grey--text text--lighten-5">{{$t('post.filter')}}</span>
+            <span class="headline grey--text text--lighten-5">{{$t("post.filter")}}</span>
         </v-flex>
         <v-flex xs12>
             <v-select
@@ -36,7 +36,7 @@
     export default {
         computed: {
             statuses() {
-                const statuses = this.$t('post.statuses');
+                const statuses = this.$t("post.statuses");
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key], icon: postStatusIcons[key], color: postStatusColors[key] }
                 ))
@@ -50,7 +50,7 @@
                 } else {
                     delete query[name];
                 }
-                this.$router.push({ path: '/', query });
+                this.$router.push({ path: "/", query });
             }
         }
     }
