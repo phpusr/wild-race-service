@@ -49,11 +49,6 @@ class SyncService(
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
 
-        if (!configService.get().syncPosts) {
-            logger.debug(">> Sync is disabled")
-            return
-        }
-
         var needSync = true
         while(needSync) {
             val countPosts = vkApiService.wallGet(0, 1, false).response.count

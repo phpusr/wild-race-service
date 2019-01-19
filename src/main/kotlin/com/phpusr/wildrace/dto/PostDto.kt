@@ -28,7 +28,7 @@ object PostDtoObject {
                 post.sumDistance, post.lastUpdate?.time, post.editReason, null)
     }
     fun create(post: Post, config: Config): PostDto {
-        val link = "${Consts.VKLink}/${config.groupShortLink}?w=wall${config.groupId}_${post.id}"
+        val link = "${Consts.VKLink}/public${config.groupId * -1}?w=wall${config.groupId}_${post.id}"
         return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, post.text, post.distance,
                 post.sumDistance, post.lastUpdate?.time, post.editReason, link)
     }

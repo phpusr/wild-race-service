@@ -8,7 +8,11 @@
                             <img :src="post.from.photo_50" />
                         </v-avatar>
                         <div class="ml-2">
-                            <h3><a :href="post.link">#{{post.number}}</a> {{post.from.lastName}} {{post.from.firstName}}</h3>
+                            <h3>
+                                <a :href="post.link" target="_blank">#{{post.number}}</a>
+                                {{post.from.firstName}}
+                                {{post.from.lastName}}
+                            </h3>
                             <div class="caption grey--text lighten-3">{{date}}</div>
                         </div>
                         <post-parser-status :status-id="post.statusId" class="ml-2" />

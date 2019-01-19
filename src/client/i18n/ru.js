@@ -78,11 +78,11 @@ export default {
         trainingMaxOneMan: 'Максимум от одного человека'
     },
     config: {
-        syncPosts: 'Синхронизация постов',
+        syncPosts: 'Авто-синхронизация постов',
         syncSeconds: 'Интервал запуска синхронизации (с.)',
         groupId: 'ID группы',
         groupShortLink: 'Домен группы',
-        commenting: 'Комментирование',
+        commenting: 'Комментирование статуса обработки постов',
         commentAccessToken: 'Токен для комментирования',
         commentFromGroup: 'Комментирование от имени группы',
         publishStat: 'Авто-публикация статистики',

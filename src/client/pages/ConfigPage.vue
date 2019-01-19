@@ -6,14 +6,20 @@
                     :label="$t('config.syncPosts')"
                     :readonly="show"
             />
-            <v-text-field
-                    v-model="config.syncSeconds"
-                    :label="$t('config.syncSeconds')"
-                    mask="#####"
-                    :rules="requiredRules"
-                    required
+            <v-checkbox
+                    v-model="config.publishStat"
+                    :label="$t('config.publishStat')"
                     :readonly="show"
-                    :solo="show"
+            />
+            <v-checkbox
+                    v-model="config.commenting"
+                    :label="$t('config.commenting')"
+                    :readonly="show"
+            />
+            <v-checkbox
+                    v-model="config.commentFromGroup"
+                    :label="$t('config.commentFromGroup')"
+                    :readonly="show"
             />
             <v-text-field
                     v-model="config.groupId"
@@ -24,19 +30,6 @@
                     :solo="show"
             />
             <v-text-field
-                    v-model="config.groupShortLink"
-                    :label="$t('config.groupShortLink')"
-                    :rules="requiredRules"
-                    required
-                    :readonly="show"
-                    :solo="show"
-            />
-            <v-checkbox
-                    v-model="config.commenting"
-                    :label="$t('config.commenting')"
-                    :readonly="show"
-            />
-            <v-text-field
                     v-model="config.commentAccessToken"
                     :label="$t('config.commentAccessToken')"
                     :rules="requiredRules"
@@ -44,16 +37,7 @@
                     :readonly="show"
                     :solo="show"
             />
-            <v-checkbox
-                    v-model="config.commentFromGroup"
-                    :label="$t('config.commentFromGroup')"
-                    :readonly="show"
-            />
-            <v-checkbox
-                    v-model="config.publishStat"
-                    :label="$t('config.publishStat')"
-                    :readonly="show"
-            />
+
 
             <div v-if="show">
                 <v-btn to="/config/edit">{{$t('default.editButton')}}</v-btn>
