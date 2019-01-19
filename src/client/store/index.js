@@ -4,13 +4,13 @@ import {deleteObject, replaceObject} from "../util/collections"
 import dateFormat from "date-format"
 import loginApi from "../api/login"
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 function formatDate(date) {
-    return dateFormat("hh:mm:ss (dd.MM.yyyy)", new Date(date));
+    return dateFormat("hh:mm:ss (dd.MM.yyyy)", new Date(date))
 }
 
-const {user, stat, lastSyncDate} = document.frontendData;
+const {user, stat, lastSyncDate} = document.frontendData
 
 export default new Vuex.Store({
     state: {
@@ -27,58 +27,58 @@ export default new Vuex.Store({
             if (state.user == null) {
                 return null
             }
-            const roles = state.user.authorities.map(it => it.authority);
+            const roles = state.user.authorities.map(it => it.authority)
 
             return roles.includes("ROLE_ADMIN")
         }
     },
     mutations: {
         setUserMutation(state, user) {
-            state.user = user;
+            state.user = user
         },
         addPostMutation(state, post) {
-            const data = state.post;
-            const index = data.posts.findIndex(el => el.id === post.id);
+            const data = state.post
+            const index = data.posts.findIndex(el => el.id === post.id)
             if (index === -1) {
-                data.posts.unshift(post);
-                data.posts.sort((a, b) => b.date - a.date);
-                data.totalElements++;
+                data.posts.unshift(post)
+                data.posts.sort((a, b) => b.date - a.date)
+                data.totalElements++
             } else {
-                replaceObject(data.posts, post);
+                replaceObject(data.posts, post)
             }
         },
         addPostsMutation(state, {list, totalElements}) {
-            state.post.totalElements = totalElements;
+            state.post.totalElements = totalElements
             if (list.length) {
-                state.post.posts.push(...list);
+                state.post.posts.push(...list)
             }
         },
         resetPostsMutation(state) {
-            state.post.posts = [];
+            state.post.posts = []
         },
         updatePostMutation(state, post) {
-            replaceObject(state.post.posts, post);
+            replaceObject(state.post.posts, post)
         },
         removePostMutation(state, post) {
             if (deleteObject(state.post.posts, post.id)) {
-                state.post.totalElements--;
+                state.post.totalElements--
             }
         },
         updatePostStatMutation(state, stat) {
-            state.post.stat = stat;
+            state.post.stat = stat
         },
         updateLastSyncDateMutation(state, date) {
-            state.lastSyncDate = formatDate(date);
+            state.lastSyncDate = formatDate(date)
         }
     },
     actions: {
         async loginAction({commit}, {username, password}) {
-            const response = await loginApi.login(username, password);
-            commit("setUserMutation", response.body);
+            const response = await loginApi.login(username, password)
+            commit("setUserMutation", response.body)
         },
         async logoutAction({commit}) {
-            await loginApi.logout();
-            commit("setUserMutation");
+            await loginApi.logout()
+            commit("setUserMutation")
         }
     }
 })

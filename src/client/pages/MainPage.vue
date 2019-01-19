@@ -39,32 +39,32 @@
         methods: {
             ...mapMutations(["addPostsMutation", "resetPostsMutation"]),
             resetData() {
-                this.resetPostsMutation();
-                this.page = 0;
-                this.infiniteId += 1;
+                this.resetPostsMutation()
+                this.page = 0
+                this.infiniteId += 1
             },
             async infiniteHandler($state) {
-                const params = this.$route.query;
+                const params = this.$route.query
                 const {body} = await postApi.getAll({
                         ...params,
                         page: this.page,
-                });
-                const {list} = body;
-                this.addPostsMutation(body);
+                })
+                const {list} = body
+                this.addPostsMutation(body)
                 if (list.length) {
-                    this.page += 1;
-                    $state.loaded();
+                    this.page += 1
+                    $state.loaded()
                 } else {
-                    $state.complete();
+                    $state.complete()
                 }
             }
         },
         computed: {
             ...mapState(["post"]),
             statTitles() {
-                const data = this.post;
-                const stat = data.stat;
-                const numberOfPostsString = (data.totalElements === stat.numberOfPosts) ? stat.numberOfPosts : `${data.totalElements} / ${stat.numberOfPosts}`;
+                const data = this.post
+                const stat = data.stat
+                const numberOfPostsString = (data.totalElements === stat.numberOfPosts) ? stat.numberOfPosts : `${data.totalElements} / ${stat.numberOfPosts}`
                 return [
                     {title: this.$t("post.totalSumDistance"), value: stat.sumDistance},
                     {title: this.$t("post.numberOfRuns"), value: stat.numberOfRuns},
@@ -74,17 +74,17 @@
             containerConfig() {
                 return {
                     ["grid-list-" + this.$vuetify.breakpoint.name]: true
-                };
+                }
             }
         },
         created() {
-            this.resetData();
+            this.resetData()
         },
         beforeRouteUpdate (to, from, next) {
-            next();
+            next()
 
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
-                this.resetData();
+                this.resetData()
             }
         },
     }

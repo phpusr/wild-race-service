@@ -23,7 +23,7 @@
 <script>
     import NavigationDrawer from "./components/NavigationDrawer"
     import Toolbar from "./components/Toolbar"
-    import {activityHandler, methods} from "./util/topicActivityHandler";
+    import {activityHandler, methods} from "./util/topicActivityHandler"
 
     export default {
         name: "app",
@@ -38,7 +38,7 @@
         },
         methods,
         created() {
-            activityHandler(this);
+            activityHandler(this)
         }
     }
 </script>

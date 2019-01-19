@@ -22,16 +22,16 @@
         },
         computed: {
             value() {
-                return this.$t("post.statuses")[this.statusId];
+                return this.$t("post.statuses")[this.statusId]
             },
             icon() {
-                return postStatusIcons[this.statusId];
+                return postStatusIcons[this.statusId]
             },
             color() {
-                return postStatusColors[this.statusId];
+                return postStatusColors[this.statusId]
             },
             mobile() {
-                return this.$vuetify.breakpoint.name === "xs";
+                return this.$vuetify.breakpoint.name === "xs"
             }
         }
     }

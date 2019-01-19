@@ -71,7 +71,7 @@
             }
         },
         created() {
-            this.fetchData();
+            this.fetchData()
         },
         computed: {
             postId() {
@@ -81,32 +81,32 @@
                 return !!this.postId
             },
             statuses() {
-                const statuses = this.$t("post.statuses");
+                const statuses = this.$t("post.statuses")
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key] }
                 ))
             },
             smAndUp() {
-                return this.$vuetify.breakpoint.smAndUp;
+                return this.$vuetify.breakpoint.smAndUp
             }
         },
         methods: {
             async fetchData() {
-                const {body} = await postApi.getOne(this.postId);
-                this.post = body;
+                const {body} = await postApi.getOne(this.postId)
+                this.post = body
             },
             update() {
-                postApi.update(this.post, this.updateNextPosts);
-                this.goToMainPage();
+                postApi.update(this.post, this.updateNextPosts)
+                this.goToMainPage()
             },
             remove() {
                 if (confirm(this.$t("default.confirmDelete"))) {
-                    postApi.remove(this.post.id, this.updateNextPosts);
-                    this.goToMainPage();
+                    postApi.remove(this.post.id, this.updateNextPosts)
+                    this.goToMainPage()
                 }
             },
             goToMainPage() {
-                this.$router.push({ path: "/", query: this.$route.query });
+                this.$router.push({ path: "/", query: this.$route.query })
             }
         }
     }

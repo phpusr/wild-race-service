@@ -1,6 +1,6 @@
 import Vue from "vue"
 
-const api = Vue.resource("/post/{id}");
+const api = Vue.resource("/post/{id}")
 
 export default {
     getOne: id => api.get({id}),

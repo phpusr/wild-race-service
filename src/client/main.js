@@ -11,22 +11,22 @@ import store from "./store"
 
 import "vuetify/dist/vuetify.min.css"
 
-connectToWS();
+connectToWS()
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
-Vue.use(Vuetify);
-Vue.use(VueRouter);
-Vue.use(VueI18n);
+Vue.use(Vuetify)
+Vue.use(VueRouter)
+Vue.use(VueI18n)
 
 const i18n = new VueI18n({
     locale: "ru",
     messages,
-});
+})
 
 new Vue({
     render: h => h(App),
     router,
     i18n,
     store
-}).$mount("#app");
+}).$mount("#app")

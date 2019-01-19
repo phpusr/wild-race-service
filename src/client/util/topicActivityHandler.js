@@ -3,33 +3,33 @@ import {mapMutations} from "vuex"
 import {isEmptyObject} from "./collections"
 
 export const methods = mapMutations(["addPostMutation", "updatePostMutation", "removePostMutation",
-    "updatePostStatMutation", "updateLastSyncDateMutation"]);
+    "updatePostStatMutation", "updateLastSyncDateMutation"])
 
 export function activityHandler(component) {
     addHandler("/topic/activity", data => {
-        const body = data.body;
+        const body = data.body
         if (data.objectType === "Post") {
             switch(data.eventType) {
                 case "Create":
                     if (isEmptyObject(component.$route.query)) {
-                        component.addPostMutation(body);
+                        component.addPostMutation(body)
                     }
-                    break;
+                    break
                 case "Update":
-                    component.updatePostMutation(body);
-                    break;
+                    component.updatePostMutation(body)
+                    break
                 case "Remove":
-                    component.removePostMutation(body);
-                    break;
+                    component.removePostMutation(body)
+                    break
                 default:
-                    throw new Error(`Looks like the event type is unknown: "${data.eventType}"`);
+                    throw new Error(`Looks like the event type is unknown: "${data.eventType}"`)
             }
         } else if (data.objectType === "Stat") {
-            component.updatePostStatMutation(body);
+            component.updatePostStatMutation(body)
         } else if (data.objectType === "LastSyncDate") {
-            component.updateLastSyncDateMutation(body);
+            component.updateLastSyncDateMutation(body)
         } else {
-            throw new Error(`Looks like the object type is unknown: "${data.objectType}"`);
+            throw new Error(`Looks like the object type is unknown: "${data.objectType}"`)
         }
-    });
+    })
 }

@@ -33,4 +33,4 @@ export default new VueRouter({ routes: [
         ]
     },
     { path: "/test", component: TestPage },
-]});
+]})

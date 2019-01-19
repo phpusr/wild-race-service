@@ -55,8 +55,8 @@
 <script>
     import dateFormat from "date-format"
 
-    const ruDatePattern = "dd.MM.yyyy";
-    const isoDatePattern = "yyyy-MM-dd";
+    const ruDatePattern = "dd.MM.yyyy"
+    const isoDatePattern = "yyyy-MM-dd"
     export default {
 
         data: () => ({
@@ -74,12 +74,12 @@
 
         methods: {
             formatDate (date) {
-                if (!date) return null;
+                if (!date) return null
 
-                return dateFormat(ruDatePattern, new Date(date));
+                return dateFormat(ruDatePattern, new Date(date))
             },
             parseDate (date) {
-                if (!date) return null;
+                if (!date) return null
 
                 return dateFormat(isoDatePattern, dateFormat.parse(ruDatePattern, date))
             }

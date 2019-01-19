@@ -36,7 +36,7 @@
     export default {
         computed: {
             statuses() {
-                const statuses = this.$t("post.statuses");
+                const statuses = this.$t("post.statuses")
                 return Object.keys(statuses).map(key => (
                     { value: key, text: statuses[key], icon: postStatusIcons[key], color: postStatusColors[key] }
                 ))
@@ -44,13 +44,13 @@
         },
         methods: {
             changeQuery(name, value) {
-                const query = { ...this.$route.query };
+                const query = { ...this.$route.query }
                 if (value) {
-                    query[name] = value;
+                    query[name] = value
                 } else {
-                    delete query[name];
+                    delete query[name]
                 }
-                this.$router.push({ path: "/", query });
+                this.$router.push({ path: "/", query })
             }
         }
     }

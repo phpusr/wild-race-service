@@ -30,7 +30,7 @@
                 if (confirm(this.$t("sync.confirm"))) {
                     postApi.sync()
                         .then(() => alert(this.$t("sync.success")))
-                        .catch(fetchHandler);
+                        .catch(fetchHandler)
                 }
             }
         },

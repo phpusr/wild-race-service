@@ -58,14 +58,14 @@
     import statApi from "../api/stat"
     import {fetchHandler} from "../util"
 
-    const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true};
-    const DateTab = {name: "date", tabIndex: 1, isDateTab: true};
+    const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true}
+    const DateTab = {name: "date", tabIndex: 1, isDateTab: true}
 
     export default {
         components: {DatePicker},
         data() {
-            const {typeOfForm, startRange, endRange} = this.$route.params;
-            const activeTab = typeOfForm === DateTab.name ? DateTab : DistanceTab;
+            const {typeOfForm, startRange, endRange} = this.$route.params
+            const activeTab = typeOfForm === DateTab.name ? DateTab : DistanceTab
             return {
                 activeTabIndex: activeTab.tabIndex,
                 startDistance: activeTab.isDistanceTab  ? +startRange : null,
@@ -76,9 +76,9 @@
         },
         computed: {
             params() {
-                const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab;
-                const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate;
-                const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate;
+                const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab
+                const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate
+                const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate
                 return {
                     type: activeTab.name,
                     startRange: startRange || "-",
@@ -88,7 +88,7 @@
         },
         methods: {
             recount() {
-                this.$router.push({name: "stat", params: this.params});
+                this.$router.push({name: "stat", params: this.params})
             },
             publishPost() {
                 if (!confirm(this.$t("stat.confirmPublish"))) {

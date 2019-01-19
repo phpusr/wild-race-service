@@ -49,8 +49,8 @@
     import PostParserStatus from "./PostParserStatus"
     import dateFormat from "date-format"
 
-    const maxLength = 170;
-    const maxHeight = 500;
+    const maxLength = 170
+    const maxHeight = 500
 
     export default {
         components: {PostParserStatus},
@@ -62,20 +62,20 @@
         }),
         computed: {
             date() {
-                return dateFormat("hh:mm dd.MM.yyyy", new Date(this.post.date));
+                return dateFormat("hh:mm dd.MM.yyyy", new Date(this.post.date))
             },
             largeTextOfPost() {
-                return this.post.text.length > maxLength;
+                return this.post.text.length > maxLength
             },
             textExpandPostButton() {
-                return this.$t(this.maxHeight ? "post.expand" : "post.squeeze");
+                return this.$t(this.maxHeight ? "post.expand" : "post.squeeze")
             },
             textOfPost() {
-                let {text} = this.post;
+                let {text} = this.post
                 if (this.maxHeight) {
-                    text = text.length > maxLength ? text.substr(0, maxLength) + "..." : text;
+                    text = text.length > maxLength ? text.substr(0, maxLength) + "..." : text
                 }
-                return text.replace(/\n/g, "<br/>");
+                return text.replace(/\n/g, "<br/>")
             }
         },
         methods: {
@@ -83,10 +83,10 @@
                 this.$router.push({
                     path: `/post/${this.post.id}/edit`,
                     query: this.$route.query
-                });
+                })
             },
             expandPost() {
-                this.maxHeight = this.maxHeight ? null : maxHeight;
+                this.maxHeight = this.maxHeight ? null : maxHeight
             }
         }
     }

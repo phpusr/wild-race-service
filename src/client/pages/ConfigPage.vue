@@ -60,7 +60,7 @@
         created() {
             this.$http.get("/config").then(response =>
                 this.config = response.body
-            );
+            )
         },
         computed: {
             show() {
@@ -71,13 +71,13 @@
             save() {
                 if (this.$refs.form.validate()) {
                     this.$http.put("/config", this.config).then(response => {
-                        this.config = response.body;
-                        this.$router.push("/config");
-                    });
+                        this.config = response.body
+                        this.$router.push("/config")
+                    })
                 }
             },
             cancel () {
-                this.$router.go(-1);
+                this.$router.go(-1)
             }
         }
     }

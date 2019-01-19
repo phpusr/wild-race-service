@@ -63,20 +63,20 @@
             ...mapActions(["loginAction"]),
             async login() {
                 try {
-                    await this.loginAction(this.user);
-                    this.show = false;
-                    this.alertMessage = null;
+                    await this.loginAction(this.user)
+                    this.show = false
+                    this.alertMessage = null
                 } catch(e) {
                     if (e.status === 401) {
-                        this.alertMessage = this.$t("user.loginNotFound");
+                        this.alertMessage = this.$t("user.loginNotFound")
                     } else {
                         this.alertMessage = `${e.status}: ${e.statusText}`
                     }
                 }
             },
             cancel() {
-                this.show = false;
-                this.alertMessage = null;
+                this.show = false
+                this.alertMessage = null
             }
         }
     }
