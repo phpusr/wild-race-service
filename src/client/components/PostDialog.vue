@@ -95,13 +95,13 @@
                 const {body} = await postApi.getOne(this.postId);
                 this.post = body;
             },
-            async update() {
-                await postApi.update(this.post, this.updateNextPosts);
+            update() {
+                postApi.update(this.post, this.updateNextPosts);
                 this.goToMainPage();
             },
-            async remove() {
+            remove() {
                 if (confirm(this.$t('default.confirmDelete'))) {
-                    await postApi.remove(this.post.id, this.updateNextPosts);
+                    postApi.remove(this.post.id, this.updateNextPosts);
                     this.goToMainPage();
                 }
             },
