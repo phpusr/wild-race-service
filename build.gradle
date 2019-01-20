@@ -58,5 +58,6 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-websocket")
 	// Security
 	compile('org.springframework.boot:spring-boot-starter-security')
-
+	// VK API
+	compile 'com.vk.api:sdk:0.5.12'
 }

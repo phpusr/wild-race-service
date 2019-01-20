@@ -1,8 +1,14 @@
 package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.consts.Consts
-import com.phpusr.wildrace.dto.vk.WallGet
 import com.phpusr.wildrace.dto.vk.WallPost
+import com.vk.api.sdk.client.VkApiClient
+import com.vk.api.sdk.client.actors.UserActor
+import com.vk.api.sdk.httpclient.HttpTransportClient
+import com.vk.api.sdk.objects.groups.GroupFull
+import com.vk.api.sdk.objects.users.UserXtrCounters
+import com.vk.api.sdk.objects.wall.responses.GetResponse
+import com.vk.api.sdk.queries.users.UserField
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,25 +18,38 @@ class VKApiService(
 ) {
 
     private val url = "https://api.vk.com/method"
+    private val client = VkApiClient(HttpTransportClient.getInstance())
+    private val user: UserActor
+        get() = UserActor(Consts.VKAppId, configService.get().commentAccessToken)
 
     /**
      * Возвращает посты со стены
      * @param offset смещение относительно последнего поста
      * @param count кол-во постов для скачивания
-     * @param extended если true возвращает массив профилей авторов постов
      */
-    fun wallGet(offset: Long, count: Int, extended: Boolean): WallGet {
+    fun wallGet(offset: Int, count: Int): GetResponse {
         val config = configService.get()
-        val params = mapOf(
-                "owner_id" to  config.groupId,
-                "offset" to offset,
-                "count" to count,
-                "filter" to "all",
-                "v" to Consts.VK_API_Version,
-                "extended" to if (extended) 1 else 0,
-                "access_token" to config.commentAccessToken
-        )
-        return restService.get("$url/wall.get", params, WallGet::class)
+        return client.wall()
+                .get(user)
+                .ownerId(config.groupId.toInt())
+                .offset(offset)
+                .count(count)
+                .execute()!!
+    }
+
+    fun usersGetById(userId: Int): UserXtrCounters? {
+        return client.users()
+                .get(user)
+                .userIds(userId.toString())
+                .fields(UserField.SEX, UserField.PHOTO_50, UserField.PHOTO_100)
+                .execute().first()
+    }
+
+    fun groupsGetById(groupId: Int): GroupFull? {
+        return client.groups()
+                .getById(user)
+                .groupId(groupId.toString())
+                .execute().first()
     }
 
     fun wallAddComment(postId: Long, text: String) {
