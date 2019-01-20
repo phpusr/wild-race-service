@@ -193,7 +193,7 @@ class StatService(
             val newRunnersString = if (newRunners.isNotEmpty()) {
                 newRunners.map { it.getVKLinkForPost(isDevelopmentEnv) }.joinToString(", ")
             } else "В этот раз без новичков"
-            val segment = if (startDistance != null && endDistance != null) {
+            val segment = if (stat.type == StatType.Distance) {
                 "$startDistance-$endDistance"
             } else {
                 val dfPost = SimpleDateFormat(Consts.PostDateFormat)

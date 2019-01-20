@@ -78,16 +78,16 @@ class StatDto {
     /** Топ бегунов на отрезке */
     lateinit var topIntervalRunners: List<RunnerDto>
 
-    private fun getStatType(): StatType {
-        return if (startDistance != null && endDistance != null) StatType.Distance else StatType.Date
-    }
+    val type: StatType
+        get(): StatType {
+            return if (startDistance != null && endDistance != null) StatType.Distance else StatType.Date
+        }
 
     fun createStatLog(postId: Int): StatLog {
         val df = SimpleDateFormat(Consts.JSDateFormat)
-        val statType = getStatType()
-        val startValue = if (statType == StatType.Distance) startDistance!!.toString() else df.format(startDate)
-        val endValue = if (statType == StatType.Distance) endDistance!!.toString() else df.format(endDate)
-        return StatLog(postId.toLong(), Date(), statType, startValue, endValue)
+        val startValue = if (type == StatType.Distance) startDistance!!.toString() else df.format(startDate)
+        val endValue = if (type == StatType.Distance) endDistance!!.toString() else df.format(endDate)
+        return StatLog(postId.toLong(), Date(), type, startValue, endValue)
     }
 
 }

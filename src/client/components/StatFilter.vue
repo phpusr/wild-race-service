@@ -68,8 +68,8 @@
             const activeTab = typeOfForm === DateTab.name ? DateTab : DistanceTab
             return {
                 activeTabIndex: activeTab.tabIndex,
-                startDistance: activeTab.isDistanceTab  ? +startRange : null,
-                endDistance: activeTab.isDistanceTab ? +endRange : null,
+                startDistance: activeTab.isDistanceTab  ? startRange : null,
+                endDistance: activeTab.isDistanceTab ? endRange : null,
                 startDate: activeTab.isDateTab ? startRange : null,
                 endDate: activeTab.isDateTab ? endRange : null
             }
@@ -77,12 +77,12 @@
         computed: {
             params() {
                 const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab
-                const startRange = activeTab.isDistanceTab ? this.startDistance : this.startDate
-                const endRange = activeTab.isDistanceTab ? this.endDistance : this.endDate
+                const startRange = activeTab.isDistanceTab ? +this.startDistance : this.startDate
+                const endRange = activeTab.isDistanceTab ? +this.endDistance : this.endDate
                 return {
                     type: activeTab.name,
-                    startRange: startRange || "-",
-                    endRange: endRange || "-",
+                    startRange: startRange != null ? startRange : "-",
+                    endRange: endRange != null ? endRange : "-",
                 }
             }
         },
