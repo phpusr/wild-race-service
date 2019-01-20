@@ -82,12 +82,12 @@ class StatDto {
         return if (startDistance != null && endDistance != null) StatType.Distance else StatType.Date
     }
 
-    fun createStatLog(postId: Long): StatLog {
+    fun createStatLog(postId: Int): StatLog {
         val df = SimpleDateFormat(Consts.JSDateFormat)
         val statType = getStatType()
         val startValue = if (statType == StatType.Distance) startDistance!!.toString() else df.format(startDate)
         val endValue = if (statType == StatType.Distance) endDistance!!.toString() else df.format(endDate)
-        return StatLog(postId, Date(), statType, startValue, endValue)
+        return StatLog(postId.toLong(), Date(), statType, startValue, endValue)
     }
 
 }

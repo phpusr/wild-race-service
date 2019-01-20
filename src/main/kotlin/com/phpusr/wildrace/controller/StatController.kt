@@ -38,7 +38,7 @@ class StatController(private val statService: StatService) {
             @RequestParam type: StatType?,
             @RequestParam startRange: String?,
             @RequestParam endRange: String?
-    ): Long {
+    ): Int {
         val stat = statService.calcStat(type, startRange, endRange)
         return statService.publishStatPost(stat)
     }

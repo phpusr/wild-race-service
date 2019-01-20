@@ -284,7 +284,7 @@ class SyncService(
         // Задержка перед добавлением комментария, чтобы не заблокировали пользователя
         Thread.sleep(publishingCommentInterval)
 
-        vkApiService.wallAddComment(postId, commentText)
+        vkApiService.wallAddComment(postId.toInt(), commentText)
     }
 
     fun updateNextPosts(updatePost: Post) {

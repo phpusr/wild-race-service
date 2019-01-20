@@ -151,8 +151,8 @@ class StatService(
         statSender.accept(EventType.Update, getStat())
     }
 
-    fun publishStatPost(stat: StatDto): Long {
-        val postId = vkApiService.wallPost(createPostText(stat)).response.post_id
+    fun publishStatPost(stat: StatDto): Int {
+        val postId = vkApiService.wallPost(createPostText(stat)).postId
         statLogRepo.save(stat.createStatLog(postId))
 
         return postId
@@ -161,7 +161,6 @@ class StatService(
     private fun createPostText(stat: StatDto): String {
         val isDevelopmentEnv = environmentService.isDevelopment()
 
-        //TODO добавить вывод города
         val s = with(stat) {
             val newRunnersString = if (newRunners.isNotEmpty()) {
                 newRunners.map { it.getVKLinkForPost(isDevelopmentEnv) }.joinToString(", ")
@@ -210,7 +209,6 @@ class StatService(
             if (lastLog != null) {
                 str.append("\nПредыдущий пост со статистикой: ${lastLog.getVKLink(configService.get())}\n")
             }
-            //TODO ссылка на источник статистики
 
             str.append("\nВсем отличного бега!\n")
 

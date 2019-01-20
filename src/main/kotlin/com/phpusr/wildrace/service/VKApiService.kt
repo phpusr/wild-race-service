@@ -1,23 +1,20 @@
 package com.phpusr.wildrace.service
 
 import com.phpusr.wildrace.consts.Consts
-import com.phpusr.wildrace.dto.vk.WallPost
 import com.vk.api.sdk.client.VkApiClient
 import com.vk.api.sdk.client.actors.UserActor
 import com.vk.api.sdk.httpclient.HttpTransportClient
 import com.vk.api.sdk.objects.groups.GroupFull
 import com.vk.api.sdk.objects.users.UserXtrCounters
+import com.vk.api.sdk.objects.wall.responses.CreateCommentResponse
 import com.vk.api.sdk.objects.wall.responses.GetResponse
+import com.vk.api.sdk.objects.wall.responses.PostResponse
 import com.vk.api.sdk.queries.users.UserField
 import org.springframework.stereotype.Service
 
 @Service
-class VKApiService(
-        private val configService: ConfigService,
-        private val restService: RestService
-) {
+class VKApiService(private val configService: ConfigService) {
 
-    private val url = "https://api.vk.com/method"
     private val client = VkApiClient(HttpTransportClient.getInstance())
     private val user: UserActor
         get() = UserActor(Consts.VKAppId, configService.get().commentAccessToken)
@@ -52,30 +49,23 @@ class VKApiService(
                 .execute().first()
     }
 
-    fun wallAddComment(postId: Long, text: String) {
+    fun wallAddComment(postId: Int, message: String): CreateCommentResponse? {
         val config = configService.get()
-        val params = mapOf(
-                "owner_id" to  config.groupId,
-                "post_id" to postId,
-                "text" to text,
-                "v" to Consts.VK_API_Version,
-                "access_token" to config.commentAccessToken,
-                "from_group" to if (config.commentFromGroup) 1 else 0
-        )
-        restService.get("$url/wall.addComment", params)
+        return client.wall().createComment(user, postId)
+                .ownerId(config.groupId.toInt())
+                .message(message)
+                .fromGroup(if (config.commentFromGroup) 1 else 0)
+                .execute()!!
     }
 
-    fun wallPost(message: String): WallPost {
+    fun wallPost(message: String): PostResponse {
         val config = configService.get()
-        val params = mapOf(
-                "owner_id" to  config.groupId,
-                "message" to message,
-                "signed" to 1,
-                "v" to Consts.VK_API_Version,
-                "access_token" to config.commentAccessToken,
-                "from_group" to if (config.commentFromGroup) 1 else 0
-        )
-        return restService.post("$url/wall.post", params, WallPost::class)
+        return client.wall().post(user)
+                .ownerId(config.groupId.toInt())
+                .message(message)
+                .signed(true)
+                .fromGroup(config.commentFromGroup)
+                .execute()!!
     }
 
 }
