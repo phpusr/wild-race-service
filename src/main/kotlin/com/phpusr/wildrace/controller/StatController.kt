@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*
 import java.beans.PropertyEditorSupport
 
 
-@RestController
+@Transactional(readOnly = true)
 @RequestMapping("stat")
-@Transactional
+@RestController
 class StatController(private val statService: StatService) {
 
     @InitBinder
@@ -35,6 +35,7 @@ class StatController(private val statService: StatService) {
         return statService.calcStat(type, startRange, endRange)
     }
 
+    @Transactional
     @PostMapping("publishPost")
     fun publishPost(
             @RequestParam type: StatType?,

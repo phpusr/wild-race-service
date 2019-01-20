@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import java.util.function.BiConsumer
 
+@Transactional(readOnly = true, rollbackFor = [ApiException::class])
 @Service
-@Transactional(rollbackFor = [ApiException::class])
 class SyncService(
         private val configService: ConfigService,
         private val postRepo: PostRepo,
@@ -48,6 +48,7 @@ class SyncService(
     /** Интервал между публикациями комментариев */
     private val publishingCommentInterval = 300L
 
+    @Transactional
     fun syncPosts() {
         logger.debug("-------- Start sync --------")
 
@@ -294,6 +295,7 @@ class SyncService(
         vkApiService.wallAddComment(postId.toInt(), commentText)
     }
 
+    @Transactional
     fun updateNextPosts(updatePost: Post) {
         val startPost = if (updatePost.number != null) {
             updatePost

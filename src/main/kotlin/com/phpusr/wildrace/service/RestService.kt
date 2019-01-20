@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import kotlin.reflect.KClass
 
-@Service
 @Transactional(readOnly = true)
+@Service
 class RestService {
 
     private val restTemplate = RestTemplate()

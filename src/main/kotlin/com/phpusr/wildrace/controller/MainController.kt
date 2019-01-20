@@ -11,9 +11,9 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 
-@Controller
-@RequestMapping("/")
 @Transactional(readOnly = true)
+@RequestMapping("/")
+@Controller
 class MainController(
         private val tempDataRepo: TempDataRepo,
         private val statService: StatService

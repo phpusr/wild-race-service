@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.function.BiConsumer
 
-@RestController
+@Transactional(readOnly = true)
 @RequestMapping("post")
-@Transactional
+@RestController
 class PostController(
         private val postRepo: PostRepo,
         private val configService: ConfigService,
@@ -52,6 +52,7 @@ class PostController(
         return PostDtoObject.create(post)
     }
 
+    @Transactional
     @PutMapping("{id}")
     @JsonView(Views.PostDtoREST::class)
     fun update(@RequestBody postDto: PostDto, @RequestParam(defaultValue = "false") updateNextPosts: Boolean): PostDto {
@@ -77,6 +78,7 @@ class PostController(
         return updatePostDto
     }
 
+    @Transactional
     @DeleteMapping("{id}")
     fun delete(@PathVariable("id") post: Post, @RequestParam(defaultValue = "false") updateNextPosts: Boolean): Long {
         logger.debug(">> Hand delete post: $post")
@@ -91,6 +93,7 @@ class PostController(
         return post.id
     }
 
+    @Transactional
     @GetMapping("sync")
     fun sync() {
         syncService.syncPosts()

@@ -19,8 +19,8 @@ import java.util.*
 import java.util.function.BiConsumer
 import kotlin.NoSuchElementException
 
+@Transactional(readOnly = true)
 @Service
-@Transactional
 class StatService(
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
@@ -147,12 +147,14 @@ class StatService(
         )
     }
 
+    @Transactional
     fun updateStat() {
         val tempData = tempDataRepo.save(tempDataRepo.get().copy(lastSyncDate = Date()))
         lastSyncDateSender.accept(EventType.Update, tempData.lastSyncDate.time)
         statSender.accept(EventType.Update, getStat())
     }
 
+    @Transactional
     fun publishStatPost(stat: StatDto): Int {
         val postId = vkApiService.wallPost(createPostText(stat)).postId
         statLogRepo.save(stat.createStatLog(postId))
