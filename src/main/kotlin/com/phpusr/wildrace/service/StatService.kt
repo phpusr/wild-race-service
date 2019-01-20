@@ -7,6 +7,7 @@ import com.phpusr.wildrace.dto.RunnerDto
 import com.phpusr.wildrace.dto.StatDto
 import com.phpusr.wildrace.enum.StatType
 import com.phpusr.wildrace.util.Util
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -31,6 +32,7 @@ class StatService(
         private val vkApiService: VKApiService,
         private val environmentService: EnvironmentService
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
         val stat = StatDto()
@@ -156,10 +158,32 @@ class StatService(
 
     @Transactional
     fun publishStatPost(stat: StatDto): Int {
+        logger.debug(">> Publish stat: ${stat.startDistance} -> ${stat.endDistance} (${stat.startDate} - ${stat.endDate})")
+
         val postId = vkApiService.wallPost(createPostText(stat)).postId
         statLogRepo.save(stat.createStatLog(postId))
 
         return postId
+    }
+
+    /** Publish stat every ${publishIntervalDistance} km */
+    @Transactional
+    fun publishStatPost(publishIntervalDistance: Int) {
+        val lastRunning = getOneRunning(Sort.Direction.DESC)
+
+        if (lastRunning == null) {
+            return
+        }
+
+        val lastStatLog = statLogRepo.findFirstByStatTypeOrderByPublishDateDesc(StatType.Distance)
+
+        val startDistance = lastStatLog?.endValue?.toInt() ?: 0
+        val endDistance = startDistance + publishIntervalDistance
+
+        if (lastRunning.sumDistance!! >= endDistance) {
+            val stat = calcStat(StatType.Distance, startDistance.toString(), endDistance.toString())
+            publishStatPost(stat)
+        }
     }
 
     private fun createPostText(stat: StatDto): String {
