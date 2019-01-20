@@ -2,10 +2,12 @@ package com.phpusr.wildrace.controller
 
 import com.phpusr.wildrace.domain.Config
 import com.phpusr.wildrace.service.ConfigService
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("config")
+@Transactional
 class ConfigController(private val configService: ConfigService) {
 
     @GetMapping

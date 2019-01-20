@@ -5,6 +5,7 @@ import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.dto.StatDto
 import com.phpusr.wildrace.enum.StatType
 import com.phpusr.wildrace.service.StatService
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
 import java.beans.PropertyEditorSupport
@@ -12,6 +13,7 @@ import java.beans.PropertyEditorSupport
 
 @RestController
 @RequestMapping("stat")
+@Transactional
 class StatController(private val statService: StatService) {
 
     @InitBinder

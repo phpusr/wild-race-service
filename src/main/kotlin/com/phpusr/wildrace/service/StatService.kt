@@ -10,6 +10,7 @@ import com.phpusr.wildrace.util.Util
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -19,6 +20,7 @@ import java.util.function.BiConsumer
 import kotlin.NoSuchElementException
 
 @Service
+@Transactional
 class StatService(
         private val postRepo: PostRepo,
         private val tempDataRepo: TempDataRepo,
@@ -84,7 +86,7 @@ class StatService(
         return stat
     }
 
-    fun getOneRunning(direction: Sort.Direction, stat: StatDto? = null): Post? {
+    private fun getOneRunning(direction: Sort.Direction, stat: StatDto? = null): Post? {
         val sort = Sort(direction, "date")
         val pageable = PageRequest.of(0, 1, sort)
 

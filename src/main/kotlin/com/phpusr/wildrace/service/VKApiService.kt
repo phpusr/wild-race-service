@@ -11,8 +11,10 @@ import com.vk.api.sdk.objects.wall.responses.GetResponse
 import com.vk.api.sdk.objects.wall.responses.PostResponse
 import com.vk.api.sdk.queries.users.UserField
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class VKApiService(private val configService: ConfigService) {
 
     private val client = VkApiClient(HttpTransportClient.getInstance())

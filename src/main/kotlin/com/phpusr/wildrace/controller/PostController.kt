@@ -14,12 +14,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.function.BiConsumer
 
 @RestController
 @RequestMapping("post")
+@Transactional
 class PostController(
         private val postRepo: PostRepo,
         private val configService: ConfigService,
