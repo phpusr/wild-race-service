@@ -37,9 +37,9 @@
                     required
                     :readonly="show"
                     :solo="show"
+                    :append-icon="show ? null : 'refresh'"
+                    @click:append="updateAccessToken"
             />
-            <a v-if="!show" :href="authorizeUrl">Get new</a>
-
 
             <div v-if="show">
                 <v-btn to="/config/edit">{{$t("default.editButton")}}</v-btn>
@@ -77,6 +77,9 @@
                         this.config.commentAccessToken = access_token
                     }
                 })
+            },
+            updateAccessToken() {
+                document.location = this.authorizeUrl;
             },
             save() {
                 if (this.$refs.form.validate()) {
