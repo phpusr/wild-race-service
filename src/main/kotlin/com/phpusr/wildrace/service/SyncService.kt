@@ -92,7 +92,7 @@ class SyncService(
         val vkPosts = response.items.reversed()
 
         val lastDbPosts = getLastPosts()
-        removeDeletedPosts(vkPosts, lastDbPosts)
+        val deletedPosts = removeDeletedPosts(vkPosts, lastDbPosts)
 
         vkPosts.forEach { vkPost ->
             val postId = vkPost.id.toLong()
@@ -127,6 +127,9 @@ class SyncService(
             }
         }
 
+        // Deleting posts from the client, after sync without exceptions
+        deletedPosts.forEach{ it -> postSender.accept(EventType.Remove, PostDtoObject.create(it)) }
+
         return postRepo.count().toInt()
     }
 
@@ -136,7 +139,7 @@ class SyncService(
     }
 
     /** Удаление из БД удаленных постов */
-    private fun removeDeletedPosts(vkPosts: List<WallPostFull>, lastDbPosts: MutableList<Post>) {
+    private fun removeDeletedPosts(vkPosts: List<WallPostFull>, lastDbPosts: MutableList<Post>): List<Post> {
         // Поиск постов за последние сутки
         val startDate = Date(Date().time - 24 * 3600 * 1000)
         val lastDayPosts = lastDbPosts.filter{ it.date >= startDate }
@@ -145,17 +148,17 @@ class SyncService(
         }
 
         if (deletedPosts.isEmpty()) {
-            return
+            return deletedPosts
         }
 
         logger.debug(">> Delete vkPosts, number: ${deletedPosts.size}")
         deletedPosts.forEach { post ->
             logger.debug(" -- Delete: $post")
-            post.number = null
             postRepo.delete(post)
-            postSender.accept(EventType.Remove, PostDtoObject.create(post))
             lastDbPosts.remove(post)
         }
+
+        return deletedPosts
     }
 
     private fun findOrCreateProfile(vkPost: WallPostFull, postDate: Date, dbProfiles: MutableList<Profile>): Profile {
