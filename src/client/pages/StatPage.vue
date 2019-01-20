@@ -85,6 +85,13 @@
                 newRunners: []
             }
         }),
+        methods: {
+            async fetchData() {
+                const {params} = this.$route
+                const response = await statApi.get(params)
+                this.stat = response.body
+            }
+        },
         created() {
             this.fetchData()
         },
@@ -93,12 +100,5 @@
 
             this.fetchData()
         },
-        methods: {
-            async fetchData() {
-                const {params} = this.$route
-                const response = await statApi.get(params)
-                this.stat = response.body
-            }
-        }
     }
 </script>

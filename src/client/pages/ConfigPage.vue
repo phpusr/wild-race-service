@@ -25,6 +25,7 @@
                     v-model="config.groupId"
                     :label="$t('config.groupId')"
                     :rules="requiredRules"
+                    mask="###############"
                     required
                     :readonly="show"
                     :solo="show"
@@ -57,17 +58,17 @@
             config: {},
             requiredRules: [v => !!v || "Filed is required"]
         }),
-        created() {
-            this.$http.get("/config").then(response =>
-                this.config = response.body
-            )
-        },
         computed: {
             show() {
                 return this.$route.path === "/config"
             }
         },
         methods: {
+            fetchData() {
+                this.$http.get("/config").then(response =>
+                    this.config = response.body
+                )
+            },
             save() {
                 if (this.$refs.form.validate()) {
                     this.$http.put("/config", this.config).then(response => {
@@ -79,6 +80,14 @@
             cancel () {
                 this.$router.go(-1)
             }
-        }
+        },
+        created() {
+            this.fetchData();
+        },
+        beforeRouteUpdate (to, from, next) {
+            next()
+
+            this.fetchData()
+        },
     }
 </script>
