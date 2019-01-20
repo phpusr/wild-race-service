@@ -56,7 +56,7 @@
 <script>
     import DatePicker from "./DatePicker"
     import statApi from "../api/stat"
-    import {fetchHandler} from "../util"
+    import {fetchHandler, stringToInt} from "../util"
 
     const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true}
     const DateTab = {name: "date", tabIndex: 1, isDateTab: true}
@@ -77,8 +77,8 @@
         computed: {
             params() {
                 const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab
-                const startRange = activeTab.isDistanceTab ? +this.startDistance : this.startDate
-                const endRange = activeTab.isDistanceTab ? +this.endDistance : this.endDate
+                const startRange = activeTab.isDistanceTab ? stringToInt(this.startDistance) : this.startDate
+                const endRange = activeTab.isDistanceTab ? stringToInt(this.endDistance) : this.endDate
                 return {
                     type: activeTab.name,
                     startRange: startRange != null ? startRange : "-",
