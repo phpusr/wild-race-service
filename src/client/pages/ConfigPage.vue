@@ -72,9 +72,11 @@
                     this.config = config
                     this.authorizeUrl = authorizeUrl
 
-                    const {access_token} = this.$route.query
+                    const {access_token, error} = this.$route.query
                     if (access_token) {
                         this.config.commentAccessToken = access_token
+                    } else if (error) {
+                        alert(error);
                     }
                 })
             },

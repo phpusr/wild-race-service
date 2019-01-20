@@ -13,11 +13,20 @@
 
 <script>
     const hash = window.location.hash.replace("#", "")
-    const token = hash.split("&").map(it => {
+    const params = hash.split("&").map(it => {
         const param = it.split("=")
         return {name: param[0], value: param[1]}
-    }).find(it => it.name === "access_token")
-    window.location.replace(`/#config/edit?${token.name}=${token.value}`)
+    })
+
+    let responseParam = params.find(it => it.name === "access_token")
+    if (!responseParam) {
+        responseParam = params.find(it => it.name === "error")
+    }
+    if (!responseParam) {
+        responseParam = {error: "other"}
+    }
+
+    window.location.replace(`/#config/edit?${responseParam.name}=${responseParam.value}`)
 </script>
 
 </body>
