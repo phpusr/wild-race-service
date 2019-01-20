@@ -1,5 +1,6 @@
 package com.phpusr.wildrace.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.Profile
@@ -12,6 +13,7 @@ import java.util.*
 /**
  * Класс для хранения статистики
  */
+@JsonIgnoreProperties("type")
 @JsonView(Views.StatDtoREST::class)
 class StatDto {
     /** Начальная дистанция для отчетности */
