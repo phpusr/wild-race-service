@@ -93,7 +93,7 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
     @Query("select pr, count(p.id), sum(p.distance) as s " +
             "from Post p left join p.from pr " +
             "where p.number is not null AND " +
-            "(:sDate is null OR date >= :sDate) AND (:eDate is null OR date <= :eDate) " +
+            "(:sDate is null OR p.date >= :sDate) AND (:eDate is null OR p.date <= :eDate) " +
             "group by pr order by s desc"
     )
     fun calcSumDistanceForRunners(
