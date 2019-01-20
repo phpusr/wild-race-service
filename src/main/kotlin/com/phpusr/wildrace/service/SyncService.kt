@@ -250,7 +250,7 @@ class SyncService(
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
             addStatusComment(post.id, commentText)
 
-            postSender.accept(eventType, PostDtoObject.create(post, configService.get()))
+            postSender.accept(eventType, PostDtoObject.create(post, vkApiService.getPostLink))
         }
 
         return parserOut != null

@@ -1,6 +1,5 @@
 package com.phpusr.wildrace.domain
 
-import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.enum.StatType
 import org.hibernate.validator.constraints.Length
 import org.springframework.data.repository.CrudRepository
@@ -27,10 +26,6 @@ class StatLog(
     //TODO remove in Postgres
     private val version = 0L
     private val postId = -1L
-
-    fun getVKLink(config: Config): String {
-        return "${Consts.VKLink}/public${config.groupId * -1}?w=wall${config.groupId}_$id/all"
-    }
 }
 
 interface StatLogRepo : CrudRepository<StatLog, Long> {

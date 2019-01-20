@@ -21,6 +21,11 @@ class VKApiService(private val configService: ConfigService) {
     private val user: UserActor
         get() = UserActor(Consts.VKAppId, configService.get().commentAccessToken)
 
+    val getPostLink = { id: Long ->
+        val config = configService.get()
+        "${Consts.VKLink}/public${config.groupId}?w=wall${config.groupIdNegative}_${id}"
+    }
+
     /**
      * Возвращает посты со стены
      * @param offset смещение относительно последнего поста
@@ -30,7 +35,7 @@ class VKApiService(private val configService: ConfigService) {
         val config = configService.get()
         return client.wall()
                 .get(user)
-                .ownerId(config.groupId.toInt())
+                .ownerId(config.groupIdNegative)
                 .offset(offset)
                 .count(count)
                 .execute()!!
@@ -54,7 +59,7 @@ class VKApiService(private val configService: ConfigService) {
     fun wallAddComment(postId: Int, message: String): CreateCommentResponse? {
         val config = configService.get()
         return client.wall().createComment(user, postId)
-                .ownerId(config.groupId.toInt())
+                .ownerId(config.groupIdNegative)
                 .message(message)
                 .fromGroup(if (config.commentFromGroup) 1 else 0)
                 .execute()!!
@@ -63,7 +68,7 @@ class VKApiService(private val configService: ConfigService) {
     fun wallPost(message: String): PostResponse {
         val config = configService.get()
         return client.wall().post(user)
-                .ownerId(config.groupId.toInt())
+                .ownerId(config.groupIdNegative)
                 .message(message)
                 .signed(true)
                 .fromGroup(config.commentFromGroup)

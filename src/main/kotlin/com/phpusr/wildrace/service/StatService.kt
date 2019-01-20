@@ -235,7 +235,7 @@ class StatService(
             // Добавление ссылки на предыдущий пост со статистикой
             val lastLog = statLogRepo.findFirstByOrderByPublishDateDesc()
             if (lastLog != null) {
-                str.append("\nПредыдущий пост со статистикой: ${lastLog.getVKLink(configService.get())}\n")
+                str.append("\nПредыдущий пост со статистикой: ${vkApiService.getPostLink(lastLog.id)}\n")
             }
 
             str.append("\nВсем отличного бега!\n")

@@ -1,8 +1,6 @@
 package com.phpusr.wildrace.dto
 
 import com.fasterxml.jackson.annotation.JsonView
-import com.phpusr.wildrace.consts.Consts
-import com.phpusr.wildrace.domain.Config
 import com.phpusr.wildrace.domain.Post
 import com.phpusr.wildrace.domain.Profile
 import com.phpusr.wildrace.domain.Views
@@ -27,8 +25,8 @@ object PostDtoObject {
         return PostDto(post.id, post.number, post.statusId, null, null, null, post.distance,
                 post.sumDistance, post.lastUpdate?.time, post.editReason, null)
     }
-    fun create(post: Post, config: Config): PostDto {
-        val link = "${Consts.VKLink}/public${config.groupId * -1}?w=wall${config.groupId}_${post.id}"
+    fun create(post: Post, getPostLink: (Long) -> String): PostDto {
+        val link = getPostLink(post.id)
         return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, post.text, post.distance,
                 post.sumDistance, post.lastUpdate?.time, post.editReason, link)
     }

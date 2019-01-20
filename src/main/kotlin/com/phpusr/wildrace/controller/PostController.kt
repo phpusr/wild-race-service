@@ -7,9 +7,9 @@ import com.phpusr.wildrace.domain.Views
 import com.phpusr.wildrace.dto.EventType
 import com.phpusr.wildrace.dto.PostDto
 import com.phpusr.wildrace.dto.PostDtoObject
-import com.phpusr.wildrace.service.ConfigService
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.SyncService
+import com.phpusr.wildrace.service.VKApiService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,7 +24,7 @@ import java.util.function.BiConsumer
 @RestController
 class PostController(
         private val postRepo: PostRepo,
-        private val configService: ConfigService,
+        private val vkApiService: VKApiService,
         private val postSender: BiConsumer<EventType, PostDto>,
         private val syncService: SyncService,
         private val statService: StatService
@@ -40,8 +40,7 @@ class PostController(
             @RequestParam manualEditing: Boolean?
     ): Map<String, Any> {
         val page = postRepo.findAll(pageable, statusId, manualEditing)
-        val config = configService.get()
-        val list = page.content.map { PostDtoObject.create(it, config) }
+        val list = page.content.map { PostDtoObject.create(it, vkApiService.getPostLink) }
 
         return mapOf("list" to list, "totalElements" to page.totalElements)
     }
@@ -68,7 +67,7 @@ class PostController(
         }
         postRepo.save(post)
 
-        val updatePostDto = PostDtoObject.create(post, configService.get())
+        val updatePostDto = PostDtoObject.create(post, vkApiService.getPostLink)
         postSender.accept(EventType.Update, updatePostDto)
         if (updateNextPosts) {
             syncService.updateNextPosts(post)

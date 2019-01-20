@@ -42,7 +42,10 @@ class Config(
 
         /** Публиковать-ли статистику в ВК */
         val publishStat: Boolean
-)
+) {
+        val groupIdNegative: Int
+        get() = groupId.toInt() * -1
+}
 
 interface ConfigRepo : CrudRepository<Config, Long> {
 
