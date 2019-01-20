@@ -82,12 +82,12 @@
             }
         },
         created() {
-            this.fetchData();
+            this.fetchData()
         },
         beforeRouteUpdate (to, from, next) {
             next()
 
             this.fetchData()
-        },
+        }
     }
 </script>

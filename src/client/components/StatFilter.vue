@@ -82,7 +82,7 @@
                 return {
                     type: activeTab.name,
                     startRange: startRange != null ? startRange : "-",
-                    endRange: endRange != null ? endRange : "-",
+                    endRange: endRange != null ? endRange : "-"
                 }
             }
         },

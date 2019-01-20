@@ -18,7 +18,7 @@ export default new Vuex.Store({
         post: {
             posts: [],
             totalElements: 0,
-            stat,
+            stat
         },
         lastSyncDate: formatDate(lastSyncDate)
     },

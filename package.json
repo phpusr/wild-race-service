@@ -38,8 +38,9 @@
       "eslint:recommended"
     ],
     "rules": {
-      "semi": [1, "never"],
-      "quotes": [1, "double"]
+      "semi": ["warn", "never"],
+      "quotes": ["warn", "double"],
+      "comma-dangle": ["warn", "never"]
     },
     "parserOptions": {
       "parser": "babel-eslint"
