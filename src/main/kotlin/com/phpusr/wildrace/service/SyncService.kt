@@ -10,15 +10,18 @@ import com.phpusr.wildrace.dto.PostDtoObject
 import com.phpusr.wildrace.enum.PostParserStatus
 import com.phpusr.wildrace.parser.MessageParser
 import com.phpusr.wildrace.util.Util
+import com.vk.api.sdk.exceptions.ApiException
 import com.vk.api.sdk.objects.wall.WallPostFull
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import java.util.function.BiConsumer
 
 @Service
+@Transactional(rollbackFor = [ApiException::class])
 class SyncService(
         private val configService: ConfigService,
         private val postRepo: PostRepo,
@@ -238,11 +241,12 @@ class SyncService(
 
             postRepo.save(post)
             logger.debug(" -- ${eventType.name} post after analyze: $post")
-            postSender.accept(eventType, PostDtoObject.create(post, configService.get()))
 
             // Комментарий статуса обработки поста
             val commentText = createCommentText(post, lastSumDistance, newSumDistance)
             addStatusComment(post.id, commentText)
+
+            postSender.accept(eventType, PostDtoObject.create(post, configService.get()))
         }
 
         return parserOut != null
