@@ -94,7 +94,7 @@ class PostController(
     }
 
     @Transactional
-    @GetMapping("sync")
+    @PutMapping("sync")
     fun sync() {
         syncService.syncPosts()
     }

@@ -9,5 +9,5 @@ export default {
     getLastSyncDate: () => api.get({id: "getLastSyncDate"}),
     update: (post, updateNextPosts) => Vue.http.put(`/post/${post.id}`, post, {params: {updateNextPosts}}),
     remove: (id, updateNextPosts) => Vue.http.delete(`/post/${id}`, {params: {updateNextPosts}}),
-    sync: () => api.get({id: "sync"})
+    sync: () => api.update({id: "sync"}, {})
 }
