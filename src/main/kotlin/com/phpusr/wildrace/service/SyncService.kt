@@ -51,14 +51,16 @@ class SyncService(
         var needSync = true
         while(needSync) {
             val countPosts = vkApiService.wallGet(0, 1).count
-            val alreadyDownloadCount = postRepo.count().toInt()
-            logger.debug(">> Download: $alreadyDownloadCount/$countPosts")
+            val downloadedCount = syncBlockPosts(countPosts, downloadPostsCount)
+            logger.debug(">> Downloaded (after sync): $downloadedCount/$countPosts")
+
+            if (downloadedCount > countPosts) {
+                throw RuntimeException("Number of posts in DB > downloaded")
+            }
+
+            needSync = downloadedCount < countPosts
             if (needSync) {
-                syncBlockPosts(countPosts, alreadyDownloadCount, downloadPostsCount)
-                needSync = alreadyDownloadCount < countPosts
-                if (needSync) {
-                    Thread.sleep(syncBlockInterval)
-                }
+                Thread.sleep(syncBlockInterval)
             }
         }
 
@@ -67,9 +69,12 @@ class SyncService(
         logger.debug("-------- End sync --------")
     }
 
-    private fun syncBlockPosts(countPosts: Int, alreadyDownloadCount: Int, downloadCount: Int) {
-        val offset = if (countPosts - alreadyDownloadCount > downloadCount) {
-            countPosts - alreadyDownloadCount - downloadCount
+    private fun syncBlockPosts(countPosts: Int, downloadCount: Int): Int {
+        val downloadedCount = postRepo.count().toInt()
+        logger.debug(">> Downloaded (before sync): $downloadedCount/$countPosts")
+
+        val offset = if (countPosts - downloadedCount > downloadCount) {
+            countPosts - downloadedCount - downloadCount
         } else 0
 
         val dbProfiles = profileRepo.findAll().toMutableList()
@@ -77,7 +82,8 @@ class SyncService(
         val response = vkApiService.wallGet(offset, downloadCount)
 
         if (response.count != countPosts) {
-            return
+            logger.debug(" -- Number of posts in VK changed: $countPosts -> ${response.count}")
+            return downloadedCount
         }
 
         val vkPosts = response.items.reversed()
@@ -117,6 +123,8 @@ class SyncService(
                 lastDbPosts.sortBy { it.date.time * -1 }
             }
         }
+
+        return postRepo.count().toInt()
     }
 
     private fun getLastPosts(): MutableList<Post> {
