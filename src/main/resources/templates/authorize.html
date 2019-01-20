@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Authorize</title>
+</head>
+<body>
+
+<h3>Authorize</h3>
+
+<script>
+    const hash = window.location.hash.replace("#", "")
+    const token = hash.split("&").map(it => {
+        const param = it.split("=")
+        return {name: param[0], value: param[1]}
+    }).find(it => it.name === "access_token")
+    window.location.replace(`/#config/edit?${token.name}=${token.value}`)
+</script>
+
+</body>
+</html>

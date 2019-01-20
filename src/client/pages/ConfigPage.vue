@@ -38,6 +38,7 @@
                     :readonly="show"
                     :solo="show"
             />
+            <a v-if="!show" :href="authorizeUrl">Get new</a>
 
 
             <div v-if="show">
@@ -56,6 +57,7 @@
         data: () => ({
             valid: true,
             config: {},
+            authorizeUrl: "#",
             requiredRules: [v => !!v || "Filed is required"]
         }),
         computed: {
@@ -65,9 +67,16 @@
         },
         methods: {
             fetchData() {
-                this.$http.get("/config").then(response =>
-                    this.config = response.body
-                )
+                this.$http.get("/config").then(response => {
+                    const {config, authorizeUrl} = response.body
+                    this.config = config
+                    this.authorizeUrl = authorizeUrl
+
+                    const {access_token} = this.$route.query
+                    if (access_token) {
+                        this.config.commentAccessToken = access_token
+                    }
+                })
             },
             save() {
                 if (this.$refs.form.validate()) {
@@ -78,7 +87,7 @@
                 }
             },
             cancel () {
-                this.$router.go(-1)
+                this.$router.push("/config")
             }
         },
         created() {

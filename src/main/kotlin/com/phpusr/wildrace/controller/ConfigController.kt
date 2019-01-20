@@ -2,16 +2,25 @@ package com.phpusr.wildrace.controller
 
 import com.phpusr.wildrace.domain.Config
 import com.phpusr.wildrace.service.ConfigService
+import com.phpusr.wildrace.service.VKApiService
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @Transactional(readOnly = true)
 @RequestMapping("config")
 @RestController
-class ConfigController(private val configService: ConfigService) {
+class ConfigController(
+        private val configService: ConfigService,
+        private val vkApiService: VKApiService
+) {
 
     @GetMapping
-    fun get() = configService.get()
+    fun get(): Map<String, Any> {
+        return mapOf(
+                "config" to configService.get(),
+                "authorizeUrl" to vkApiService.authorizeUrl
+        )
+    }
 
     @Transactional
     @PutMapping

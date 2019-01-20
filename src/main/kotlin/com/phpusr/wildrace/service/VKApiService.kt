@@ -21,6 +21,22 @@ class VKApiService(private val configService: ConfigService) {
     private val user: UserActor
         get() = UserActor(Consts.VKAppId, configService.get().commentAccessToken)
 
+    val authorizeUrl: String
+        get() {
+            //TODO change for production
+            val redirectUri = "http://localhost:8080/authorize"
+            val params = mapOf(
+                    "client_id" to Consts.VKAppId,
+                    "display" to "page",
+                    "redirect_uri" to redirectUri,
+                    "scope" to "wall,offline",
+                    "response_type" to "token",
+                    "v" to client.version
+            )
+            val paramsString = params.toList().joinToString("&") { "${it.first}=${it.second}" }
+            return "${client.oAuthEndpoint}authorize?$paramsString"
+        }
+
     val getPostLink = { id: Long ->
         val config = configService.get()
         "${Consts.VKLink}/public${config.groupId}?w=wall${config.groupIdNegative}_${id}"
