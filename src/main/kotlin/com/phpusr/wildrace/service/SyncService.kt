@@ -145,7 +145,7 @@ class SyncService(
             return
         }
 
-        logger.debug(">> Delete vkPosts: $deletedPosts")
+        logger.debug(">> Delete vkPosts, number: ${deletedPosts.size}")
         deletedPosts.forEach { post ->
             logger.debug(" -- Delete: $post")
             post.number = null
