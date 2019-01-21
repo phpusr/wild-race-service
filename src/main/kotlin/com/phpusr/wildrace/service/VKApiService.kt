@@ -24,7 +24,7 @@ class VKApiService(private val configService: ConfigService) {
     val authorizeUrl: String
         get() {
             //TODO change for production
-            val redirectUri = "http://localhost:8080/authorize"
+            val redirectUri = if (true) "https://oauth.vk.com/blank.html" else "http://localhost:8080/authorize"
             val params = mapOf(
                     "client_id" to Consts.VKAppId,
                     "display" to "page",
