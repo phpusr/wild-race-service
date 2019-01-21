@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.security.core.userdetails.UserDetails
 import javax.persistence.*
 
-@Entity
+@Entity(name = "user_table")
 data class User(
     @field:Id
     val id: Long?,
