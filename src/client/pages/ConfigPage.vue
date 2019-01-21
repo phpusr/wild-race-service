@@ -53,6 +53,8 @@
 </template>
 
 <script>
+    import configApi from "../api/config"
+
     export default {
         data: () => ({
             valid: true,
@@ -66,29 +68,27 @@
             }
         },
         methods: {
-            fetchData() {
-                this.$http.get("/config").then(response => {
-                    const {config, authorizeUrl} = response.body
-                    this.config = config
-                    this.authorizeUrl = authorizeUrl
+            async fetchData() {
+                const response = await configApi.get()
+                const {config, authorizeUrl} = response.body
+                this.config = config
+                this.authorizeUrl = authorizeUrl
 
-                    const {access_token, error} = this.$route.query
-                    if (access_token) {
-                        this.config.commentAccessToken = access_token
-                    } else if (error) {
-                        alert(error);
-                    }
-                })
+                const {access_token, error} = this.$route.query
+                if (access_token) {
+                    this.config.commentAccessToken = access_token
+                } else if (error) {
+                    alert(error);
+                }
             },
             updateAccessToken() {
                 document.location = this.authorizeUrl;
             },
-            save() {
+            async save() {
                 if (this.$refs.form.validate()) {
-                    this.$http.put("/config", this.config).then(response => {
-                        this.config = response.body
-                        this.$router.push("/config")
-                    })
+                    const response = await configApi.update(this.config)
+                    this.config = response.body
+                    this.$router.push("/config")
                 }
             },
             cancel () {
