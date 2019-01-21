@@ -1,5 +1,6 @@
 package com.phpusr.wildrace.config
 
+import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.UserService
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -10,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
@@ -18,14 +18,19 @@ import javax.servlet.http.HttpServletResponse
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig(
         private val userService: UserService,
-        private val passwordEncoder: PasswordEncoder
+        private val passwordEncoder: PasswordEncoder,
+        private val environmentService: EnvironmentService
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
+        val publicActions = mutableListOf("/favicon.ico", "/wild-race-ws/**", "/", "/post", "/stat")
+        if (environmentService.isDevelopment()) {
+            publicActions.addAll(listOf("/test", "/test/*"))
+        }
+
         http.authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/favicon.ico", "/wild-race-ws/**", "/", "/post", "/stat")
+            .antMatchers(HttpMethod.GET, *publicActions.toTypedArray())
                 .permitAll()
-            .antMatchers("/test*").permitAll() //TODO
             .anyRequest()
                 .hasRole("ADMIN")
 
@@ -39,7 +44,7 @@ class WebSecurityConfig(
                 }
                 .and()
             .logout()
-                .logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                .logoutSuccessHandler(RESTLogoutHandler(HttpStatus.OK))
                 .permitAll()
 
         http.exceptionHandling().authenticationEntryPoint { _, response, authException ->
