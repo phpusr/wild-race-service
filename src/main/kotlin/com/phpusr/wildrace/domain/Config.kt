@@ -50,6 +50,6 @@ class Config(
 interface ConfigRepo : CrudRepository<Config, Long> {
 
     @Query("from Config where id = 1")
-    fun get(): Config?
+    fun get(): Config
 
 }

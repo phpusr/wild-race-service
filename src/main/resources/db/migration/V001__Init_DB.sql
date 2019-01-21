@@ -2,13 +2,13 @@ create table config
 (
   id                   int8    not null,
   comment_access_token varchar(100),
-  comment_from_group   boolean not null,
   commenting           boolean not null,
   group_id             int8    not null,
   group_short_link     varchar(100),
-  publish_stat         boolean not null,
   sync_posts           boolean not null,
+  comment_from_group   boolean not null,
   sync_seconds         int4    not null,
+  publish_stat         boolean not null,
   primary key (id)
 );
 

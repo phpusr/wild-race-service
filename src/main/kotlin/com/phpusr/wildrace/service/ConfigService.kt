@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 @Service
 class ConfigService(private val configRepo: ConfigRepo) {
-    private var config = configRepo.get() ?: Config(-1, false, 0, -1, "", false, "", false, false)
+    private var config = configRepo.get()
 
     @Synchronized
     fun get() = config
