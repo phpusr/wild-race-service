@@ -48,13 +48,6 @@ class WebSecurityConfig(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        //TODO auth.userDetailsService(userService).passwordEncoder(passwordEncoder)
-        val passwordEncoder = object : PasswordEncoder {
-            override fun encode(rawPassword: CharSequence?) = rawPassword.toString()
-            override fun matches(rawPassword: CharSequence?, encodedPassword: String?) = rawPassword.toString() == encodedPassword
-        }
-        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder)
-                .withUser("user").password("1").roles("USER").and()
-                .withUser("admin").password("1").roles("ADMIN");
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder)
     }
 }

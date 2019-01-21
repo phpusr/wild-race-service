@@ -27,9 +27,7 @@ export default new Vuex.Store({
             if (state.user == null) {
                 return null
             }
-            const roles = state.user.authorities.map(it => it.authority)
-
-            return roles.includes("ROLE_ADMIN")
+            return state.user.roles.includes("ROLE_ADMIN")
         }
     },
     mutations: {
