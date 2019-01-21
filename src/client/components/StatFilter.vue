@@ -22,7 +22,7 @@
                                 <span class="mx-3 mt-2 headline">{{ $t("default.km") }}</span>
 
                                 <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
-                                <v-btn @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -43,7 +43,7 @@
                                 </v-flex>
 
                                 <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
-                                <v-btn @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -57,6 +57,7 @@
     import DatePicker from "./DatePicker"
     import statApi from "../api/stat"
     import {fetchHandler, stringToInt} from "../util"
+    import {mapGetters} from "vuex"
 
     const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true}
     const DateTab = {name: "date", tabIndex: 1, isDateTab: true}
@@ -75,6 +76,7 @@
             }
         },
         computed: {
+            ...mapGetters(["userIsAdmin"]),
             params() {
                 const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab
                 const startRange = activeTab.isDistanceTab ? stringToInt(this.startDistance) : this.startDate
