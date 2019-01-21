@@ -5,7 +5,7 @@
                 <v-flex>
                     <v-layout align-start>
                         <v-avatar class="elevation-2">
-                            <img :src="post.from.photo_50" alt="Profile avatar" />
+                            <img :src="post.from.photo_50" alt="" />
                         </v-avatar>
                         <div class="ml-2">
                             <h3>

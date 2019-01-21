@@ -78,11 +78,11 @@
                 if (access_token) {
                     this.config.commentAccessToken = access_token
                 } else if (error) {
-                    alert(error);
+                    alert(error)
                 }
             },
             updateAccessToken() {
-                document.location = this.authorizeUrl;
+                document.location = this.authorizeUrl
             },
             async save() {
                 if (this.$refs.form.validate()) {
