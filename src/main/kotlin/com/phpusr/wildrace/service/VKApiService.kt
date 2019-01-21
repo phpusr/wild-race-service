@@ -77,7 +77,7 @@ class VKApiService(private val configService: ConfigService) {
         return client.wall().createComment(user, postId)
                 .ownerId(config.groupIdNegative)
                 .message(message)
-                .fromGroup(if (config.commentFromGroup) 1 else 0)
+                .fromGroup(if (config.commentFromGroup) config.groupId.toInt() else 0)
                 .execute()!!
     }
 
