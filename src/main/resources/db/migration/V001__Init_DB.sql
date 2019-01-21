@@ -19,7 +19,7 @@ create table post
   date         timestamp,
   distance     int4,
   from_id      int8,
-  text         varchar(1000),
+  text         varchar(10000),
   sum_distance int4,
   status       int4,
   number       int4,

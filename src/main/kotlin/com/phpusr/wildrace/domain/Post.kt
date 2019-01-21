@@ -38,7 +38,7 @@ class Post(
     var number: Int? = null
 
     /** Текст записи */
-    @field:Length(max = 1000, message = "text_too_long")
+    @field:Length(max = 10000, message = "text_too_long")
     var text: String = ""
 
     /** Hash текста (MD5) */
