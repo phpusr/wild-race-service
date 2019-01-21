@@ -15,30 +15,30 @@ create table config
 create table post
 (
   id           int8 not null,
+  version      int8 not null,
   date         timestamp,
   distance     int4,
+  from_id      int8,
+  text         varchar(1000),
+  sum_distance int4,
+  status       int4,
+  number       int4,
   edit_reason  varchar(255),
   last_update  timestamp,
-  number       int4,
-  status       int4,
-  sum_distance int4,
-  text         varchar(1000),
   text_hash    varchar(32),
-  version      int8 not null,
-  from_id      int8,
   primary key (id)
 );
 
 create table profile
 (
   id             int8 not null,
+  version        int8 not null,
   birth_date     varchar(255),
   city           varchar(100),
   country        varchar(100),
   domain         varchar(100),
   first_name     varchar(100),
   has_photo      boolean,
-  join_date      timestamp,
   last_name      varchar(100),
   last_sync      timestamp,
   photo_100      varchar(255),
@@ -49,19 +49,19 @@ create table profile
   photo_max      varchar(255),
   photo_max_orig varchar(255),
   sex            int4 check (sex >= 0 AND sex <= 2),
-  version        int8 not null,
+  join_date      timestamp,
   primary key (id)
 );
 
 create table stat_log
 (
   id           int8 not null,
+  version      int8 not null,
   end_value    varchar(100),
   post_id      int8 not null,
   publish_date timestamp,
   start_value  varchar(100),
   stat_type    int4,
-  version      int8 not null,
   primary key (id)
 );
 
