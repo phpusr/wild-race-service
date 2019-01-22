@@ -36,7 +36,7 @@ class MainController(
             @RequestParam prod: Boolean = false
     ): String {
         val isProdMode = prod || environmentService.isProduction
-        logger.error(">> Production mode: $isProdMode")
+        logger.info(">> PRODUCTION MODE: $isProdMode")
         val host = if (isProdMode) "/" else "http://192.168.1.100:8000/"
 
         model["isProdMode"] = isProdMode
@@ -57,16 +57,9 @@ class MainController(
     }
 
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
-        //TODO не находит на продакшене
-        logger.error(">> Resource size: ${PathMatchingResourcePatternResolver(javaClass.classLoader)
-                .getResources("classpath*:/static/$dir/*.$ext").size}")
-
         return PathMatchingResourcePatternResolver(javaClass.classLoader)
                 .getResources("classpath*:/static/$dir/*.$ext")
-                .map{
-                    logger.error(" -- ${it.filename}");
-                    "$host$dir/${it.filename}"
-                }
+                .map{ "$host$dir/${it.filename}" }
     }
 
 
