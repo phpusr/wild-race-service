@@ -23,7 +23,12 @@ class WebSecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
-        val publicActions = mutableListOf("/favicon.ico", "/wild-race-ws/**", "/", "/post", "/stat")
+        val publicActions = mutableListOf(
+                "/favicon.ico",
+                "/wild-race-ws/**",
+                "/js/*", "/css/*",
+                "/", "/post", "/stat"
+        )
         if (environmentService.isDevelopment) {
             publicActions.addAll(listOf("/test", "/test/*"))
         }
