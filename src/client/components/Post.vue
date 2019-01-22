@@ -25,7 +25,7 @@
                         </v-tooltip>
 
                         <v-spacer />
-                        <v-btn icon @click="postEditHandler">
+                        <v-btn v-if="userIsAdmin" icon @click="postEditHandler">
                             <v-icon>edit</v-icon>
                         </v-btn>
                     </v-layout>
@@ -48,6 +48,7 @@
 <script>
     import PostParserStatus from "./PostParserStatus"
     import dateFormat from "date-format"
+    import {mapGetters} from "vuex"
 
     const maxLength = 170
     const maxHeight = 500
@@ -61,6 +62,7 @@
             maxHeight
         }),
         computed: {
+            ...mapGetters(["userIsAdmin"]),
             date() {
                 return dateFormat("hh:mm dd.MM.yyyy", new Date(this.post.date))
             },
