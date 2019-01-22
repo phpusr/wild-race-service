@@ -9,10 +9,11 @@ class MessageParserTest {
         Assert.assertNull(MessageParser(message).run())
     }
 
-    private fun assertResult(message: String, startSumNumber: Int, distance: List<Int>, endSumNumber: Int) {
+    private fun assertResult(message: String, startSumNumber: Long, distanceList: List<Short>, distance: Short, endSumNumber: Long) {
         val result = MessageParser(message).run()
 
         Assert.assertEquals(startSumNumber, result!!.startSumNumber)
+        Assert.assertEquals(distanceList, result.distanceList)
         Assert.assertEquals(distance, result.distance)
         Assert.assertEquals(endSumNumber, result.endSumNumber)
     }
@@ -20,38 +21,38 @@ class MessageParserTest {
     @Test
     fun test1() {
         assertNullResult("321 + 12.8 = 500")
-        assertResult("321.2 + 12 = 500.12", 2, listOf(12), 500)
+        assertResult("321.2 + 12 = 500.12", 2, listOf(12), 12, 500)
     }
 
     @Test
     fun test2() {
-        assertResult("2345+34=15", 2345, listOf(34), 15)
-        assertResult("2345 +34=15", 2345, listOf(34), 15)
-        assertResult("2345 + 34=15", 2345, listOf(34), 15)
-        assertResult("2345 + 34 =15", 2345, listOf(34), 15)
-        assertResult("2345 + 34 = 15", 2345, listOf(34), 15)
-        assertResult("2345 + 34+200 = 15", 2345, listOf(34, 200), 15)
+        assertResult("2345+34=15", 2345, listOf(34), 34, 15)
+        assertResult("2345 +34=15", 2345, listOf(34), 34, 15)
+        assertResult("2345 + 34=15", 2345, listOf(34), 34, 15)
+        assertResult("2345 + 34 =15", 2345, listOf(34), 34, 15)
+        assertResult("2345 + 34 = 15", 2345, listOf(34), 34, 15)
+        assertResult("2345 + 34+200 = 15", 2345, listOf(34, 200), 234, 15)
         assertNullResult("2345 + 34+200k = 15")
     }
 
     @Test
     fun test3() {
-        assertResult("5145+8=5153\n#дикийзабег", 5145, listOf(8), 5153)
+        assertResult("5145+8=5153\n#дикийзабег", 5145, listOf(8), 8, 5153)
     }
 
     @Test
     fun test4() {
-        assertResult("5127+6+12=5145", 5127, listOf(6, 12), 5145)
+        assertResult("5127+6+12=5145", 5127, listOf(6, 12), 18, 5145)
     }
 
     @Test
     fun test5() {
-        assertResult("5106 + 6 + 15 = 5127", 5106, listOf(6, 15), 5127)
+        assertResult("5106 + 6 + 15 = 5127", 5106, listOf(6, 15), 21, 5127)
     }
 
     @Test
     fun test6() {
-        assertResult("5091+4=5095 км\n\n#дикийзабег", 5091, listOf(4), 5095)
+        assertResult("5091+4=5095 км\n\n#дикийзабег", 5091, listOf(4), 4, 5095)
     }
 
     @Test
@@ -60,7 +61,7 @@ class MessageParserTest {
                 "Друзья, кто с Уфы заходите на огонёк в следующее воскресенье! 😉😊\n" +
                 "Сегодня отлично пробежались! 👍\n" +
                 "Правда трекер опять заглючило, в этот раз не в мою пользу 😂😁 3 км/ч\n" +
-                "#клуббегаСпарта #клуббегаСпартаУфа #Уфа", 5080, listOf(6), 5086)
+                "#клуббегаСпарта #клуббегаСпартаУфа #Уфа", 5080, listOf(6), 6, 5086)
     }
 
     @Test
@@ -86,6 +87,12 @@ class MessageParserTest {
                 "Пост со статистикой на 4000 км - http://vk.cc/4HAk6E \n" +
                 "Следующий отчет на 6000 км.\n" +
                 "Всем отличного бега!")
+    }
+
+    @Test(expected = NumberFormatException::class)
+    fun test9() {
+        assertResult("0 + 32767 = 32767", 0, listOf(32767), 32767, 32767)
+        MessageParser("0 + 32768 = 32768").run()
     }
 
 }

@@ -216,7 +216,7 @@ class SyncService(
         post.textHash = textHash
         if (parserOut != null) {
             // Проверка суммы
-            distance = parserOut.distance!!.sum().toShort()
+            distance = parserOut.distance!!
             newSumDistance = lastSumDistance + distance
             if (parserOut.startSumNumber == lastSumDistance) {
                 if (newSumDistance == parserOut.endSumNumber) {

@@ -20,7 +20,7 @@ class MessageParser(private val message: String) {
     /** Начальная сумма расстояний пробежек */
     private var startSumNumber: Long? = null
     /** Дистанции пробежек */
-    private lateinit var distance: MutableList<Short>
+    private lateinit var distanceList: MutableList<Short>
     /** Конечная сумма расстояний пробежек */
     private var endSumNumber: Long? = null
 
@@ -51,7 +51,7 @@ class MessageParser(private val message: String) {
         }
 
         if (endParsing) {
-            return MessageParserOut(startSumNumber, distance, endSumNumber)
+            return MessageParserOut(startSumNumber, distanceList, endSumNumber)
         }
 
         return null
@@ -62,7 +62,7 @@ class MessageParser(private val message: String) {
         debug("reset: '${currentSymbol}'")
 
         startSumNumber = null
-        distance = mutableListOf()
+        distanceList = mutableListOf()
         endSumNumber = null
     }
 
@@ -123,7 +123,7 @@ class MessageParser(private val message: String) {
         if (startSumNumber == null) {
             startSumNumber = currentNumber?.toLong()
         } else {
-            distance.add(currentNumber!!.toShort())
+            distanceList.add(currentNumber!!.toShort())
         }
         currentNumber = ""
 
@@ -160,7 +160,7 @@ class MessageParser(private val message: String) {
             return
         }
 
-        distance.add(currentNumber!!.toShort())
+        distanceList.add(currentNumber!!.toShort())
         currentNumber = ""
 
         nextSymbol()
@@ -208,9 +208,9 @@ class MessageParser(private val message: String) {
         endParsing = true
         endSumNumber = currentNumber!!.toLong()
 
-        debug("startSumNumber: ${startSumNumber}")
-        debug("distance: ${distance}")
-        debug("endSumNumber: ${endSumNumber}")
+        debug("startSumNumber: $startSumNumber")
+        debug("distanceList: $distanceList")
+        debug("endSumNumber: $endSumNumber")
     }
 
 }

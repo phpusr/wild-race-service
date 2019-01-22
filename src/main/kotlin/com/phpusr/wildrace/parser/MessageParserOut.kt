@@ -8,8 +8,11 @@ class MessageParserOut(
         val startSumNumber: Long?,
 
         /** Дистанция пробежки */
-        val distance: List<Short>?,
+        val distanceList: List<Short>?,
 
         /** Конечная сумма расстояний пробежек */
         val endSumNumber: Long?
-)
+) {
+        val distance: Short?
+        get() = distanceList?.sum()?.toShort()
+}
