@@ -47,7 +47,7 @@
                 const params = this.$route.query
                 const {body} = await postApi.getAll({
                         ...params,
-                        page: this.page,
+                        page: this.page
                 })
                 const {list} = body
                 this.addPostsMutation(body)
@@ -86,7 +86,7 @@
             if (JSON.stringify(to.query) !== JSON.stringify(from.query)) {
                 this.resetData()
             }
-        },
+        }
     }
 </script>
 

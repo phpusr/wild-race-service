@@ -33,6 +33,6 @@
                         .catch(fetchHandler)
                 }
             }
-        },
+        }
     }
 </script>

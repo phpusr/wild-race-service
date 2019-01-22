@@ -11,7 +11,7 @@ export default new VueRouter({ routes: [
         path: "/",
         components: {
             default: MainPage,
-            menu: PostFilter,
+            menu: PostFilter
         },
         children: [
             { path: "post/:postId/edit", component: PostDialog }
@@ -22,7 +22,7 @@ export default new VueRouter({ routes: [
         path: "/stat",
         component: StatPage,
         children: [
-            { name: "stat", path: ":type/:startRange/:endRange" },
+            { name: "stat", path: ":type/:startRange/:endRange" }
         ]
     },
     {
@@ -32,5 +32,5 @@ export default new VueRouter({ routes: [
             { path: "edit" }
         ]
     },
-    { path: "/test", component: TestPage },
+    { path: "/test", component: TestPage }
 ]})

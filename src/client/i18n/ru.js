@@ -90,7 +90,7 @@ export default {
         commenting: "Комментирование статуса обработки постов",
         commentAccessToken: "Токен для комментирования",
         commentFromGroup: "Комментирование от имени группы",
-        publishStat: "Авто-публикация статистики",
+        publishStat: "Авто-публикация статистики"
     },
     sync: {
         title: "Синхронизация",

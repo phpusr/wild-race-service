@@ -99,6 +99,6 @@
             next()
 
             this.fetchData()
-        },
+        }
     }
 </script>
