@@ -53,7 +53,7 @@ buildFrontend << {
 		commandLine = "yarn build".split().toList()
 	}
 }
-processResources.dependsOn buildFrontend
+//processResources.dependsOn buildFrontend
 
 
 repositories {

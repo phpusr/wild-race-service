@@ -14,6 +14,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.io.File
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -58,6 +59,9 @@ class MainController(
 
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
         //TODO не находит на продакшене
+
+        File(".").listFiles().forEach { logger.error(">> ${it.name}") }
+
         logger.error(">> Resource size: ${PathMatchingResourcePatternResolver(javaClass.classLoader)
                 .getResources("classpath*:/static/$dir/*.$ext").size}")
 
