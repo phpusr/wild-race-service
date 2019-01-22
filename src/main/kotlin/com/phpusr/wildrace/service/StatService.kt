@@ -186,7 +186,7 @@ class StatService(
     }
 
     private fun createPostText(stat: StatDto): String {
-        val isDevelopmentEnv = environmentService.isDevelopment()
+        val isDevelopmentEnv = environmentService.isDevelopment
 
         val s = with(stat) {
             val newRunnersString = if (newRunners.isNotEmpty()) {

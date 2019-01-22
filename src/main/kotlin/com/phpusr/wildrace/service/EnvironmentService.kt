@@ -8,9 +8,16 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class EnvironmentService(private val environment: Environment) {
 
-    fun isDevelopment(): Boolean {
+    private val ProdMode = "prod"
+    private val DevMode = "dev"
+
+    val isDevelopment: Boolean get() {
         val activeProfiles = environment.activeProfiles
-        return activeProfiles.contains("dev") || !activeProfiles.contains("prod")
+        return activeProfiles.contains(DevMode) || !activeProfiles.contains(ProdMode)
+    }
+
+    val isProduction: Boolean get() {
+        return environment.activeProfiles.contains(ProdMode)
     }
 
 }

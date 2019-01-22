@@ -1,6 +1,7 @@
 package com.phpusr.wildrace.controller
 
 import com.phpusr.wildrace.domain.TempDataRepo
+import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -18,7 +19,8 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 class MainController(
         private val tempDataRepo: TempDataRepo,
-        private val statService: StatService
+        private val statService: StatService,
+        private val environmentService: EnvironmentService
 ) {
 
     @GetMapping
@@ -28,6 +30,7 @@ class MainController(
                 "stat" to statService.getStat(),
                 "lastSyncDate" to tempDataRepo.get().lastSyncDate.time
         )
+        model["isProdMode"] = environmentService.isProduction
         return "index"
     }
 

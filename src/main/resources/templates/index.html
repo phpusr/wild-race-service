@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:with="host = ${isProdMode} ? '/' : 'http://192.168.1.100:8000/'">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <!--TODO favicon-->
+    <link rel="icon" href="/favicon.ico">
     <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
 
     <title>Wild Race</title>
@@ -22,7 +23,10 @@
 
 <div id="app"></div>
 
-<script th:src="'http://localhost:8000/app.js'"></script>
+<script th:if="${!isProdMode}" th:src="@{${host} + 'app.js'}"></script>
+
+<script th:if="${isProdMode}" th:src="@{${host} + 'js/app.62ef08e1.js'}"></script>
+<script th:if="${isProdMode}" th:src="@{${host} + 'js/chunk-vendors.d5e7dcd9.js'}"></script>
 
 </body>
 </html>

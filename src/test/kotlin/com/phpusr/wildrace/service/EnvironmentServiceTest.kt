@@ -22,7 +22,7 @@ class DefaultEnvironmentServiceTest {
     @Test
     fun isDevelopmentTest() {
         Assert.assertEquals(environment.activeProfiles.size, 0)
-        Assert.assertTrue(environmentService.isDevelopment())
+        Assert.assertTrue(environmentService.isDevelopment)
     }
 }
 
@@ -39,7 +39,7 @@ class ProdEnvironmentServiceTest {
     @Test
     fun isDevelopmentTest() {
         Assert.assertEquals(environment.activeProfiles.size, 1)
-        Assert.assertTrue(!environmentService.isDevelopment())
+        Assert.assertTrue(!environmentService.isDevelopment)
     }
 }
 
@@ -56,6 +56,6 @@ class DevEnvironmentServiceTest {
     @Test
     fun isDevelopmentTest() {
         Assert.assertEquals(environment.activeProfiles.size, 1)
-        Assert.assertTrue(environmentService.isDevelopment())
+        Assert.assertTrue(environmentService.isDevelopment)
     }
 }

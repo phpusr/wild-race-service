@@ -1,16 +1,19 @@
+const path = require("path")
+
 module.exports = {
-    baseUrl: 'http://localhost:8000/',
+    outputDir: path.resolve(__dirname + "/src/main/resources/static"),
+    baseUrl: "http://localhost:8000/",
     devServer: {
         port: 8000
     },
     configureWebpack: {
         resolve: {
             alias: {
-                '@': __dirname + '/src/client'
+                "@": path.resolve(__dirname + "/src/client")
             }
         },
         entry: {
-            app: './src/client/main.js'
+            app: path.resolve("./src/client/main.js")
         }
     }
 };
