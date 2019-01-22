@@ -12,6 +12,7 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -26,10 +27,17 @@ class MainController(
 ) {
 
     @GetMapping
-    fun main(model: Model, @AuthenticationPrincipal user: UserDetails?): String {
-        model["isProdMode"] = environmentService.isProduction
-        model["jsFiles"] = getFiles("js", "js")
-        model["cssFiles"] = getFiles("css", "css")
+    fun main(
+            model: Model,
+            @AuthenticationPrincipal user: UserDetails?,
+            @RequestParam forceProd: Boolean = false
+    ): String {
+        val isProdMode = forceProd || environmentService.isProduction
+        val host = if (isProdMode) "/" else "http://192.168.1.100:8000/"
+
+        model["isProdMode"] = isProdMode
+        model["jsFiles"] = if (isProdMode) getFiles("js", "js", host) else listOf("${host}app.js")
+        model["cssFiles"] = if (isProdMode) getFiles("css", "css", host) else listOf()
 
         model["frontendData"] = mapOf(
                 "user" to user,
@@ -44,12 +52,12 @@ class MainController(
         return "authorize"
     }
 
-    private fun getFiles(dir: String, ext: String): List<String> {
+    private fun getFiles(dir: String, ext: String, host: String): List<String> {
         return ClassPathResource("static/$dir")
                 .file
                 .listFiles()
                 .filter{ it.name.endsWith(ext) }
-                .map{ it.name }
+                .map{ "$host$dir/${it.name}" }
     }
 
 
