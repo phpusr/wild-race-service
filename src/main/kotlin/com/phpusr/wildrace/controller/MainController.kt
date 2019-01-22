@@ -4,7 +4,6 @@ import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Controller
@@ -60,16 +59,12 @@ class MainController(
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
         //TODO не находит на продакшене
 
-        File(".").listFiles().forEach { logger.error(">> ${it.name}") }
-
-        logger.error(">> Resource size: ${PathMatchingResourcePatternResolver(javaClass.classLoader)
-                .getResources("classpath*:/static/$dir/*.$ext").size}")
-
-        return PathMatchingResourcePatternResolver(javaClass.classLoader)
-                .getResources("classpath*:/static/$dir/*.$ext")
+        return File("src/main/resources/static/$dir")
+                .listFiles()
+                .filter { it.name.endsWith(ext) }
                 .map {
-                    logger.error(" -- ${it.filename}")
-                    "$host$dir/${it.filename}"
+                    logger.error(">> $it")
+                    "$host$dir/${it.name}"
                 }
     }
 
