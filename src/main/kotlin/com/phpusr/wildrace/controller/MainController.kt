@@ -63,8 +63,8 @@ class MainController(
 
         return PathMatchingResourcePatternResolver(javaClass.classLoader)
                 .getResources("classpath*:/static/$dir/*.$ext")
-                .map{
-                    logger.error(" -- ${it.filename}");
+                .map {
+                    logger.error(" -- ${it.filename}")
                     "$host$dir/${it.filename}"
                 }
     }
