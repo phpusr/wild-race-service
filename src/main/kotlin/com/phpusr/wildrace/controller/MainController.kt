@@ -3,7 +3,7 @@ package com.phpusr.wildrace.controller
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
-import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Controller
@@ -53,11 +53,9 @@ class MainController(
     }
 
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
-        return ClassPathResource("static/$dir")
-                .file
-                .listFiles()
-                .filter{ it.name.endsWith(ext) }
-                .map{ "$host$dir/${it.name}" }
+        return PathMatchingResourcePatternResolver(javaClass.classLoader)
+                .getResources("classpath*:/static/$dir/*.$ext")
+                .map{ "$host$dir/${it.filename}" }
     }
 
 
