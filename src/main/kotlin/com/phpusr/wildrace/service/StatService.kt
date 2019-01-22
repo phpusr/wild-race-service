@@ -28,7 +28,6 @@ class StatService(
         private val statSender: BiConsumer<EventType, Map<String, Any>>,
         private val lastSyncDateSender: BiConsumer<EventType, Long>,
         private val statLogRepo: StatLogRepo,
-        private val configService: ConfigService,
         private val vkApiService: VKApiService,
         private val environmentService: EnvironmentService
 ) {
