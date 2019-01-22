@@ -3,6 +3,9 @@ package com.phpusr.wildrace.controller
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.DirectoryFileFilter
+import org.apache.commons.io.filefilter.RegexFileFilter
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -59,11 +62,15 @@ class MainController(
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
         //TODO не находит на продакшене
 
+        FileUtils.listFiles(File("src"), RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY).forEach {
+            logger.error(">> ${it.absoluteFile}")
+        }
+
         return File("src/main/resources")
                 .listFiles()
                 .filter { it.name.endsWith(ext) }
                 .map {
-                    logger.error(">> $it")
+                    //logger.error(">> $it")
                     "$host$dir/${it.name}"
                 }
     }
