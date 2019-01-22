@@ -3,6 +3,7 @@ package com.phpusr.wildrace.controller
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -26,13 +27,16 @@ class MainController(
         private val environmentService: EnvironmentService
 ) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @GetMapping
     fun main(
             model: Model,
             @AuthenticationPrincipal user: UserDetails?,
-            @RequestParam forceProd: Boolean = false
+            @RequestParam prod: Boolean = false
     ): String {
-        val isProdMode = forceProd || environmentService.isProduction
+        val isProdMode = prod || environmentService.isProduction
+        logger.error(">> Production mode: $isProdMode")
         val host = if (isProdMode) "/" else "http://192.168.1.100:8000/"
 
         model["isProdMode"] = isProdMode
@@ -53,9 +57,16 @@ class MainController(
     }
 
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
+        //TODO не находит на продакшене
+        logger.error(">> Resource size: ${PathMatchingResourcePatternResolver(javaClass.classLoader)
+                .getResources("classpath*:/static/$dir/*.$ext").size}")
+
         return PathMatchingResourcePatternResolver(javaClass.classLoader)
                 .getResources("classpath*:/static/$dir/*.$ext")
-                .map{ "$host$dir/${it.filename}" }
+                .map{
+                    logger.error(" -- ${it.filename}");
+                    "$host$dir/${it.filename}"
+                }
     }
 
 
