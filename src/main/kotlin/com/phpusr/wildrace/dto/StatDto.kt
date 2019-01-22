@@ -41,11 +41,11 @@ class StatDto {
 
     /** Километраж - средний в день */
     val distancePerDayAvg: Float
-        get() = if (daysCountAll == 0) 0f else distanceAll / daysCountAll.toFloat()
+        get() = if (daysCountAll == 0) 0f else (distanceAll / daysCountAll.toDouble()).toFloat()
 
     /** Километраж - средняя длина одной пробежки */
     val distancePerTrainingAvg: Float
-        get() = if (trainingCountAll == 0) 0f else distanceAll / trainingCountAll.toFloat()
+        get() = if (trainingCountAll == 0) 0f else (distanceAll / trainingCountAll.toDouble()).toFloat()
 
     /** Километраж - максимум от 1-го человека */
     lateinit var distanceMaxOneMan: RunnerDto
@@ -56,7 +56,7 @@ class StatDto {
 
     /** Тренировки - среднее в день */
     val trainingCountPerDayAvg
-        get() = if (daysCountAll == 0) 0f else trainingCountAll / daysCountAll.toFloat()
+        get() = if (daysCountAll == 0) 0f else (trainingCountAll / daysCountAll.toDouble()).toFloat()
 
     /** Тренировки - максимум от 1-го человека */
     lateinit var trainingMaxOneMan: RunnerDto

@@ -97,7 +97,7 @@ class StatService(
     private fun getRunners(firstIntRunning: Post? = null, lastIntRunning: Post? = null): List<RunnerDto> {
         return postRepo.calcSumDistanceForRunners(firstIntRunning?.date, lastIntRunning?.date).map{
             val el = it as Array<*>
-            RunnerDto(el[0] as Profile, el[1] as Int, el[2] as Int)
+            RunnerDto(el[0] as Profile, (el[1] as Long).toInt(), (el[2] as Long).toInt())
         }
     }
 
