@@ -3,10 +3,8 @@ package com.phpusr.wildrace.controller
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.DirectoryFileFilter
-import org.apache.commons.io.filefilter.RegexFileFilter
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Controller
@@ -16,7 +14,6 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.io.File
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -61,17 +58,14 @@ class MainController(
 
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
         //TODO не находит на продакшене
+        logger.error(">> Resource size: ${PathMatchingResourcePatternResolver(javaClass.classLoader)
+                .getResources("classpath*:/static/$dir/*.$ext").size}")
 
-        FileUtils.listFiles(File("src"), RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY).forEach {
-            logger.error(">> ${it.absoluteFile}")
-        }
-
-        return File("src/main/resources")
-                .listFiles()
-                .filter { it.name.endsWith(ext) }
-                .map {
-                    //logger.error(">> $it")
-                    "$host$dir/${it.name}"
+        return PathMatchingResourcePatternResolver(javaClass.classLoader)
+                .getResources("classpath*:/static/$dir/*.$ext")
+                .map{
+                    logger.error(" -- ${it.filename}");
+                    "$host$dir/${it.filename}"
                 }
     }
 
