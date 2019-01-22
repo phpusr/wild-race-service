@@ -95,4 +95,9 @@ class MessageParserTest {
         MessageParser("0 + 32768 = 32768").run()
     }
 
+    @Test
+    fun test10() {
+        assertResult("999999900 + 100 = 1000000000", 999_999_900, listOf(100), 100, 1_000_000_000)
+    }
+
 }
