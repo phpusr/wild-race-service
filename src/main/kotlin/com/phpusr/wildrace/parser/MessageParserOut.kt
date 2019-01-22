@@ -5,11 +5,11 @@ package com.phpusr.wildrace.parser
  */
 class MessageParserOut(
         /** Начальная сумма расстояний пробежек */
-        val startSumNumber: Int?,
+        val startSumNumber: Long?,
 
         /** Дистанция пробежки */
-        val distance: List<Int>?,
+        val distance: List<Short>?,
 
         /** Конечная сумма расстояний пробежек */
-        val endSumNumber: Int?
+        val endSumNumber: Long?
 )

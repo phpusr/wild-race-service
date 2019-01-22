@@ -45,7 +45,7 @@ class Post(
     @field:Length(max = 32, message = "text_hash_too_long")
     var textHash: String = ""
 
-    val startSum: Int?
+    val startSum: Long?
         get() {
             val sum = sumDistance
             val dst = distance
@@ -53,10 +53,10 @@ class Post(
         }
 
     /** Дистанция пробежки */
-    var distance: Int? = null
+    var distance: Short? = null
 
     /** Сумма дистанций пробежек */
-    var sumDistance: Int? = null
+    var sumDistance: Long? = null
 
     /** Причина редактирования */
     @field:Length(max = 255, message = "edit_reason_too_long")
@@ -86,8 +86,8 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
             pageable: Pageable,
             @Param("sDate") startDate: Date? = null,
             @Param("eDate") endDate: Date? = null,
-            @Param("sDst") startDistance: Int? = null,
-            @Param("eDst") endDistance: Int? = null
+            @Param("sDst") startDistance: Long? = null,
+            @Param("eDst") endDistance: Long? = null
     ): List<Post>
 
     @Query("select pr, count(p.id), sum(p.distance) as s " +

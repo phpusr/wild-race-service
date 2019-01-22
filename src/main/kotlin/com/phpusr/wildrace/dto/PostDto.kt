@@ -13,8 +13,8 @@ class PostDto(
         val from: Profile?,
         val date: Long?,
         val text: String?,
-        val distance: Int?,
-        val sumDistance: Int?,
+        val distance: Short?,
+        val sumDistance: Long?,
         val lastUpdate: Long?,
         val editReason: String?,
         val link: String?

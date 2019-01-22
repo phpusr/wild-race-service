@@ -46,8 +46,8 @@ class StatService(
                 stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
             } catch (ignored: ParseException) {}
         } else if (statType == StatType.Distance) {
-            stat.startDistance = startRange?.toIntOrNull()
-            stat.endDistance = endRange?.toIntOrNull()
+            stat.startDistance = startRange?.toLongOrNull()
+            stat.endDistance = endRange?.toLongOrNull()
         }
 
         val firstRunning = getOneRunning(Sort.Direction.ASC)
@@ -97,7 +97,7 @@ class StatService(
     private fun getRunners(firstIntRunning: Post? = null, lastIntRunning: Post? = null): List<RunnerDto> {
         return postRepo.calcSumDistanceForRunners(firstIntRunning?.date, lastIntRunning?.date).map{
             val el = it as Array<*>
-            RunnerDto(el[0] as Profile, el[1] as Long, el[2] as Long)
+            RunnerDto(el[0] as Profile, el[1] as Int, el[2] as Int)
         }
     }
 

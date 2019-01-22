@@ -17,10 +17,10 @@ import java.util.*
 @JsonView(Views.StatDtoREST::class)
 class StatDto {
     /** Начальная дистанция для отчетности */
-    var startDistance: Int? = null
+    var startDistance: Long? = null
 
     /** Конечная дистанция для отчетности */
-    var endDistance: Int? = null
+    var endDistance: Long? = null
 
     /** Начальная дата для отчетности */
     var startDate: Date? = null
@@ -37,15 +37,15 @@ class StatDto {
 
 
     /** Километраж - общий  */
-    var distanceAll: Int = 0
+    var distanceAll: Long = 0
 
     /** Километраж - средний в день */
     val distancePerDayAvg: Float
-        get() = if (daysCountAll == 0) 0f else distanceAll.toFloat() / daysCountAll
+        get() = if (daysCountAll == 0) 0f else distanceAll / daysCountAll.toFloat()
 
     /** Километраж - средняя длина одной пробежки */
     val distancePerTrainingAvg: Float
-        get() = if (trainingCountAll == 0) 0f else distanceAll.toFloat() / trainingCountAll
+        get() = if (trainingCountAll == 0) 0f else distanceAll / trainingCountAll.toFloat()
 
     /** Километраж - максимум от 1-го человека */
     lateinit var distanceMaxOneMan: RunnerDto
@@ -56,7 +56,7 @@ class StatDto {
 
     /** Тренировки - среднее в день */
     val trainingCountPerDayAvg
-        get() = if (daysCountAll == 0) 0f else trainingCountAll.toFloat() / daysCountAll
+        get() = if (daysCountAll == 0) 0f else trainingCountAll / daysCountAll.toFloat()
 
     /** Тренировки - максимум от 1-го человека */
     lateinit var trainingMaxOneMan: RunnerDto

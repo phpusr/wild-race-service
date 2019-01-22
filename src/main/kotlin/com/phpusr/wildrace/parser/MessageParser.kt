@@ -18,11 +18,11 @@ class MessageParser(private val message: String) {
     /** Текущее число, собираемое посимвольно */
     private var currentNumber: String? = null
     /** Начальная сумма расстояний пробежек */
-    private var startSumNumber: Int? = null
+    private var startSumNumber: Long? = null
     /** Дистанции пробежек */
-    private lateinit var distance: MutableList<Int>
+    private lateinit var distance: MutableList<Short>
     /** Конечная сумма расстояний пробежек */
-    private var endSumNumber: Int? = null
+    private var endSumNumber: Long? = null
 
     /** Закончилась-ли обработка выражения */
     private var endParsing = false
@@ -121,9 +121,9 @@ class MessageParser(private val message: String) {
         debug("step3: '${currentSymbol}'")
 
         if (startSumNumber == null) {
-            startSumNumber = currentNumber?.toInt()
+            startSumNumber = currentNumber?.toLong()
         } else {
-            distance.add(currentNumber!!.toInt())
+            distance.add(currentNumber!!.toShort())
         }
         currentNumber = ""
 
@@ -160,7 +160,7 @@ class MessageParser(private val message: String) {
             return
         }
 
-        distance.add(currentNumber!!.toInt())
+        distance.add(currentNumber!!.toShort())
         currentNumber = ""
 
         nextSymbol()
@@ -206,7 +206,7 @@ class MessageParser(private val message: String) {
         debug("finish: '${currentNumber}'")
 
         endParsing = true
-        endSumNumber = currentNumber!!.toInt()
+        endSumNumber = currentNumber!!.toLong()
 
         debug("startSumNumber: ${startSumNumber}")
         debug("distance: ${distance}")

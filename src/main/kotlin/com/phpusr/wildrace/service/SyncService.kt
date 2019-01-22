@@ -204,19 +204,19 @@ class SyncService(
     }
 
     /** Анализ сообщения и вытаскивание дистанции */
-    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Int, lastPostNumber: Int, post: Post,
+    private fun analyzePostText(text: String, textHash: String, lastSumDistance: Long, lastPostNumber: Int, post: Post,
                                 eventType: EventType): Boolean {
         val parserOut = MessageParser(text).run()
         val status: PostParserStatus
         val number: Int?
-        val distance: Int?
-        val newSumDistance: Int?
+        val distance: Short?
+        val newSumDistance: Long?
 
         post.text = text
         post.textHash = textHash
         if (parserOut != null) {
             // Проверка суммы
-            distance = parserOut.distance!!.sum()
+            distance = parserOut.distance!!.sum().toShort()
             newSumDistance = lastSumDistance + distance
             if (parserOut.startSumNumber == lastSumDistance) {
                 if (newSumDistance == parserOut.endSumNumber) {
@@ -256,7 +256,7 @@ class SyncService(
         return parserOut != null
     }
 
-    private fun createCommentText(post: Post, startSumNumber: Int?, endSumNumber: Int?): String {
+    private fun createCommentText(post: Post, startSumDistance: Long, endSumDistance: Long?): String {
         val commentText = StringBuilder()
 
         // Обращение
@@ -275,9 +275,9 @@ class SyncService(
 
         commentText.append(when(post.statusId) {
             PostParserStatus.Success.id -> "Пост успешно обработан"
-            PostParserStatus.ErrorSum.id -> "Ошибка при сложении, должно быть: ${endSumNumber}"
+            PostParserStatus.ErrorSum.id -> "Ошибка при сложении, должно быть: $endSumDistance"
             PostParserStatus.ErrorParse.id -> "Ошибка в формате записи, пост не распознан"
-            PostParserStatus.ErrorStartSum.id -> "Ошибка в стартовой сумме, должна быть: ${startSumNumber}"
+            PostParserStatus.ErrorStartSum.id -> "Ошибка в стартовой сумме, должна быть: $startSumDistance"
             else -> "Ошибка: Не предусмотренный статус, напишите администратору"
         })
 
