@@ -59,7 +59,7 @@ class MainController(
     private fun getFiles(dir: String, ext: String, host: String): List<String> {
         //TODO не находит на продакшене
 
-        return File("src/main/resources/static/$dir")
+        return File("src/main/resources")
                 .listFiles()
                 .filter { it.name.endsWith(ext) }
                 .map {
