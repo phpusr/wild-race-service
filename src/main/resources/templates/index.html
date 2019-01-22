@@ -6,8 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" th:href="@{'/favicon.ico'}">
     <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+
+    <th:block th:if="isProdMode" th:each="name : ${cssFiles}">
+        <link th:href="@{${host} + 'css/' + ${name}}" rel="stylesheet" />
+    </th:block>
 
     <title>Wild Race</title>
 
@@ -25,8 +29,9 @@
 
 <script th:if="${!isProdMode}" th:src="@{${host} + 'app.js'}"></script>
 
-<script th:if="${isProdMode}" th:src="@{${host} + 'js/app.62ef08e1.js'}"></script>
-<script th:if="${isProdMode}" th:src="@{${host} + 'js/chunk-vendors.d5e7dcd9.js'}"></script>
+<th:block th:if="isProdMode" th:each="name : ${jsFiles}">
+    <script th:src="@{${host} + 'js/' + ${name}}"></script>
+</th:block>
 
 </body>
 </html>
