@@ -46,15 +46,18 @@ clean << {
 }
 
 // Build frontend before build backend
-task 'buildFrontend'
-buildFrontend << {
-	println('>> buildFrontend')
-	project.exec {
-		commandLine = "yarn build".split().toList()
-	}
+task buildFrontend(type: Exec) {
+	commandLine 'yarn build'.split().toList()
 }
 processResources.dependsOn buildFrontend
 
+// Deploy to heroku
+task fastDeploy(type: Exec) {
+	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a wildrace".split().toList()
+}
+task deploy {
+	dependsOn build, fastDeploy
+}
 
 repositories {
 	mavenCentral()
