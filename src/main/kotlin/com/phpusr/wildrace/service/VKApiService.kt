@@ -39,7 +39,7 @@ class VKApiService(private val configService: ConfigService) {
 
     val getPostLink = { id: Long ->
         val config = configService.get()
-        "${Consts.VKLink}/public${config.groupId}?w=wall${config.groupIdNegative}_${id}"
+        "${Consts.VKLink}/club${config.groupId}?w=wall${config.groupIdNegative}_${id}"
     }
 
     /**
