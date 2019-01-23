@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.phpusr.wildrace.domain.Post
 import com.phpusr.wildrace.domain.Profile
 import com.phpusr.wildrace.domain.Views
+import com.phpusr.wildrace.util.Util
 
 @JsonView(Views.PostDtoREST::class)
 class PostDto(
@@ -27,7 +28,7 @@ object PostDtoObject {
     }
     fun create(post: Post, getPostLink: (Long) -> String): PostDto {
         val link = getPostLink(post.id)
-        return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, post.text, post.distance,
-                post.sumDistance, post.lastUpdate?.time, post.editReason, link)
+        return PostDto(post.id, post.number, post.statusId, post.from, post.date.time, Util.unicodeToUTF8(post.text),
+                post.distance, post.sumDistance, post.lastUpdate?.time, post.editReason, link)
     }
 }

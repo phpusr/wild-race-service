@@ -1,6 +1,7 @@
 package com.phpusr.wildrace.util
 
 import java.math.BigInteger
+import java.nio.charset.Charset
 import java.security.MessageDigest
 
 object Util {
@@ -25,6 +26,13 @@ object Util {
             sb.append(s[i])
         }
         return sb.toString()
+    }
+
+    fun unicodeToUTF8(string: String): String {
+        val utf8 = string.toByteArray(charset("UTF-8"))
+
+        // Convert from UTF-8 to Unicode
+        return String(utf8, Charset.forName("utf8"))
     }
 
     fun floatRoundToString(value: Float, precision: Int): String? {

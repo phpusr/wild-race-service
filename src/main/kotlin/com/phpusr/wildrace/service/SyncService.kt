@@ -119,7 +119,7 @@ class SyncService(
             val profile = findOrCreateProfile(vkPost, postDate, dbProfiles)
             val newPost = Post(postId, PostParserStatus.Success.id, profile, postDate)
 
-            val parserOut = analyzePostText(vkPost.text, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
+            val parserOut = analyzePostText(postText, textHash, lastSumDistance, lastPostNumber, newPost, EventType.Create)
 
             // Добавление нового поста в список последних постов и сортировка постов по времени
             if (parserOut) {
