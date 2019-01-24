@@ -31,7 +31,7 @@
                 return postStatusColors[this.statusId]
             },
             mobile() {
-                return this.$vuetify.breakpoint.name === "xs"
+                return this.$vuetify.breakpoint.xs
             }
         }
     }
