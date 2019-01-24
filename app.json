@@ -1,0 +1,32 @@
+{
+  "addons": [
+    "newrelic",
+    "heroku-postgresql",
+    "timber-logging"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/jvm"
+    }
+  ],
+  "env": {
+    "JAVA_OPTS": {
+      "required": true
+    },
+    "NEW_RELIC_LICENSE_KEY": {
+      "required": true
+    },
+    "NEW_RELIC_LOG": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "wild-race-service",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}
