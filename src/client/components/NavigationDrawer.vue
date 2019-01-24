@@ -19,17 +19,37 @@
                             </v-btn>
                         </v-list-tile>
 
-                        <v-list-tile
-                                v-for="item in items"
-                                :key="item.title"
-                                @click=""
-                        >
+                        <v-list-tile v-if="userIsAdmin" @click="syncPosts">
                             <v-list-tile-action>
-                                <v-icon>{{ item.icon }}</v-icon>
+                                <v-icon>sync</v-icon>
                             </v-list-tile-action>
-
                             <v-list-tile-content>
-                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                <v-list-tile-title>{{$t("sync.title")}}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile v-if="userIsAdmin" to="/config">
+                            <v-list-tile-action>
+                                <v-icon>settings</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{$t("pages./config")}}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile to="/stat">
+                            <v-list-tile-action>
+                                <v-icon>signal_cellular_alt</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{$t("pages./stat")}}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile :href="config.groupLink" target="_blank" exact>
+                            <v-list-tile-action class="font-weight-bold">VK</v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{$t("pages.groupTitle")}}</v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
 
@@ -61,7 +81,7 @@
 </template>
 
 <script>
-    import {mapActions, mapState} from "vuex"
+    import {mapActions, mapGetters, mapState} from "vuex"
     import LoginDialog from "./LoginDialog"
 
     export default {
@@ -70,13 +90,13 @@
             value: Boolean
         },
         data: () => ({
-            defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png",
-            items: [
-                { title: 'Home', icon: 'dashboard' },
-                { title: 'About', icon: 'question_answer' },
-            ]
+            defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda" +
+                "3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png"
         }),
-        computed: mapState(["user", "lastSyncDate"]),
-        methods: mapActions(["logoutAction"])
+        computed: {
+            ...mapState(["user", "lastSyncDate", "config"]),
+            ...mapGetters(["userIsAdmin"])
+        },
+        methods: mapActions(["logoutAction", "syncPosts"])
     }
 </script>
