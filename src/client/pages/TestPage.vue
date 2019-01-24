@@ -5,6 +5,8 @@
                 <!-- Дату можно только выбирать с дата пикера -->
                 <v-flex xs12 sm6 md4>
                     <v-menu
+                            :close-on-content-click="false"
+                            v-model="menu"
                             :nudge-right="40"
                             lazy
                             transition="scale-transition"
@@ -19,7 +21,7 @@
                                 prepend-icon="event"
                                 readonly
                         />
-                        <v-date-picker v-model="date" no-title scrollable />
+                        <v-date-picker v-model="date" no-title scrollable @input="menu = false" />
                     </v-menu>
                 </v-flex>
 
