@@ -36,9 +36,12 @@ class VKApiService(private val configService: ConfigService) {
             return "${client.oAuthEndpoint}authorize?$paramsString"
         }
 
+    val groupLink: String
+        get() = "${Consts.VKLink}/club${configService.get().groupId}"
+
     val getPostLink = { id: Long ->
         val config = configService.get()
-        "${Consts.VKLink}/club${config.groupId}?w=wall${config.groupIdNegative}_${id}"
+        "$groupLink?w=wall${config.groupIdNegative}_$id"
     }
 
     /**

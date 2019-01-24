@@ -4,7 +4,8 @@ export default {
         "/test": "Тестовая страница",
         "/config": "Настройки",
         "/config/edit": "Настройки",
-        "/stat": "Статистика"
+        "/stat": "Статистика",
+        groupTitle: "Группа в VK"
     },
     default: {
         datePattern: "dd.MM.yyyy",

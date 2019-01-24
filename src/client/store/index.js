@@ -10,7 +10,7 @@ function formatDate(date) {
     return dateFormat("hh:mm:ss (dd.MM.yyyy)", new Date(date))
 }
 
-const {user, stat, lastSyncDate} = document.frontendData
+const {user, stat, lastSyncDate, config} = document.frontendData
 
 export default new Vuex.Store({
     state: {
@@ -20,7 +20,8 @@ export default new Vuex.Store({
             totalElements: 0,
             stat
         },
-        lastSyncDate: formatDate(lastSyncDate)
+        lastSyncDate: formatDate(lastSyncDate),
+        config
     },
     getters: {
         userIsAdmin: state => {

@@ -3,6 +3,7 @@ package com.phpusr.wildrace.controller
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
+import com.phpusr.wildrace.service.VKApiService
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -24,7 +25,8 @@ import javax.servlet.http.HttpServletResponse
 class MainController(
         private val tempDataRepo: TempDataRepo,
         private val statService: StatService,
-        private val environmentService: EnvironmentService
+        private val environmentService: EnvironmentService,
+        private val vkApiService: VKApiService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -46,7 +48,10 @@ class MainController(
         model["frontendData"] = mapOf(
                 "user" to user,
                 "stat" to statService.getStat(),
-                "lastSyncDate" to tempDataRepo.get().lastSyncDate.time
+                "lastSyncDate" to tempDataRepo.get().lastSyncDate.time,
+                "config" to mapOf(
+                    "groupLink" to vkApiService.groupLink
+                )
         )
         return "index"
     }
