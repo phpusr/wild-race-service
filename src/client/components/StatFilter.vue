@@ -8,21 +8,30 @@
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
-                            <v-layout>
-                                <v-flex sm2>
-                                    <v-text-field v-model="startDistance" mask="##########" solo @keyup.enter="recount" />
+                            <v-layout wrap>
+                                <v-flex sm3 xs5>
+                                    <v-text-field v-model="startDistance" mask="##########" solo @keyup.enter="recount" clearable />
                                 </v-flex>
 
-                                <span class="mx-3 display-1">-</span>
-
-                                <v-flex sm2>
-                                    <v-text-field v-model="endDistance" mask="##########" solo @keyup.enter="recount" />
+                                <v-flex xs1>
+                                    <div class="mt-1 display-1 text-xs-center">-</div>
                                 </v-flex>
 
-                                <span class="mx-3 mt-2 headline">{{ $t("default.km") }}</span>
+                                <v-flex sm3 xs5>
+                                    <v-text-field v-model="endDistance" mask="##########" solo @keyup.enter="recount" clearable />
+                                </v-flex>
 
-                                <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
-                                <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-flex xs1>
+                                    <div class="ml-2 mt-2 headline">{{ $t("default.km") }}</div>
+                                </v-flex>
+
+                                <v-flex xs5 sm3 md2>
+                                    <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                </v-flex>
+
+                                <v-flex xs5 sm3 md2>
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                </v-flex>
                             </v-layout>
                         </v-card-text>
                     </v-card>
@@ -31,19 +40,26 @@
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
-                            <v-layout>
-                                <v-flex sm2>
+                            <v-layout wrap>
+                                <v-flex sm3 xs5>
                                     <date-picker v-model="startDate" />
                                 </v-flex>
 
-                                <span class="mx-3 mt-2 display-1">-</span>
+                                <v-flex xs1>
+                                    <div class="mt-2 display-1 text-xs-center">-</div>
+                                </v-flex>
 
-                                <v-flex sm2>
+                                <v-flex sm3 xs5>
                                     <date-picker v-model="endDate" />
                                 </v-flex>
 
-                                <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
-                                <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-flex xs5 sm3 md2>
+                                    <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                </v-flex>
+
+                                <v-flex xs5 sm3 md2>
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                </v-flex>
                             </v-layout>
                         </v-card-text>
                     </v-card>

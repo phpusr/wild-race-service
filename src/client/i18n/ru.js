@@ -62,7 +62,7 @@ export default {
         distanceRange: "Диапазон расстояний",
         dateRange: "Диапазон дат",
         recount: "Пересчет",
-        publish: "Опубликовать в ВК",
+        publish: "-> ВК",
         confirmPublish: "Вы действительно хотите опубликовать пост в ВК?",
         successPublishPost: "Пост успешно опубликован под ID: {id}",
         topAllRunners: "Топ бегунов за все время",

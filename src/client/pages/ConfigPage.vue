@@ -83,7 +83,7 @@
             },
             updateAccessToken() {
                 if (this.authorizeUrl.indexOf("vk.com/blank.html") >= 0) {
-                    const win = window.open(this.authorizeUrl, '_blank')
+                    const win = window.open(this.authorizeUrl, "_blank")
                     win.focus()
                 } else {
                     document.location = this.authorizeUrl

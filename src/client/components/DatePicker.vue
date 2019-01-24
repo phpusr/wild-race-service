@@ -15,6 +15,8 @@
                 :label="label"
                 prepend-icon="event"
                 readonly
+                clearable
+                @click:clear="$emit('input')"
         />
         <v-date-picker
                 :value="isoFormattedDate"
