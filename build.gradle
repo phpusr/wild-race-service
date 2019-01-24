@@ -54,7 +54,7 @@ processResources.dependsOn buildFrontend
 // Deploy to heroku
 task fastDeploy(type: Exec) {
 	dependsOn bootJar
-	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a wildrace".split().toList()
+	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a wildrace-test".split().toList()
 }
 task deploy {
 	dependsOn build, fastDeploy
