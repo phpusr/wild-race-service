@@ -82,7 +82,12 @@
                 }
             },
             updateAccessToken() {
-                document.location = this.authorizeUrl
+                if (this.authorizeUrl.indexOf("vk.com/blank.html") >= 0) {
+                    const win = window.open(this.authorizeUrl, '_blank')
+                    win.focus()
+                } else {
+                    document.location = this.authorizeUrl
+                }
             },
             async save() {
                 if (this.$refs.form.validate()) {
