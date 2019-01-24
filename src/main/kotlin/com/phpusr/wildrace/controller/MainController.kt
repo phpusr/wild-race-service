@@ -1,5 +1,6 @@
 package com.phpusr.wildrace.controller
 
+import com.phpusr.wildrace.consts.Consts
 import com.phpusr.wildrace.domain.TempDataRepo
 import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
@@ -39,7 +40,7 @@ class MainController(
     ): String {
         val isProdMode = prod || environmentService.isProduction
         logger.info(">> PRODUCTION MODE: $isProdMode")
-        val host = if (isProdMode) "/" else "http://192.168.1.100:8000/"
+        val host = if (isProdMode) "/" else "${Consts.DevHost}/"
 
         model["isProdMode"] = isProdMode
         model["jsFiles"] = if (isProdMode) getFiles("js", "js", host) else listOf("${host}app.js")
