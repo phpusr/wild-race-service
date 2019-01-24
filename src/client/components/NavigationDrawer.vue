@@ -18,6 +18,35 @@
                                 <v-icon @click="logoutAction">exit_to_app</v-icon>
                             </v-btn>
                         </v-list-tile>
+
+                        <v-list-tile
+                                v-for="item in items"
+                                :key="item.title"
+                                @click=""
+                        >
+                            <v-list-tile-action>
+                                <v-icon>{{ item.icon }}</v-icon>
+                            </v-list-tile-action>
+
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <span class="subheading grey--text text--lighten-1">
+                                    <span class="font-weight-medium">{{$t("post.lastSyncDate")}}: </span>
+                                    <span>{{lastSyncDate}}</span>
+                                </span>
+                            </v-list-tile-action>
+                        </v-list-tile>
+
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <router-view name="menu" />
+                            </v-list-tile-action>
+                        </v-list-tile>
                     </v-list>
                 </v-toolbar>
             </v-container>
@@ -25,15 +54,7 @@
 
         <v-flex xs11>
             <v-container class="pr-0">
-                <router-view name="menu" />
-                <v-layout row wrap>
-                    <v-flex xs12>
-                        <span class="subheading grey--text text--lighten-1">
-                            <span class="font-weight-medium">{{$t("post.lastSyncDate")}}: </span>
-                            <span>{{lastSyncDate}}</span>
-                        </span>
-                    </v-flex>
-                </v-layout>
+
             </v-container>
         </v-flex>
     </v-navigation-drawer>
@@ -49,7 +70,12 @@
             drawer: Boolean
         },
         data: () => ({
-            defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png"
+            defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png",
+            items: [
+                { title: 'Home', icon: 'dashboard' },
+                { title: 'About', icon: 'question_answer' },
+                { title: 'About', icon: 'question_answer' }
+            ]
         }),
         computed: mapState(["user", "lastSyncDate"]),
         methods: mapActions(["logoutAction"])
