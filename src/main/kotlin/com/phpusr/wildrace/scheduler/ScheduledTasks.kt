@@ -46,7 +46,8 @@ class ScheduledTasks(
         logger.info("--- Stat publish job end ---")
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
+    // Disabled, instead it using New Relic monitor
+    //@Scheduled(fixedRate = 5 * 60 * 1000)
     fun herokuDontStopJob() {
         if (environmentService.isProduction.not()) {
             return
