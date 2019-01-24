@@ -11,7 +11,7 @@ class RestService {
 
     private val restTemplate = RestTemplate()
 
-    fun get(uri: String, params: Map<String, Any>) = get(uri, params, HashMap::class)
+    fun get(uri: String, params: Map<String, Any> = mapOf()) = get(uri, params, HashMap::class)
 
     fun <T : Any> get(uri: String, params: Map<String, Any>, responseClass: KClass<T>): T {
         val query = params.map{ "${it.key}={${it.key}}" }.joinToString(separator = "&")
