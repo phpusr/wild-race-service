@@ -3,6 +3,9 @@ import Vuex from "vuex"
 import {deleteObject, replaceObject} from "../util/collections"
 import dateFormat from "date-format"
 import loginApi from "../api/login"
+import postApi from "../api/post"
+import {fetchHandler} from "../util"
+import i18n from "../i18n"
 
 Vue.use(Vuex)
 
@@ -78,6 +81,13 @@ export default new Vuex.Store({
         async logoutAction({commit}) {
             await loginApi.logout()
             commit("setUserMutation")
+        },
+        syncPosts() {
+            if (confirm(i18n.tc("sync.confirm"))) {
+                postApi.sync()
+                    .then(() => alert(i18n.tc("sync.success")))
+                    .catch(fetchHandler)
+            }
         }
     }
 })

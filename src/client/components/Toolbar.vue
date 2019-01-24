@@ -9,7 +9,7 @@
         </v-btn>
 
         <v-toolbar-items>
-            <v-btn v-if="userIsAdmin" flat @click="sync">{{$t("sync.title")}}</v-btn>
+            <v-btn v-if="userIsAdmin" flat @click="syncPosts">{{$t("sync.title")}}</v-btn>
             <v-btn v-if="userIsAdmin" flat to="/config">{{$t("pages./config")}}</v-btn>
             <v-btn flat to="/stat">{{$t("pages./stat")}}</v-btn>
             <v-btn flat :href="config.groupLink" target="_blank" exact>{{$t("pages.groupTitle")}}</v-btn>
@@ -20,23 +20,13 @@
 </template>
 
 <script>
-    import postApi from "../api/post"
-    import {mapGetters, mapState} from "vuex"
-    import {fetchHandler} from "../util"
+    import {mapActions, mapGetters, mapState} from "vuex"
 
     export default {
         computed: {
             ...mapState(["config"]),
             ...mapGetters(["userIsAdmin"])
         },
-        methods: {
-            sync() {
-                if (confirm(this.$t("sync.confirm"))) {
-                    postApi.sync()
-                        .then(() => alert(this.$t("sync.success")))
-                        .catch(fetchHandler)
-                }
-            }
-        }
+        methods: mapActions(["syncPosts"])
     }
 </script>
