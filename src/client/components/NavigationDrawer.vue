@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer v-model="drawer" clipped app dark>
+    <v-navigation-drawer :value="value" @input="$emit('input', $event)" clipped app dark>
         <v-flex>
             <v-container class="">
                 <v-toolbar flat class="transparent">
@@ -67,14 +67,13 @@
     export default {
         components: {LoginDialog},
         props: {
-            drawer: Boolean
+            value: Boolean
         },
         data: () => ({
             defaultAvatar: "https://www.yourfirstpatient.com/assets/default-user-avatar-thumbnail@2x-ad6390912469759cda3106088905fa5bfbadc41532fbaa28237209b1aa976fc9.png",
             items: [
                 { title: 'Home', icon: 'dashboard' },
                 { title: 'About', icon: 'question_answer' },
-                { title: 'About', icon: 'question_answer' }
             ]
         }),
         computed: mapState(["user", "lastSyncDate"]),

@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <v-app>
-            <navigation-drawer :drawer="drawer" />
+            <navigation-drawer v-model="drawer" />
             <toolbar @click="drawer = !drawer" />
             <v-content>
                 <v-container fluid class="pa-1">
@@ -28,9 +28,11 @@
     export default {
         name: "app",
         components: {NavigationDrawer, Toolbar},
-        data: () => ({
-            drawer: !false
-        }),
+        data() {
+            return {
+                drawer: this.$vuetify.breakpoint.mdAndUp
+            }
+        },
         computed: {
             title() {
                 return this.$t("pages")[this.$route.path]
