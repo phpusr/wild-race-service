@@ -6,6 +6,7 @@ import com.phpusr.wildrace.service.EnvironmentService
 import com.phpusr.wildrace.service.StatService
 import com.phpusr.wildrace.service.VKApiService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -27,7 +28,9 @@ class MainController(
         private val tempDataRepo: TempDataRepo,
         private val statService: StatService,
         private val environmentService: EnvironmentService,
-        private val vkApiService: VKApiService
+        private val vkApiService: VKApiService,
+        @Value("\${project.version}")
+        private val projectVersion: String
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -51,6 +54,7 @@ class MainController(
                 "stat" to statService.getStat(),
                 "lastSyncDate" to tempDataRepo.get().lastSyncDate.time,
                 "config" to mapOf(
+                    "projectVersion" to projectVersion,
                     "groupLink" to vkApiService.groupLink
                 )
         )

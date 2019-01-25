@@ -52,7 +52,7 @@
             <v-list-tile v-if="mobile" :href="config.groupLink" target="_blank" exact>
                 <v-list-tile-action class="font-weight-bold">VK</v-list-tile-action>
                 <v-list-tile-content>
-                    <v-list-tile-title>{{$t("pages.groupTitle")}}</v-list-tile-title>
+                    <v-list-tile-title>{{$t("pages.vkGroup")}}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
 

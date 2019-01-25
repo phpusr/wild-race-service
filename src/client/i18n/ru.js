@@ -5,9 +5,10 @@ export default {
         "/config": "Настройки",
         "/config/edit": "Настройки",
         "/stat": "Статистика",
-        groupTitle: "Группа в VK"
+        vkGroup: "Группа в VK"
     },
     default: {
+        projectName: "WildRace",
         datePattern: "dd.MM.yyyy",
         isoDatePattern: "yyyy-MM-dd",
         saveButton: "Сохранить",
