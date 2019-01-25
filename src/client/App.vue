@@ -6,7 +6,7 @@
             <v-content>
                 <v-container fluid class="pa-1">
                     <v-flex md6 offset-md3 class="mt-3">
-                        <h1>{{title}}</h1>
+                        <h1 v-html="title"></h1>
                     </v-flex>
                     <router-view/>
                 </v-container>

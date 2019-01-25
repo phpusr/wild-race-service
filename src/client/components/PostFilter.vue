@@ -1,5 +1,5 @@
 <template>
-    <v-layout row wrap>
+    <v-layout v-if="userIsAdmin" row wrap>
         <v-flex class="mb-2" xs12>
             <span class="headline grey--text text--lighten-5">{{$t("post.filter")}}</span>
         </v-flex>
@@ -32,9 +32,11 @@
 
 <script>
     import {postStatusColors, postStatusIcons} from "../util/data"
+    import {mapGetters} from "vuex"
 
     export default {
         computed: {
+            ...mapGetters(["userIsAdmin"]),
             statuses() {
                 const statuses = this.$t("post.statuses")
                 return Object.keys(statuses).map(key => (

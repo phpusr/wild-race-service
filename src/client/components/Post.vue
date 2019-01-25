@@ -31,7 +31,7 @@
                     </v-layout>
                     <div v-if="post.distance" class="mt-3 display-1 blue--text font-weight-bold">+{{post.distance}}</div>
                     <div class="display-1 green--text">{{post.sumDistance}}</div>
-                    <div class="mt-3 font-italic" v-html="textOfPost" />
+                    <div class="mt-3 font-italic break-word" v-html="textOfPost" />
                 </v-flex>
             </v-card-title>
             <v-card-actions v-if="largeTextOfPost">
@@ -93,3 +93,9 @@
         }
     }
 </script>
+
+<style>
+    .break-word {
+        word-wrap: break-word;
+    }
+</style>
