@@ -22,7 +22,7 @@
         <router-view name="menu" class="px-4 mt-5" />
 
         <v-list class="mt-3">
-            <v-list-tile v-if="mobile && userIsAdmin" @click="syncPosts">
+            <v-list-tile v-if="mobile && userIsAdmin" @click="syncPosts" class="mt-2">
                 <v-list-tile-action>
                     <v-icon>sync</v-icon>
                 </v-list-tile-action>

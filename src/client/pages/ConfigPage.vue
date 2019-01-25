@@ -1,5 +1,5 @@
 <template>
-    <v-flex md6 offset-md3 lazy-validation>
+    <v-flex md6 offset-md3 lazy-validation class="pa-2">
         <v-form ref="form" v-model="valid">
             <v-checkbox
                     v-model="config.syncPosts"
@@ -30,7 +30,7 @@
                     :readonly="show"
                     :solo="show"
             />
-            <v-text-field
+            <v-textarea
                     v-model="config.commentAccessToken"
                     :label="$t('config.commentAccessToken')"
                     :rules="requiredRules"
