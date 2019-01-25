@@ -51,13 +51,16 @@ task buildFrontend(type: Exec) {
 }
 processResources.dependsOn buildFrontend
 
+final HerokuAppName = 'wildrace'
+
 // Deploy to heroku
 task fastDeploy(type: Exec) {
 	dependsOn bootJar
-	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a wildrace-test".split().toList()
+	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a ${HerokuAppName}-test".split().toList()
 }
-task deploy {
-	dependsOn build, fastDeploy
+task deploy(type: Exec) {
+	dependsOn build
+	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a ${HerokuAppName}".split().toList()
 }
 
 repositories {
