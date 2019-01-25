@@ -42,7 +42,7 @@ class SyncService(
      * Кол-во последних постов для нахождения последних данных
      * Предполагается, что последние 100 могут измениться
      */
-    private val lastPostsCount = downloadPostsCount + 1
+    private val lastPostsCount = downloadPostsCount * 2
     /** Интервал между запросами к VK */
     private val syncBlockInterval = 1000L
     /** Интервал между публикациями комментариев */
@@ -92,7 +92,7 @@ class SyncService(
 
         val vkPosts = response.items.reversed()
 
-        val lastDbPosts = getLastPosts()
+        val lastDbPosts = getLastPosts(lastPostsCount)
         val deletedPosts = removeDeletedPosts(vkPosts, lastDbPosts)
 
         vkPosts.forEach { vkPost ->
@@ -101,7 +101,7 @@ class SyncService(
             val postDate = Date(vkPost.date.toLong() * 1000)
             val textHash = Util.MD5(postText)
             val dbPost = lastDbPosts.find { it.id == postId }
-            val lastPost = lastDbPosts.find{ it.number != null && it.id != postId && it.date <= postDate }
+            val lastPost = lastDbPosts.find { it.number != null && it.id != postId && it.date <= postDate }
             val lastSumDistance = lastPost?.sumDistance ?: 0
             val lastPostNumber = lastPost?.number ?: 0
 
@@ -134,8 +134,8 @@ class SyncService(
         return postRepo.count().toInt()
     }
 
-    private fun getLastPosts(): MutableList<Post> {
-        val pageable = PageRequest.of(0, lastPostsCount, Sort(Sort.Direction.DESC, "date"))
+    private fun getLastPosts(postsCount: Int): MutableList<Post> {
+        val pageable = PageRequest.of(0, postsCount, Sort(Sort.Direction.DESC, "date"))
         return postRepo.findAll(pageable, null, null).toMutableList()
     }
 
