@@ -26,7 +26,7 @@ class WebSecurityConfig(
         val publicActions = mutableListOf(
                 "/favicon.ico",
                 "/wild-race-ws/**",
-                "/js/*", "/css/*",
+                "/js/*", "/css/*", "/img/*",
                 "/", "/post", "/stat"
         )
         if (environmentService.isDevelopment) {

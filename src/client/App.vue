@@ -11,11 +11,7 @@
                     <router-view/>
                 </v-container>
             </v-content>
-            <v-footer dark class="pa-3">
-                <v-layout justify-center>
-                    <div>Created by <a href="http://vk.com/phpusr">Sergey Doronin</a></div>
-                </v-layout>
-            </v-footer>
+            <app-footer />
         </v-app>
     </div>
 </template>
@@ -23,11 +19,12 @@
 <script>
     import NavigationDrawer from "./components/NavigationDrawer"
     import Toolbar from "./components/Toolbar"
+    import Footer from "./components/Footer"
     import {activityHandler, methods} from "./util/topicActivityHandler"
 
     export default {
         name: "app",
-        components: {NavigationDrawer, Toolbar},
+        components: {NavigationDrawer, Toolbar, AppFooter: Footer},
         data() {
             return {
                 drawer: this.$vuetify.breakpoint.mdAndUp
