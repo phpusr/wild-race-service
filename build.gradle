@@ -56,16 +56,15 @@ processResources {
 	filesMatching('**/*.properties') { expand(project.properties) }
 }
 
-final HerokuAppName = 'wildrace'
-
 // Deploy to heroku
+final HerokuAppName = 'wildrace'
 task fastDeploy(type: Exec) {
 	dependsOn bootJar
 	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a ${HerokuAppName}-test".split().toList()
 }
-task deploy(type: Exec) {
-	dependsOn build
-	commandLine = "heroku deploy:jar -j ${jar.archivePath} -a ${HerokuAppName}".split().toList()
+// Deploy to heroku
+task deploy {
+	dependsOn build, fastDeploy
 }
 
 repositories {
