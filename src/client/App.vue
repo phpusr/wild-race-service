@@ -32,7 +32,10 @@
         },
         computed: {
             title() {
-                return this.$t("pages")[this.$route.path]
+                const {path} = this.$route
+                const endIndex = path.substr(1).indexOf("/")
+                const code = path.substring(0, endIndex > 0 ? endIndex + 1 : undefined)
+                return this.$t("pages")[code]
             }
         },
         methods,
