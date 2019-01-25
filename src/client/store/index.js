@@ -13,6 +13,10 @@ function formatDate(date) {
     return dateFormat("hh:mm:ss (dd.MM.yyyy)", new Date(date))
 }
 
+function sortPosts(posts) {
+    posts.sort((a, b) => b.date - a.date)
+}
+
 const {user, stat, lastSyncDate, config} = document.frontendData
 
 export default new Vuex.Store({
@@ -43,17 +47,18 @@ export default new Vuex.Store({
             const index = data.posts.findIndex(el => el.id === post.id)
             if (index === -1) {
                 data.posts.unshift(post)
-                data.posts.sort((a, b) => b.date - a.date)
+                sortPosts(data.posts)
                 data.totalElements++
             } else {
                 replaceObject(data.posts, post)
             }
         },
         addPostsMutation(state, {list, totalElements}) {
-            state.post.totalElements = totalElements
             if (list.length) {
                 state.post.posts.push(...list)
+                sortPosts(state.post.posts)
             }
+            state.post.totalElements = totalElements
         },
         resetPostsMutation(state) {
             state.post.posts = []
