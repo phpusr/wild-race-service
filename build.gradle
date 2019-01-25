@@ -49,7 +49,12 @@ clean << {
 task buildFrontend(type: Exec) {
 	commandLine 'yarn build'.split().toList()
 }
-processResources.dependsOn buildFrontend
+
+// Add project version to application.properties
+processResources {
+	dependsOn buildFrontend
+	filesMatching('**/*.properties') { expand(project.properties) }
+}
 
 final HerokuAppName = 'wildrace'
 
