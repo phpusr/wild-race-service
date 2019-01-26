@@ -96,7 +96,7 @@
         methods: {
             async fetchData() {
                 const {params} = this.$route
-                const response = statApi.get(params)
+                statApi.get(params)
                     .then(({body}) => this.stat = body)
                     .catch(fetchHandler)
             }

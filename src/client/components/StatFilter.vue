@@ -112,7 +112,7 @@
         },
         methods: {
             recount() {
-                const params = this.params;
+                const params = this.params
                 if (params.startRange !== "-" && params.endRange !== "-" && params.startRange >= params.endRange) {
                     alert(this.$t("stat.startRangeLessEndRange"))
                     return

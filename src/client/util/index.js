@@ -1,5 +1,4 @@
 export function fetchHandler(e) {
-    console.log(">> e", e)
     alert(`${e.status}: ${e.body.error} on "${e.url}"`)
 }
 
