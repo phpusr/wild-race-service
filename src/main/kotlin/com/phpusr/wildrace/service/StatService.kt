@@ -165,9 +165,9 @@ class StatService(
         return postId
     }
 
-    /** Publish stat every ${publishIntervalDistance} km */
+    /** Publish stat every ${Consts.PublishingStatInterval} km */
     @Transactional
-    fun publishStatPost(publishIntervalDistance: Int) {
+    fun publishStatPost() {
         val lastRunning = getOneRunning(Sort.Direction.DESC)
 
         if (lastRunning == null) {
@@ -177,7 +177,7 @@ class StatService(
         val lastStatLog = statLogRepo.findFirstByStatTypeOrderByPublishDateDesc(StatType.Distance)
 
         val startDistance = lastStatLog?.endValue?.toInt() ?: 0
-        val endDistance = startDistance + publishIntervalDistance
+        val endDistance = startDistance + Consts.PublishingStatInterval
 
         if (lastRunning.sumDistance!! >= endDistance) {
             val stat = calcStat(StatType.Distance, startDistance.toString(), endDistance.toString())

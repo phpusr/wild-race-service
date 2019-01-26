@@ -41,7 +41,7 @@ class ScheduledTasks(
             return
         }
 
-        statService.publishStatPost(1000)
+        statService.publishStatPost()
 
         logger.info("--- Stat publish job end ---")
     }
