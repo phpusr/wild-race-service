@@ -40,15 +40,6 @@
                 </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-if="mobile" to="/stat">
-                <v-list-tile-action>
-                    <v-icon>signal_cellular_alt</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{$t("pages./stat")}}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
-
             <v-list-tile v-if="mobile" :href="config.groupLink" target="_blank" exact>
                 <v-list-tile-action class="font-weight-bold">VK</v-list-tile-action>
                 <v-list-tile-content>
