@@ -1,6 +1,6 @@
 export default {
     pages: {
-        "/": "Дикий Забег. Цель&nbsp;на&nbsp;1000&nbsp;000&nbsp;км",
+        "/": "Дикий Забег. Цель&nbsp;на&nbsp;1&nbsp;000&nbsp;000&nbsp;км",
         "/test": "Тестовая страница",
         "/config": "Настройки",
         "/config/edit": "Настройки",
