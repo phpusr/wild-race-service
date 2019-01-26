@@ -1,5 +1,5 @@
 <template>
-    <v-flex md6 offset-md3>
+    <v-flex md8>
         <router-view />
         <v-container v-bind="containerConfig" class="pa-0">
             <v-layout text-xs-center>

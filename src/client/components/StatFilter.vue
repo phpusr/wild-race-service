@@ -26,13 +26,12 @@
                                 </v-flex>
 
                                 <v-flex xs4 sm2>
-                                    <v-btn @click="recount" color="info" :title="$t('stat.recount')">
-                                        <v-icon>cached</v-icon>
-                                    </v-btn>
+                                    <v-btn @click="recount" color="info">{{$t("stat.recount")}}</v-btn>
                                 </v-flex>
 
                                 <v-flex xs4 sm2>
-                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="error" :title="$t('stat.titlePublishButton')">
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="error"
+                                           :title="$t('stat.titlePublishButton')">
                                         {{$t('stat.textPublishButton')}}
                                     </v-btn>
                                 </v-flex>
@@ -58,13 +57,12 @@
                                 </v-flex>
 
                                 <v-flex xs4 sm2>
-                                    <v-btn @click="recount" color="info" :title="$t('stat.recount')">
-                                        <v-icon>cached</v-icon>
-                                    </v-btn>
+                                    <v-btn @click="recount" color="info">{{$t("stat.recount")}}</v-btn>
                                 </v-flex>
 
                                 <v-flex xs4 sm2>
-                                    <v-btn v-if="userIsAdmin" @click="publishPost" :title="$t('stat.titlePublishButton')">
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="error"
+                                           :title="$t('stat.titlePublishButton')">
                                         {{$t('stat.textPublishButton')}}
                                     </v-btn>
                                 </v-flex>

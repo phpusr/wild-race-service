@@ -22,21 +22,21 @@
         <router-view name="menu" class="px-4 mt-5" />
 
         <v-list class="mt-3">
-            <v-list-tile v-if="mobile && userIsAdmin" @click="syncPosts" class="mt-2">
-                <v-list-tile-action>
-                    <v-icon>sync</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{$t("sync.title")}}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
-
             <v-list-tile v-if="mobile && userIsAdmin" to="/config">
                 <v-list-tile-action>
                     <v-icon>settings</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
                     <v-list-tile-title>{{$t("pages./config")}}</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile v-if="mobile && userIsAdmin" @click="syncPosts" class="mt-2">
+                <v-list-tile-action>
+                    <v-icon>sync</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                    <v-list-tile-title>{{$t("sync.title")}}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
 

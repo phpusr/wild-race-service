@@ -1,5 +1,5 @@
 <template>
-    <v-flex md6 offset-md3>
+    <v-flex md10>
         <stat-filter />
 
         <v-container v-bind="containerConfig" class="my-3 pa-0">
