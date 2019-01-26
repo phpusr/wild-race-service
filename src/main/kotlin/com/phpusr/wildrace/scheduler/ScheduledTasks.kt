@@ -46,15 +46,4 @@ class ScheduledTasks(
         logger.info("--- Stat publish job end ---")
     }
 
-    // Disabled, instead it using New Relic monitor
-    //@Scheduled(fixedRate = 5 * 60 * 1000)
-    fun herokuDontStopJob() {
-        if (environmentService.isProduction.not()) {
-            return
-        }
-
-        logger.info("--- Heroku don't stop job start ---")
-        val totalPosts = restService.get("https://wildrace.herokuapp.com/post")["totalElements"] as Int
-        logger.info("--- Heroku don't stop job end (total posts: $totalPosts) ---")
-    }
 }
