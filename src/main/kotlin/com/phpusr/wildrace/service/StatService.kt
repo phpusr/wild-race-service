@@ -154,16 +154,6 @@ class StatService(
         statSender.accept(EventType.Update, getStat())
     }
 
-    @Transactional
-    fun publishStatPost(stat: StatDto): Int {
-        logger.debug(">> Publish stat: ${stat.startDistance} -> ${stat.endDistance} (${stat.startDate} - ${stat.endDate})")
-
-        val postId = vkApiService.wallPost(createPostText(stat)).postId
-        statLogRepo.save(stat.createStatLog(postId))
-
-        return postId
-    }
-
     /** Publish stat every ${Consts.PublishingStatInterval} km */
     @Transactional
     fun publishStatPost() {
@@ -182,6 +172,16 @@ class StatService(
             val stat = calcStat(StatType.Distance, startDistance.toString(), endDistance.toString())
             publishStatPost(stat)
         }
+    }
+
+    @Transactional
+    fun publishStatPost(stat: StatDto): Int {
+        logger.debug(">> Publish stat: ${stat.startDistance} -> ${stat.endDistance} (${stat.startDate} - ${stat.endDate})")
+
+        val postId = vkApiService.wallPost(createPostText(stat)).postId
+        statLogRepo.save(stat.createStatLog(postId))
+
+        return postId
     }
 
     private fun createPostText(stat: StatDto): String {
