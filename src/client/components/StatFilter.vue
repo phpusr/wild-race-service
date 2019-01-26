@@ -120,7 +120,7 @@
                 }
 
                 statApi.publishPost(this.params)
-                    .then(response => alert(this.$t("stat.successPublishPost", {id: response.body})))
+                    .then(({body}) => alert(this.$t("stat.successPublishPost", {id: body})))
                     .catch(fetchHandler)
             }
         }
