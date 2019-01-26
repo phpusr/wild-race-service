@@ -4,7 +4,7 @@
             <navigation-drawer v-model="drawer" />
             <toolbar @click="drawer = !drawer" />
             <v-content>
-                <v-container fluid class="pa-0">
+                <v-container class="pa-1">
                     <v-flex md6 offset-md3 class="mt-3">
                         <h1 v-html="title" class="text-xs-center text-md-left"></h1>
                     </v-flex>

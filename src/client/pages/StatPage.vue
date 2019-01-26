@@ -2,7 +2,7 @@
     <v-flex md6 offset-md3>
         <stat-filter />
 
-        <v-container grid-list-lg class="pa-0 my-3">
+        <v-container v-bind="containerConfig" class="my-3 pa-0">
             <v-layout wrap>
                 <v-flex d-flex sm6 xs12>
                     <stat-card :title="$t('stat.topIntervalRunners')">
@@ -86,6 +86,13 @@
                 newRunners: []
             }
         }),
+        computed: {
+            containerConfig() {
+                return {
+                    ["grid-list-" + this.$vuetify.breakpoint.name]: true
+                }
+            }
+        },
         methods: {
             async fetchData() {
                 const {params} = this.$route
