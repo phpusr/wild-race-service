@@ -9,7 +9,7 @@
                     <v-card flat>
                         <v-card-text>
                             <v-layout wrap>
-                                <v-flex sm3 xs5>
+                                <v-flex xs5 sm3>
                                     <v-text-field v-model="startDistance" mask="##########" solo @keyup.enter="recount" clearable />
                                 </v-flex>
 
@@ -17,7 +17,7 @@
                                     <div class="mt-1 display-1 text-xs-center">-</div>
                                 </v-flex>
 
-                                <v-flex sm3 xs5>
+                                <v-flex xs5 sm3>
                                     <v-text-field v-model="endDistance" mask="##########" solo @keyup.enter="recount" clearable />
                                 </v-flex>
 
@@ -25,12 +25,16 @@
                                     <div class="ml-2 mt-2 headline">{{ $t("default.km") }}</div>
                                 </v-flex>
 
-                                <v-flex xs5 sm3 md2>
-                                    <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                <v-flex xs4 sm2>
+                                    <v-btn @click="recount" color="info" :title="$t('stat.recount')">
+                                        <v-icon>cached</v-icon>
+                                    </v-btn>
                                 </v-flex>
 
-                                <v-flex xs5 sm3 md2>
-                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-flex xs4 sm2>
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="error" :title="$t('stat.titlePublishButton')">
+                                        {{$t('stat.textPublishButton')}}
+                                    </v-btn>
                                 </v-flex>
                             </v-layout>
                         </v-card-text>
@@ -41,7 +45,7 @@
                     <v-card flat>
                         <v-card-text>
                             <v-layout wrap>
-                                <v-flex sm3 xs5>
+                                <v-flex xs5 sm3>
                                     <date-picker v-model="startDate" />
                                 </v-flex>
 
@@ -49,16 +53,20 @@
                                     <div class="mt-2 display-1 text-xs-center">-</div>
                                 </v-flex>
 
-                                <v-flex sm3 xs5>
+                                <v-flex xs5 sm3>
                                     <date-picker v-model="endDate" />
                                 </v-flex>
 
-                                <v-flex xs5 sm3 md2>
-                                    <v-btn @click="recount">{{ $t("stat.recount") }}</v-btn>
+                                <v-flex xs4 sm2>
+                                    <v-btn @click="recount" color="info" :title="$t('stat.recount')">
+                                        <v-icon>cached</v-icon>
+                                    </v-btn>
                                 </v-flex>
 
-                                <v-flex xs5 sm3 md2>
-                                    <v-btn v-if="userIsAdmin" @click="publishPost" color="info">{{ $t("stat.publish") }}</v-btn>
+                                <v-flex xs4 sm2>
+                                    <v-btn v-if="userIsAdmin" @click="publishPost" :title="$t('stat.titlePublishButton')">
+                                        {{$t('stat.textPublishButton')}}
+                                    </v-btn>
                                 </v-flex>
                             </v-layout>
                         </v-card-text>
