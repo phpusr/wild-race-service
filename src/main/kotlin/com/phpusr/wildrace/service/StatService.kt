@@ -51,12 +51,6 @@ class StatService(
         }
 
         val firstRunning = getOneRunning(Sort.Direction.ASC)
-        val lastRunning = getOneRunning(Sort.Direction.DESC)
-
-        if (firstRunning == null || lastRunning == null) {
-            throw NoSuchElementException("not_found_posts")
-        }
-
         val firstIntRunning = getOneRunning(Sort.Direction.ASC, stat)
         if (stat.startDate == null) {
             stat.startDate = firstIntRunning?.date
@@ -65,8 +59,13 @@ class StatService(
         if (stat.endDate == null) {
             stat.endDate = lastIntRunning?.date
         }
+        val lastRunning = lastIntRunning
 
-        val runners = getRunners()
+        if (firstRunning == null || lastRunning == null) {
+            throw NoSuchElementException("not_found_posts")
+        }
+
+        val runners = getRunners(firstRunning, lastRunning)
         stat.topAllRunners = getTopRunners(runners)
         val intRunners = getRunners(firstIntRunning, lastIntRunning)
         stat.topIntervalRunners = getTopRunners(intRunners)
