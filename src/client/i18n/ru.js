@@ -82,7 +82,8 @@ export default {
         trainings: "Тренировки",
         trainingCountAll: "Всего",
         trainingCountPerDayAvgFunction: "Среднее в день",
-        trainingMaxOneMan: "Максимум от одного человека"
+        trainingMaxOneMan: "Максимум от одного человека",
+        startRangeLessEndRange: "Стартовое значение должно быть меньше конечного"
     },
     config: {
         syncPosts: "Авто-синхронизация постов",

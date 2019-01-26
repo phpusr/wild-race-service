@@ -106,7 +106,13 @@
         },
         methods: {
             recount() {
-                this.$router.push({name: "stat", params: this.params})
+                const params = this.params;
+                if (params.startRange !== "-" && params.endRange !== "-" && params.startRange >= params.endRange) {
+                    alert(this.$t("stat.startRangeLessEndRange"))
+                    return
+                }
+
+                this.$router.push({name: "stat", params})
             },
             publishPost() {
                 if (!confirm(this.$t("stat.confirmPublish"))) {
