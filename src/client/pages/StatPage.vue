@@ -5,9 +5,9 @@
         <v-container grid-list-lg class="pa-0 my-3">
             <v-layout wrap>
                 <v-flex d-flex sm6 xs12>
-                    <stat-card :title="$t('stat.topAllRunners')">
+                    <stat-card :title="$t('stat.topIntervalRunners')">
                         <ol>
-                            <li v-for="r in stat.topAllRunners" :key="r.id">
+                            <li v-for="r in stat.topIntervalRunners" :key="r.id">
                                 <runner-value v-bind="r" />
                             </li>
                         </ol>
@@ -15,9 +15,9 @@
                 </v-flex>
 
                 <v-flex d-flex sm6 xs12>
-                    <stat-card :title="$t('stat.topIntervalRunners')">
+                    <stat-card :title="$t('stat.topAllRunners')">
                         <ol>
-                            <li v-for="r in stat.topIntervalRunners" :key="r.id">
+                            <li v-for="r in stat.topAllRunners" :key="r.id">
                                 <runner-value v-bind="r" />
                             </li>
                         </ol>
