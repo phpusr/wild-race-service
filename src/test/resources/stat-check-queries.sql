@@ -1,10 +1,12 @@
 -- find out of sync
-select from_id, distance, sum_distance,
+select date, from_id, distance, sum_distance,
        sum(distance) over (partition by from_id order by date) as sum2,
        text
 from post
-where distance is not null and id >= 78 and id <= 175
-order by sum2 desc;
+where distance is not null
+  and date >= '2015-09-06+5'::timestamptz
+  and date < '2015-09-14+5'::timestamptz
+order by date;
 
 -- running
 select id, date, from_id, distance, sum_distance, text from post
@@ -30,7 +32,7 @@ and sum_distance - distance < 500
 order by date desc limit 1;
 
 -- days count all
-select '2015-09-13 05:43:22.000000'::timestamp - '2015-09-06 12:00:29.000000'::timestamp;
+select '2015-09-12 20:36:25.000000'::timestamp - '2015-09-06 05:57:35.000000'::timestamp;
 
 -- training count
 select count(number) from post;
@@ -43,15 +45,17 @@ select from_id, count(distance) as tc, sum(distance) as sm from post
 where distance is not null group by from_id order by tc desc limit 5;
 -- runners
 select count(distinct from_id) from post
-where
-      id >= 78 and id <= 175 and
-      number is not null;
+where number is not null
+    --date >= '2015-09-06+5'::timestamptz
+    and date < '2015-09-14+5'::timestamptz;
 -- new runners
 SELECT array_to_string(
            array(
                select from_id
                from post left join profile pr on from_id = pr.id
-               where number is not null and join_date >= '2015-09-06 12:00:29.000000' and join_date <= '2015-09-13 05:43:22.000000'
+               where number is not null
+               and join_date >= '2015-09-06+5'::timestamptz
+               and join_date < '2015-09-14+5'::timestamptz
                group by from_id, join_date
                order by join_date
                limit 25
@@ -63,7 +67,8 @@ SELECT array_to_string(
                select row(from_id, count(distance), sum(distance))
                from post
                where distance is not null
-               and id >= 78 and id <= 175
+               and date >= '2015-09-06+5'::timestamptz
+               and date < '2015-09-14+5'::timestamptz
                group by from_id
                order by sum(distance) desc
                limit 5

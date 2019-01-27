@@ -386,4 +386,55 @@ internal class StatServiceTest {
         collector.checkThat(stat.type, equalTo(StatType.Distance))
     }
 
+    @Test
+    fun calcStatDateIntervalTest() {
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("+5")));
+
+        val stat = statService.calcStat(StatType.Date, "2015-09-06", "2015-09-13")
+        collector.checkThat(stat.startDistance, nullValue())
+        collector.checkThat(stat.endDistance, nullValue())
+
+        // Dates
+        collector.checkThat(stat.startDate, comparesEqualTo(createDate(2015, 9, 6, utc = false)))
+        collector.checkThat(stat.endDate, comparesEqualTo(createDate(2015, 9, 13, 23, 59, 59, utc = false)))
+        collector.checkThat(stat.daysCountAll, equalTo(13))
+        collector.checkThat(stat.daysCountInterval, equalTo(8))
+
+        // Distance
+        collector.checkThat(stat.distanceAll, equalTo(508L))
+        collector.checkThat(stat.distancePerDayAvg.toDouble(), closeTo(39.077, 0.001))
+        collector.checkThat(stat.distancePerTrainingAvg.toDouble(), closeTo(6.773, 0.001))
+        collector.checkThat(stat.distanceMaxOneMan.profile.id, equalTo(63399502L))
+        collector.checkThat(stat.distanceMaxOneMan.numberOfRuns, equalTo(6))
+        collector.checkThat(stat.distanceMaxOneMan.sumDistance, equalTo(56))
+
+        // Trainings
+        collector.checkThat(stat.trainingCountAll, equalTo(75))
+        collector.checkThat(stat.trainingCountPerDayAvg.toDouble(), closeTo(5.769, 0.001))
+        collector.checkThat(stat.trainingMaxOneMan.profile.id, equalTo(63399502L))
+        collector.checkThat(stat.trainingMaxOneMan.numberOfRuns, equalTo(6))
+        collector.checkThat(stat.trainingMaxOneMan.sumDistance, equalTo(56))
+
+        // Runners
+        collector.checkThat(stat.runnersCountAll, equalTo(31))
+        collector.checkThat(stat.runnersCountInterval, equalTo(26))
+        collector.checkThat(stat.newRunners, iterableWithSize(13))
+        val newRunnersIdsActual = stat.newRunners.joinToString(", ") { it.id.toString() }
+        val newRunnersIdsExpect = "67799362, 5488260, 18530540, 122104881, 179202944, 24237989, 293509406, 12274403, 29244944, 148329750, 2123686, 5967972, 30441799"
+        collector.checkThat(newRunnersIdsActual, equalTo(newRunnersIdsExpect))
+        collector.checkThat(stat.countNewRunners, equalTo(13))
+
+        collector.checkThat(stat.topAllRunners, iterableWithSize(5))
+        val topAllRunnersActually = stat.topAllRunners.joinToString(", ") { "(${it.profile.id},${it.numberOfRuns},${it.sumDistance})" }
+        val topAllRunnersExpect = "(63399502,6,56), (12274403,3,43), (6465387,6,39), (2437792,5,36), (5488260,2,32)"
+        collector.checkThat(topAllRunnersActually, equalTo(topAllRunnersExpect))
+
+        collector.checkThat(stat.topIntervalRunners, iterableWithSize(5))
+        val topIntervalRunnersActually = stat.topIntervalRunners.joinToString(", ") { "(${it.profile.id},${it.numberOfRuns},${it.sumDistance})" }
+        val topIntervalRunnersExpect = "(12274403,3,43), (5488260,2,32), (63399502,3,29), (293509406,2,27), (2437792,3,27)"
+        collector.checkThat(topIntervalRunnersActually, equalTo(topIntervalRunnersExpect))
+
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+    }
+
 }
