@@ -83,13 +83,43 @@ internal class StatServiceTest {
         collector.checkThat(stat.type, equalTo(StatType.Date))
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = NoSuchElementException::class)
     fun calcStatWithSameParamsTest() {
         statService.calcStat(StatType.Distance, "1", "1")
     }
 
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFoundTest() {
+        statService.calcStat(StatType.Date, null, "2015-01-01")
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFound2Test() {
+        statService.calcStat(StatType.Date, "2015-10-01", null)
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFound3Test() {
+        statService.calcStat(StatType.Date, "2015-10-01", "2015-01-01")
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFound4Test() {
+        statService.calcStat(StatType.Distance, null, "0")
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFound5Test() {
+        statService.calcStat(StatType.Distance, "2000", null)
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun calcStatWithNothingFound6Test() {
+        statService.calcStat(StatType.Distance, "2000", "0")
+    }
+
     @Test
-    fun calcStatWithOthersParams() {
+    fun calcStatWithOthersParamsTest() {
         // -- stat type is null
 
         // Without start range, end range is date
