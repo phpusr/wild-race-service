@@ -1,17 +1,21 @@
 -- find out of sync
-select id, number,
-       row_number() over (),
-       distance, sum_distance,
-       sum(distance) over (order by id) as sum2,
-       text, edit_reason, last_update
+select from_id, distance, sum_distance,
+       sum(distance) over (partition by from_id order by date) as sum2,
+       text
 from post
-where distance is not null order by id;
+where distance is not null and id >= 78 and id <= 175
+order by sum2 desc;
+
+-- running
+select id, date, from_id, distance, sum_distance, text from post
+where number is not null and sum_distance - distance >= 200 and sum_distance - distance < 500
+order by date;
 
 -- start date: 2015-09-01 03:56:09
 -- end date:   2015-09-24 10:52:34
 
 -- sum distance
-select sum(distance) from post;
+select sum(distance) from post where id <= 175;
 
 -- start date
 select date from post where number is not null
@@ -38,13 +42,16 @@ where distance is not null group by from_id order by sm desc limit 5;
 select from_id, count(distance) as tc, sum(distance) as sm from post
 where distance is not null group by from_id order by tc desc limit 5;
 -- runners
-select count(distinct from_id) from post where number is not null;
+select count(distinct from_id) from post
+where
+      id >= 78 and id <= 175 and
+      number is not null;
 -- new runners
 SELECT array_to_string(
            array(
                select from_id
                from post left join profile pr on from_id = pr.id
-               where number is not null and join_date >= '2015-09-01 03:56:09' and join_date <= '2015-09-24 10:52:34'
+               where number is not null and join_date >= '2015-09-06 12:00:29.000000' and join_date <= '2015-09-13 05:43:22.000000'
                group by from_id, join_date
                order by join_date
                limit 25
@@ -56,6 +63,7 @@ SELECT array_to_string(
                select row(from_id, count(distance), sum(distance))
                from post
                where distance is not null
+               and id >= 78 and id <= 175
                group by from_id
                order by sum(distance) desc
                limit 5
