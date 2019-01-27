@@ -120,7 +120,7 @@ internal class StatServiceTest {
 
     @Test
     fun calcStatWithOthersParamsTest() {
-        // -- stat type is null
+        // -- Stat type is null
 
         // Without start range, end range is date
         var stat = statService.calcStat(null, null, "2015-09-20")
@@ -183,14 +183,26 @@ internal class StatServiceTest {
         collector.checkThat(stat.type, equalTo(StatType.Date))
 
         // Start range < first running, without end range
-        //TODO
+        stat = statService.calcStat(StatType.Date, "2015-06-01", null)
+        var startInterval = createDate(2015, 6, 1, utc = false)
+        collector.checkThat(stat.startDate, comparesEqualTo(startInterval))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(116))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
 
         // Start range < first running, end range is distance
-        //TODO
+        stat = statService.calcStat(StatType.Date, "2015-06-01", "200")
+        startInterval = createDate(2015, 6, 1, utc = false)
+        collector.checkThat(stat.startDate, comparesEqualTo(startInterval))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(116))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
 
         // Start range < first running, end range < last running date
         stat = statService.calcStat(StatType.Date, "2015-06-01", "2015-09-20")
-        var startInterval = createDate(2015, 6, 1, utc = false)
+        startInterval = createDate(2015, 6, 1, utc = false)
         collector.checkThat(stat.startDate, comparesEqualTo(startInterval))
         endInterval = createDate(2015, 9, 20, 23, 59, 59, utc = false)
         collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
