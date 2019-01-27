@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -40,11 +39,11 @@ class StatService(
             val df = SimpleDateFormat(Consts.JSDateFormat)
             try {
                 stat.startDate = df.parse(startRange)
-            } catch (ignored: ParseException) {}
+            } catch (ignored: Exception) {}
             try {
                 // Change time at end of day
-                stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
-            } catch (ignored: ParseException) {}
+                stat.endDate = Date(df.parse(endRange).time + (24 * 3600 - 1) * 1000)
+            } catch (ignored: Exception) {}
         } else if (statType == StatType.Distance) {
             stat.startDistance = startRange?.toLongOrNull()
             stat.endDistance = endRange?.toLongOrNull()

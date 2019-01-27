@@ -24,8 +24,16 @@ internal class StatServiceTest {
     @Autowired
     private lateinit var statService: StatService
 
+    private val startDate = createDate(2015, 9, 1, 3, 56, 9)
+    private val endDate = createDate(2015, 9, 24, 10, 52, 34)
+
     @get:Rule
     val collector = ErrorCollector()
+
+    private fun createDate(year: Int, month: Int, day: Int, hour: Int = 0, minute: Int = 0, second: Int = 0, utc: Boolean = true): Date {
+        val zoneId = if (utc) ZoneId.of("UTC") else ZoneId.systemDefault()
+        return Date.from(ZonedDateTime.of(year, month, day, hour, minute, second, 0, zoneId).toInstant())
+    }
 
     @Test
     fun calcStatWithoutParamsTest() {
@@ -34,9 +42,7 @@ internal class StatServiceTest {
         collector.checkThat(stat.endDistance, nullValue())
 
         // Dates
-        val startDate = Date.from(ZonedDateTime.of(2015, 9, 1, 3, 56, 9, 0, ZoneId.of("UTC")).toInstant())
         collector.checkThat(stat.startDate, comparesEqualTo(startDate))
-        val endDate = Date.from(ZonedDateTime.of(2015, 9, 24, 10, 52, 34, 0, ZoneId.of("UTC")).toInstant())
         collector.checkThat(stat.endDate, comparesEqualTo(endDate))
         collector.checkThat(stat.daysCountAll, equalTo(24))
         collector.checkThat(stat.daysCountInterval, equalTo(24))
@@ -76,4 +82,144 @@ internal class StatServiceTest {
 
         collector.checkThat(stat.type, equalTo(StatType.Date))
     }
+
+    @Test(expected = RuntimeException::class)
+    fun calcStatWithSameParamsTest() {
+        statService.calcStat(StatType.Distance, "1", "1")
+    }
+
+    @Test
+    fun calcStatWithOthersParams() {
+        // -- stat type is null
+
+        // Without start range, end range is date
+        var stat = statService.calcStat(null, null, "2015-09-20")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(24))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Without start range, end range is distance
+        stat = statService.calcStat(null, null, "200")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(24))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Start range is date, without end range
+        stat = statService.calcStat(null, "2015-09-20", null)
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(24))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Start range is distance, without end range
+        stat = statService.calcStat(null, "200", null)
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(24))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // -- Stat type is Date
+
+        // Without start range, end range is distance
+        stat = statService.calcStat(StatType.Date, null, "200")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        collector.checkThat(stat.endDate, comparesEqualTo(endDate))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(24))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Without start range, end range < last running date
+        stat = statService.calcStat(StatType.Date, null, "2015-09-20")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        var endInterval = createDate(2015, 9, 20, 23, 59, 59, utc = false)
+        collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
+        collector.checkThat(stat.daysCountAll, equalTo(20))
+        collector.checkThat(stat.daysCountInterval, equalTo(20))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Without start range, end range > last running date
+        stat = statService.calcStat(StatType.Date, null, "2015-10-15")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        endInterval = createDate(2015, 10, 15, 23, 59, 59, utc = false)
+        collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
+        collector.checkThat(stat.daysCountAll, equalTo(24))
+        collector.checkThat(stat.daysCountInterval, equalTo(45))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Start range < first running, without end range
+        //TODO
+
+        // Start range < first running, end range is distance
+        //TODO
+
+        // Start range < first running, end range < last running date
+        stat = statService.calcStat(StatType.Date, "2015-06-01", "2015-09-20")
+        var startInterval = createDate(2015, 6, 1, utc = false)
+        collector.checkThat(stat.startDate, comparesEqualTo(startInterval))
+        endInterval = createDate(2015, 9, 20, 23, 59, 59, utc = false)
+        collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
+        collector.checkThat(stat.daysCountAll, equalTo(20))
+        collector.checkThat(stat.daysCountInterval, equalTo(112))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Start range > first running  and without end range
+        //TODO
+
+        // Start range > first running, end range is distance
+        //TODO
+
+        // Start range > first running, end range < last running date
+        stat = statService.calcStat(StatType.Date, "2015-09-10", "2015-09-20")
+        startInterval = createDate(2015, 9, 10, utc = false)
+        collector.checkThat(stat.startDate, comparesEqualTo(startInterval))
+        endInterval = createDate(2015, 9, 20, 23, 59, 59, utc = false)
+        collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
+        collector.checkThat(stat.daysCountAll, equalTo(20))
+        collector.checkThat(stat.daysCountInterval, equalTo(11))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // -- Stat type is Distance
+
+        // Without start range, end range is date
+        //TODO
+
+
+        // Without start range and end distance < end range sum last running
+        stat = statService.calcStat(StatType.Distance, null, "200")
+        collector.checkThat(stat.startDate, comparesEqualTo(startDate))
+        endInterval = createDate(2015, 9, 6, 11, 16, 30)
+        collector.checkThat(stat.endDate, comparesEqualTo(endInterval))
+        collector.checkThat(stat.daysCountAll, equalTo(6))
+        collector.checkThat(stat.daysCountInterval, equalTo(6))
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+
+        // Without start range and end distance > end sum last running
+        //TODO
+
+        // Start range < 0, without end range
+        //TODO
+
+        // Start range < 0, end range is date
+        //TODO
+
+        // Start range < 0, end range < sum last running
+        //TODO
+
+        // Start range > 0, without end range
+        //TODO
+
+        // Start range > 0, end range is date
+        //TODO
+
+        // Start range > 0, end range < sum last running
+        //TODO
+
+    }
+
 }

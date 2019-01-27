@@ -7,14 +7,20 @@ select id, number,
 from post
 where distance is not null order by id;
 
-
+-- start date: 2015-09-01 03:56:09
+-- end date:   2015-09-24 10:52:34
 
 -- sum distance
 select sum(distance) from post;
 -- start date
-select date from post where number is not null order by date limit 1;
+select date from post where number is not null
+and date >= '2015-09-10'
+order by date limit 1;
 -- end date
-select date from post where number is not null order by date desc limit 1;
+select date from post where number is not null
+and date < '2015-09-21'
+-- and sum_distance - distance < 200
+order by date desc limit 1;
 -- days count all
 select '2015-09-24 10:52:34'::timestamp - '2015-09-01 03:56:09'::timestamp;
 -- training count
