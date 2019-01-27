@@ -12,19 +12,25 @@ where distance is not null order by id;
 
 -- sum distance
 select sum(distance) from post;
+
 -- start date
 select date from post where number is not null
-and date >= '2015-09-10'
+--and date >= '2015-09-10'
+and sum_distance - distance >= 200
 order by date limit 1;
+
 -- end date
 select date from post where number is not null
-and date < '2015-09-21'
--- and sum_distance - distance < 200
+--and date < '2015-09-21'
+and sum_distance - distance < 500
 order by date desc limit 1;
+
 -- days count all
-select '2015-09-24 10:52:34'::timestamp - '2015-09-01 03:56:09'::timestamp;
+select '2015-09-13 05:43:22.000000'::timestamp - '2015-09-06 12:00:29.000000'::timestamp;
+
 -- training count
 select count(number) from post;
+
 -- distance max
 select from_id, sum(distance) as sm, count(distance) as tc from post
 where distance is not null group by from_id order by sm desc limit 5;
