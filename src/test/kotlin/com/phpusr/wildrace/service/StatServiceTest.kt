@@ -387,4 +387,17 @@ internal class StatServiceTest {
         collector.checkThat(stat.type, equalTo(StatType.Date))
     }
 
+    @Test
+    /** People with post without distance shouldn't get here */
+    fun findNewRunnersTest() {
+        val stat = statService.calcStat(StatType.Distance, null, 122)
+        collector.checkThat(stat.type, equalTo(StatType.Date))
+        collector.checkThat(stat.newRunners, iterableWithSize(15))
+        val newRunnersIdsActual = stat.newRunners.joinToString(", ") { it.id.toString() }
+        val newRunnersIdsExpect = "39752943, 8429458, 84566235, 82121484, 18273238, 2437792, 11351451, 63399502, " +
+                "117963335, 258765420, 282180599, 10811344, 1553750, 52649788, 151575104"
+        collector.checkThat(newRunnersIdsActual, equalTo(newRunnersIdsExpect))
+        collector.checkThat(stat.countNewRunners, equalTo(15))
+    }
+
 }
