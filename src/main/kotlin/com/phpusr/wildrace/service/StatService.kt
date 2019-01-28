@@ -32,21 +32,22 @@ class StatService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
+    fun calcStat(statType: StatType, startRange: Long?, endRange: Long?): StatDto {
         val stat = StatDto()
 
         if (statType == StatType.Date) {
-            val df = SimpleDateFormat(Consts.JSDateFormat)
-            try {
-                stat.startDate = df.parse(startRange)
-            } catch (ignored: Exception) {}
-            try {
+            if (startRange != null) {
+                stat.startDate = Date(startRange)
+            }
+            if (endRange != null) {
                 // Change time at end of day
-                stat.endDate = Date(df.parse(endRange).time + (24 * 3600 - 1) * 1000)
-            } catch (ignored: Exception) {}
+                stat.endDate = Date(endRange + (24 * 3600 - 1) * 1000)
+            }
         } else if (statType == StatType.Distance) {
-            stat.startDistance = startRange?.toLongOrNull()
-            stat.endDistance = endRange?.toLongOrNull()
+            stat.startDistance = startRange
+            stat.endDistance = endRange
+        } else {
+            throw RuntimeException("Unsupported stat type: $statType")
         }
 
         val firstRunning = getOneRunning(Sort.Direction.ASC)
@@ -164,11 +165,11 @@ class StatService(
 
         val lastStatLog = statLogRepo.findFirstByStatTypeOrderByPublishDateDesc(StatType.Distance)
 
-        val startDistance = lastStatLog?.endValue?.toInt() ?: 0
+        val startDistance = lastStatLog?.endValue?.toLong() ?: 0
         val endDistance = startDistance + Consts.PublishingStatInterval
 
         if (lastRunning.sumDistance!! >= endDistance) {
-            val stat = calcStat(StatType.Distance, startDistance.toString(), endDistance.toString())
+            val stat = calcStat(StatType.Distance, startDistance, endDistance)
             publishStatPost(stat)
         }
     }
