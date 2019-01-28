@@ -195,13 +195,15 @@ class StatService(
                 "$startDistance-$endDistance"
             } else {
                 val dfPost = SimpleDateFormat(Consts.PostDateFormat)
-                "(${dfPost.format(stat.startDate)}-${dfPost.format(endDate)})"
+                "(${dfPost.format(stat.startDate)} - ${dfPost.format(endDate)})"
             }
 
             val str = StringBuilder()
             str.append("СТАТИСТИКА\n")
             if (endDistance != null) {
-                str.append("Отметка в $endDistance км преодолена!\n")
+                str.append("Отметка в $endDistance км преодолена!\n\n")
+            } else {
+                str.append("Статистика за: $segment\n\n")
             }
             if (newRunners.isNotEmpty()) {
                 str.append("Поприветствуем наших новичков:\n")

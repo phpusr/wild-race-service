@@ -74,7 +74,7 @@
     import ProfileLink from "../components/ProfileLink"
     import RunnerValue from "../components/RunnerValue"
     import statApi from "../api/stat"
-    import {fetchHandler} from "../util"
+    import {convertStatParams, fetchHandler} from "../util"
 
     export default {
         components: {StatFilter, StatCard, ProfileLink, RunnerValue},
@@ -95,7 +95,7 @@
         },
         methods: {
             async fetchData() {
-                const {params} = this.$route
+                const params = convertStatParams(this.$route.params)
                 statApi.get(params)
                     .then(({body}) => this.stat = body)
                     .catch(fetchHandler)

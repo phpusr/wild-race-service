@@ -78,17 +78,15 @@
 <script>
     import DatePicker from "./DatePicker"
     import statApi from "../api/stat"
-    import {fetchHandler, stringToInt} from "../util"
+    import {checkValue, convertStatParams, fetchHandler, stringToInt} from "../util"
     import {mapGetters} from "vuex"
-
-    const DistanceTab = {name: "distance", tabIndex: 0, isDistanceTab: true}
-    const DateTab = {name: "date", tabIndex: 1, isDateTab: true}
+    import {dateTab, distanceTab} from "../util/data"
 
     export default {
         components: {DatePicker},
         data() {
-            const {typeOfForm, startRange, endRange} = this.$route.params
-            const activeTab = typeOfForm === DateTab.name ? DateTab : DistanceTab
+            const {type, startRange, endRange} = this.$route.params
+            const activeTab = type === dateTab.name ? dateTab : distanceTab
             return {
                 activeTabIndex: activeTab.tabIndex,
                 startDistance: activeTab.isDistanceTab  ? startRange : null,
@@ -100,7 +98,7 @@
         computed: {
             ...mapGetters(["userIsAdmin"]),
             params() {
-                const activeTab = this.activeTabIndex === 0 ? DistanceTab : DateTab
+                const {activeTab} = this
                 const startRange = activeTab.isDistanceTab ? stringToInt(this.startDistance) : this.startDate
                 const endRange = activeTab.isDistanceTab ? stringToInt(this.endDistance) : this.endDate
                 return {
@@ -108,26 +106,42 @@
                     startRange: startRange != null ? startRange : "-",
                     endRange: endRange != null ? endRange : "-"
                 }
+            },
+            activeTab() {
+                return this.activeTabIndex === 0 ? distanceTab : dateTab
             }
         },
         methods: {
             recount() {
-                const params = this.params
-                if (params.startRange !== "-" && params.endRange !== "-" && params.startRange >= params.endRange) {
-                    alert(this.$t("stat.startRangeLessEndRange"))
+                if (!this.checkRange()) {
                     return
                 }
 
-                this.$router.push({name: "stat", params})
+                this.$router.push({name: "stat", params: this.params})
             },
             publishPost() {
                 if (!confirm(this.$t("stat.confirmPublish"))) {
                     return
                 }
 
-                statApi.publishPost(this.params)
+                if (!this.checkRange()) {
+                    return
+                }
+
+                const params = convertStatParams(this.params)
+
+                statApi.publishPost(params)
                     .then(({body}) => alert(this.$t("stat.successPublishPost", {id: body})))
                     .catch(fetchHandler)
+            },
+            checkRange() {
+                const {startRange, endRange} = this.params
+                if (checkValue(startRange) && checkValue(endRange) && startRange > endRange) {
+                    alert(this.$t("stat.startRangeLessEndRange"))
+                    return false
+                }
+
+                return true
             }
         }
     }
