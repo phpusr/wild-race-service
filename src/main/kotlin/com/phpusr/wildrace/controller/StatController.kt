@@ -28,9 +28,9 @@ class StatController(private val statService: StatService) {
     @GetMapping
     @JsonView(Views.StatDtoREST::class)
     fun getData(
-            @RequestParam type: StatType?,
-            @RequestParam startRange: String?,
-            @RequestParam endRange: String?
+            @RequestParam type: StatType,
+            @RequestParam startRange: Long?,
+            @RequestParam endRange: Long?
     ): StatDto {
         return statService.calcStat(type, startRange, endRange)
     }
@@ -38,9 +38,9 @@ class StatController(private val statService: StatService) {
     @Transactional
     @PostMapping("publishPost")
     fun publishPost(
-            @RequestParam type: StatType?,
-            @RequestParam startRange: String?,
-            @RequestParam endRange: String?
+            @RequestParam type: StatType,
+            @RequestParam startRange: Long?,
+            @RequestParam endRange: Long?
     ): Int {
         val stat = statService.calcStat(type, startRange, endRange)
         return statService.publishStatPost(stat)

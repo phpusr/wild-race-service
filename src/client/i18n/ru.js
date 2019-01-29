@@ -1,6 +1,6 @@
 export default {
     pages: {
-        "/": "Дикий Забег. Цель&nbsp;на&nbsp;1000&nbsp;000&nbsp;км",
+        "/": "Дикий Забег. Цель&nbsp;на&nbsp;1&nbsp;000&nbsp;000&nbsp;км",
         "/test": "Тестовая страница",
         "/config": "Настройки",
         "/config/edit": "Настройки",
@@ -63,7 +63,8 @@ export default {
         distanceRange: "Диапазон расстояний",
         dateRange: "Диапазон дат",
         recount: "Пересчет",
-        publish: "-> ВК",
+        titlePublishButton: "Опубликовать в ВК",
+        textPublishButton: "-> VK",
         confirmPublish: "Вы действительно хотите опубликовать пост в ВК?",
         successPublishPost: "Пост успешно опубликован под ID: {id}",
         topAllRunners: "Топ бегунов за все время",
@@ -82,7 +83,8 @@ export default {
         trainings: "Тренировки",
         trainingCountAll: "Всего",
         trainingCountPerDayAvgFunction: "Среднее в день",
-        trainingMaxOneMan: "Максимум от одного человека"
+        trainingMaxOneMan: "Максимум от одного человека",
+        startRangeLessEndRange: "Стартовое значение должно быть меньше конечного"
     },
     config: {
         syncPosts: "Авто-синхронизация постов",

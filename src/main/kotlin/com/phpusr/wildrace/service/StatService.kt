@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -33,30 +32,25 @@ class StatService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun calcStat(statType: StatType?, startRange: String?, endRange: String?): StatDto {
+    fun calcStat(statType: StatType, startRange: Long?, endRange: Long?): StatDto {
         val stat = StatDto()
 
         if (statType == StatType.Date) {
-            val df = SimpleDateFormat(Consts.JSDateFormat)
-            try {
-                stat.startDate = df.parse(startRange)
-            } catch (ignored: ParseException) {}
-            try {
+            if (startRange != null) {
+                stat.startDate = Date(startRange)
+            }
+            if (endRange != null) {
                 // Change time at end of day
-                stat.endDate = Date(df.parse(endRange).time + (24 * 3600 * 1000 - 1))
-            } catch (ignored: ParseException) {}
+                stat.endDate = Date(endRange + (24 * 3600 - 1) * 1000)
+            }
         } else if (statType == StatType.Distance) {
-            stat.startDistance = startRange?.toLongOrNull()
-            stat.endDistance = endRange?.toLongOrNull()
+            stat.startDistance = startRange
+            stat.endDistance = endRange
+        } else {
+            throw RuntimeException("Unsupported stat type: $statType")
         }
 
         val firstRunning = getOneRunning(Sort.Direction.ASC)
-        val lastRunning = getOneRunning(Sort.Direction.DESC)
-
-        if (firstRunning == null || lastRunning == null) {
-            throw NoSuchElementException("not_found_posts")
-        }
-
         val firstIntRunning = getOneRunning(Sort.Direction.ASC, stat)
         if (stat.startDate == null) {
             stat.startDate = firstIntRunning?.date
@@ -65,8 +59,13 @@ class StatService(
         if (stat.endDate == null) {
             stat.endDate = lastIntRunning?.date
         }
+        val lastRunning = lastIntRunning
 
-        val runners = getRunners()
+        if (firstRunning == null || lastRunning == null) {
+            throw NoSuchElementException("not_found_posts")
+        }
+
+        val runners = getRunners(firstRunning, lastRunning)
         stat.topAllRunners = getTopRunners(runners)
         val intRunners = getRunners(firstIntRunning, lastIntRunning)
         stat.topIntervalRunners = getTopRunners(intRunners)
@@ -155,19 +154,9 @@ class StatService(
         statSender.accept(EventType.Update, getStat())
     }
 
+    /** Publish stat every ${Consts.PublishingStatInterval} km */
     @Transactional
-    fun publishStatPost(stat: StatDto): Int {
-        logger.debug(">> Publish stat: ${stat.startDistance} -> ${stat.endDistance} (${stat.startDate} - ${stat.endDate})")
-
-        val postId = vkApiService.wallPost(createPostText(stat)).postId
-        statLogRepo.save(stat.createStatLog(postId))
-
-        return postId
-    }
-
-    /** Publish stat every ${publishIntervalDistance} km */
-    @Transactional
-    fun publishStatPost(publishIntervalDistance: Int) {
+    fun publishStatPost() {
         val lastRunning = getOneRunning(Sort.Direction.DESC)
 
         if (lastRunning == null) {
@@ -176,13 +165,23 @@ class StatService(
 
         val lastStatLog = statLogRepo.findFirstByStatTypeOrderByPublishDateDesc(StatType.Distance)
 
-        val startDistance = lastStatLog?.endValue?.toInt() ?: 0
-        val endDistance = startDistance + publishIntervalDistance
+        val startDistance = lastStatLog?.endValue?.toLong() ?: 0
+        val endDistance = startDistance + Consts.PublishingStatInterval
 
         if (lastRunning.sumDistance!! >= endDistance) {
-            val stat = calcStat(StatType.Distance, startDistance.toString(), endDistance.toString())
+            val stat = calcStat(StatType.Distance, startDistance, endDistance)
             publishStatPost(stat)
         }
+    }
+
+    @Transactional
+    fun publishStatPost(stat: StatDto): Int {
+        logger.debug(">> Publish stat: ${stat.startDistance} -> ${stat.endDistance} (${stat.startDate} - ${stat.endDate})")
+
+        val postId = vkApiService.wallPost(createPostText(stat)).postId
+        statLogRepo.save(stat.createStatLog(postId))
+
+        return postId
     }
 
     private fun createPostText(stat: StatDto): String {
@@ -196,13 +195,15 @@ class StatService(
                 "$startDistance-$endDistance"
             } else {
                 val dfPost = SimpleDateFormat(Consts.PostDateFormat)
-                "(${dfPost.format(stat.startDate)}-${dfPost.format(endDate)})"
+                "(${dfPost.format(stat.startDate)} - ${dfPost.format(endDate)})"
             }
 
             val str = StringBuilder()
             str.append("СТАТИСТИКА\n")
             if (endDistance != null) {
-                str.append("Отметка в $endDistance км преодолена!\n")
+                str.append("Отметка в $endDistance км преодолена!\n\n")
+            } else {
+                str.append("Статистика за: $segment\n\n")
             }
             if (newRunners.isNotEmpty()) {
                 str.append("Поприветствуем наших новичков:\n")
