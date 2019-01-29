@@ -29,6 +29,7 @@
     import InfiniteLoading from "vue-infinite-loading"
     import postApi from "../api/post"
     import {mapMutations, mapState} from "vuex"
+    import {postSortDirection} from "../util/data"
 
     export default {
         components: {Post, InfiniteLoading},
@@ -47,6 +48,8 @@
                 const params = this.$route.query
                 const {body} = await postApi.getAll({
                         ...params,
+                        size: 10,
+                        sort: `date,${postSortDirection}`,
                         page: this.page
                 })
                 const {list} = body
