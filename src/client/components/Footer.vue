@@ -10,7 +10,7 @@
                 </v-layout>
             </div>
             <div class="pt-1">
-                <a href="https://github.com/phpusr/wild-race-service" target="_blank">
+                <a href="https://github.com/phpusr/wildrace" target="_blank">
                     <img src="/img/GitHub-Mark-32px.png" class="logo" alt="GitHub logo"/>
                 </a>
             </div>
