@@ -1,5 +1,5 @@
 <template>
-    <v-flex md6 offset-md3 lazy-validation class="pa-2">
+    <v-flex md8 lazy-validation class="pa-2">
         <v-form ref="form" v-model="valid">
             <v-checkbox
                     v-model="config.syncPosts"

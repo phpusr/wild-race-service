@@ -1,13 +1,13 @@
 <template>
-    <v-flex md6 offset-md3>
+    <v-flex md10>
         <stat-filter />
 
-        <v-container grid-list-lg class="pa-0 my-3">
+        <v-container v-bind="containerConfig" class="my-3 pa-0">
             <v-layout wrap>
                 <v-flex d-flex sm6 xs12>
-                    <stat-card :title="$t('stat.topAllRunners')">
+                    <stat-card :title="$t('stat.topIntervalRunners')">
                         <ol>
-                            <li v-for="r in stat.topAllRunners" :key="r.id">
+                            <li v-for="r in stat.topIntervalRunners" :key="r.id">
                                 <runner-value v-bind="r" />
                             </li>
                         </ol>
@@ -15,9 +15,9 @@
                 </v-flex>
 
                 <v-flex d-flex sm6 xs12>
-                    <stat-card :title="$t('stat.topIntervalRunners')">
+                    <stat-card :title="$t('stat.topAllRunners')">
                         <ol>
-                            <li v-for="r in stat.topIntervalRunners" :key="r.id">
+                            <li v-for="r in stat.topAllRunners" :key="r.id">
                                 <runner-value v-bind="r" />
                             </li>
                         </ol>
@@ -74,6 +74,7 @@
     import ProfileLink from "../components/ProfileLink"
     import RunnerValue from "../components/RunnerValue"
     import statApi from "../api/stat"
+    import {convertStatParams, fetchHandler} from "../util"
 
     export default {
         components: {StatFilter, StatCard, ProfileLink, RunnerValue},
@@ -85,11 +86,19 @@
                 newRunners: []
             }
         }),
+        computed: {
+            containerConfig() {
+                return {
+                    ["grid-list-" + this.$vuetify.breakpoint.name]: true
+                }
+            }
+        },
         methods: {
             async fetchData() {
-                const {params} = this.$route
-                const response = await statApi.get(params)
-                this.stat = response.body
+                const params = convertStatParams(this.$route.params)
+                statApi.get(params)
+                    .then(({body}) => this.stat = body)
+                    .catch(fetchHandler)
             }
         },
         created() {

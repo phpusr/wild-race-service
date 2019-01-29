@@ -8,10 +8,11 @@
             </v-toolbar-title>
         </v-btn>
 
+        <v-btn flat to="/stat">{{$t("pages./stat")}}</v-btn>
+
         <v-toolbar-items v-if="this.$vuetify.breakpoint.mdAndUp">
             <v-btn v-if="userIsAdmin" flat @click="syncPosts">{{$t("sync.title")}}</v-btn>
             <v-btn v-if="userIsAdmin" flat to="/config">{{$t("pages./config")}}</v-btn>
-            <v-btn flat to="/stat">{{$t("pages./stat")}}</v-btn>
             <v-btn flat :href="config.groupLink" target="_blank" exact>{{$t("pages.vkGroup")}}</v-btn>
         </v-toolbar-items>
 

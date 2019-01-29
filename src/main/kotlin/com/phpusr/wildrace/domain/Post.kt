@@ -80,7 +80,7 @@ interface PostRepo : PagingAndSortingRepository<Post, Long> {
     @EntityGraph(value = "Post.detail", type = EntityGraph.EntityGraphType.LOAD)
     @Query("from Post p where number is not null AND " +
             "(cast(:sDate as date) is null OR date >= :sDate) AND (cast(:eDate as date) is null OR date <= :eDate) AND " +
-            "(:sDst is null OR p.sumDistance - distance >= :sDst) AND (:eDst is null OR p.sumDistance - distance <= :eDst)"
+            "(:sDst is null OR p.sumDistance - distance >= :sDst) AND (:eDst is null OR p.sumDistance - distance < :eDst)"
     )
     fun findRunningPage(
             pageable: Pageable,

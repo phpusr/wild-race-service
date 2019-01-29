@@ -1,6 +1,8 @@
 package com.phpusr.wildrace.scheduler
 
-import com.phpusr.wildrace.service.*
+import com.phpusr.wildrace.service.ConfigService
+import com.phpusr.wildrace.service.StatService
+import com.phpusr.wildrace.service.SyncService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -11,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class ScheduledTasks(
         private val syncService: SyncService,
         private val configService: ConfigService,
-        private val statService: StatService,
-        private val restService: RestService,
-        private val environmentService: EnvironmentService
+        private val statService: StatService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -32,7 +32,7 @@ class ScheduledTasks(
     }
 
     @Transactional
-    @Scheduled(fixedRate = 60 * 60 * 1000) // Run every 1 hour
+    @Scheduled(fixedRate = 20 * 1000) // Run every 1 hour
     fun statPublishJob() {
         logger.info("--- Stat publish job start ---")
 
@@ -41,20 +41,9 @@ class ScheduledTasks(
             return
         }
 
-        statService.publishStatPost(1000)
+        statService.publishStatPost()
 
         logger.info("--- Stat publish job end ---")
     }
 
-    // Disabled, instead it using New Relic monitor
-    //@Scheduled(fixedRate = 5 * 60 * 1000)
-    fun herokuDontStopJob() {
-        if (environmentService.isProduction.not()) {
-            return
-        }
-
-        logger.info("--- Heroku don't stop job start ---")
-        val totalPosts = restService.get("https://wildrace.herokuapp.com/post")["totalElements"] as Int
-        logger.info("--- Heroku don't stop job end (total posts: $totalPosts) ---")
-    }
 }

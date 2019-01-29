@@ -1,12 +1,16 @@
 <template>
     <v-footer dark class="pa-4">
         <v-layout justify-center>
-            <div class="mt-1 font-weight-bold">{{$t("default.projectName")}} v{{config.projectVersion}}</div>
-            <div class="mt-1 ml-2">
-                Created by <a href="http://vk.com/phpusr">Sergey Doronin</a>
+            <div class="text-block">
+                <v-layout column class="text-block text-xs-center">
+                    <div class="font-weight-bold">{{$t("default.projectName")}} v{{config.projectVersion}}</div>
+                    <div>
+                        Created by <a href="http://vk.com/phpusr">Sergey Doronin</a>
+                    </div>
+                </v-layout>
             </div>
-            <div class="ml-2">
-                <a href="https://github.com/phpusr/wild-race-service" target="_blank">
+            <div class="pt-1">
+                <a href="https://github.com/phpusr/wildrace" target="_blank">
                     <img src="/img/GitHub-Mark-32px.png" class="logo" alt="GitHub logo"/>
                 </a>
             </div>
@@ -23,8 +27,11 @@
 </script>
 
 <style>
+    .text-block {
+        width: 185px;
+    }
     .logo {
         filter: invert(100%);
-        height: 25px;
+        height: 32px;
     }
 </style>
