@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(SpringRunner::class)
 @ActiveProfiles(profiles = [""])
+@TestPropertySource("/application-test.properties")
+@RunWith(SpringRunner::class)
 @SpringBootTest
 class DefaultEnvironmentServiceTest {
     @Autowired
@@ -26,8 +28,9 @@ class DefaultEnvironmentServiceTest {
     }
 }
 
-@RunWith(SpringRunner::class)
 @ActiveProfiles(profiles = ["prod"])
+@TestPropertySource("/application-test.properties")
+@RunWith(SpringRunner::class)
 @SpringBootTest
 class ProdEnvironmentServiceTest {
     @Autowired
@@ -43,8 +46,9 @@ class ProdEnvironmentServiceTest {
     }
 }
 
-@RunWith(SpringRunner::class)
+@TestPropertySource("/application-test.properties")
 @ActiveProfiles(profiles = ["dev"])
+@RunWith(SpringRunner::class)
 @SpringBootTest
 class DevEnvironmentServiceTest {
     @Autowired

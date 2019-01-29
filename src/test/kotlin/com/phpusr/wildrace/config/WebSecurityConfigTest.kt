@@ -60,6 +60,7 @@ class WebSecurityConfigAccessTest {
 }
 
 @ActiveProfiles(profiles = ["prod"])
+@TestPropertySource("/application-test.properties")
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
