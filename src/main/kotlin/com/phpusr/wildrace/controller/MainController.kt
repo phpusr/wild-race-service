@@ -30,7 +30,9 @@ class MainController(
         private val environmentService: EnvironmentService,
         private val vkApiService: VKApiService,
         @Value("\${project.version}")
-        private val projectVersion: String
+        private val projectVersion: String,
+        @Value("\${google.analytics.id}")
+        private val googleAnalyticsId: String
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -46,6 +48,7 @@ class MainController(
         val host = if (isProdMode) "/" else "${Consts.DevHost}/"
 
         model["isProdMode"] = isProdMode
+        model["googleAnalyticsId"] = googleAnalyticsId
         model["jsFiles"] = if (isProdMode) getFiles("js", "js", host) else listOf("${host}app.js")
         model["cssFiles"] = if (isProdMode) getFiles("css", "css", host) else listOf()
 

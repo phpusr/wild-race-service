@@ -2,6 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:with="host = ${isProdMode} ? '/' : 'http://192.168.1.100:8000/'">
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async th:src="'https://www.googletagmanager.com/gtag/js?id=' + ${googleAnalyticsId}"></script>
+    <script th:inline="javascript">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', [[${googleAnalyticsId}]]);
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
