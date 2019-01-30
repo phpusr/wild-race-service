@@ -32,7 +32,7 @@ class ScheduledTasks(
     }
 
     @Transactional
-    @Scheduled(fixedRate = 20 * 1000) // Run every 1 hour
+    @Scheduled(fixedRate = 60 * 60 * 1000) // Run every 1 hour
     fun statPublishJob() {
         logger.info("--- Stat publish job start ---")
 
