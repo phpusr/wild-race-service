@@ -6,6 +6,7 @@ import loginApi from "../api/login"
 import postApi from "../api/post"
 import {fetchHandler} from "../util"
 import i18n from "../i18n"
+import {postSortDirection} from "../util/data"
 
 Vue.use(Vuex)
 
@@ -14,7 +15,8 @@ function formatDate(date) {
 }
 
 function sortPosts(posts) {
-    posts.sort((a, b) => b.date - a.date)
+    const direction = postSortDirection === "desc" ? -1 : 1
+    posts.sort((a, b) => (a.date - b.date) * direction)
 }
 
 const {user, stat, lastSyncDate, config} = document.frontendData

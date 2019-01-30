@@ -45,6 +45,8 @@ class SyncService(
     private val lastPostsCount = downloadPostsCount * 2
     /** Интервал между запросами к VK */
     private val syncBlockInterval = 1000L
+    /** Интервал между получением пользователей */
+    private val gettingUserInterval = 300L
     /** Интервал между публикациями комментариев */
     private val publishingCommentInterval = 300L
 
@@ -174,6 +176,8 @@ class SyncService(
         }
 
         if (profileId >= 0) {
+            // Задержка перед получением пользователя, чтобы не заблокировали пользователя
+            Thread.sleep(gettingUserInterval)
             val vkUser = vkApiService.usersGetById(profileId.toInt())
             if (vkUser != null) {
                 with(dbProfile) {
