@@ -144,8 +144,9 @@ class SyncService(
 
     /** Удаление из БД удаленных постов */
     private fun removeDeletedPosts(vkPosts: List<WallPostFull>, lastDbPosts: MutableList<Post>): List<Post> {
-        // Поиск постов за последние сутки
-        val startDate = Date(Date().time - 24 * 3600 * 1000)
+        // Поиск постов за последние ${numberOfLastDays} дней
+        val numberOfLastDays = 5
+        val startDate = Date(Date().time - 24 * 3600 * 1000 * numberOfLastDays)
         val lastDayPosts = lastDbPosts.filter{ it.date >= startDate }
         val deletedPosts = lastDayPosts.filter { post ->
             vkPosts.find { it.id == post.id.toInt() } == null
