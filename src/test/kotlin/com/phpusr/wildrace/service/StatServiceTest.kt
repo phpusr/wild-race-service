@@ -251,7 +251,6 @@ internal class StatServiceTest {
         // Start range < 0, end range > sum last running
         stat = statService.calcStat(StatType.Distance, -200, 2000)
         collector.checkThat(stat.startDate, comparesEqualTo(startDate))
-        endInterval = createDate(2015, 9, 13, 5, 43, 22)
         collector.checkThat(stat.endDate, comparesEqualTo(endDate))
         collector.checkThat(stat.daysCountAll, equalTo(24))
         collector.checkThat(stat.daysCountInterval, equalTo(24))
