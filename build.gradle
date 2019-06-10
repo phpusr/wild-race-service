@@ -22,7 +22,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.phpusr'
-version = '2.0.2'
+version = '2.0.3'
 sourceCompatibility = 1.8
 compileKotlin {
 	kotlinOptions {
