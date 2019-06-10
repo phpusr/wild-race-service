@@ -56,15 +56,16 @@ class SyncService(
 
         var needSync = true
         while(needSync) {
-            val countPosts = vkApiService.wallGet(0, 1).count
-            val downloadedCount = syncBlockPosts(countPosts, downloadPostsCount)
-            logger.debug(">> Downloaded (after sync): $downloadedCount/$countPosts")
+            val vkPostsCount = vkApiService.wallGet(0, 1).count
+            val dbPostsCount = syncBlockPosts(vkPostsCount, downloadPostsCount)
+            logger.debug(">> Downloaded (after sync): $dbPostsCount/$vkPostsCount")
 
-            if (downloadedCount > countPosts) {
-                throw RuntimeException("Number of posts in DB > downloaded")
+            if (dbPostsCount > vkPostsCount) {
+                throw RuntimeException("Number of posts in DB ($dbPostsCount) > number of posts in VK ($vkPostsCount)")
             }
 
-            needSync = downloadedCount < countPosts
+            needSync = dbPostsCount < vkPostsCount
+
             if (needSync) {
                 Thread.sleep(syncBlockInterval)
             }
@@ -75,21 +76,21 @@ class SyncService(
         logger.debug("-------- End sync --------")
     }
 
-    private fun syncBlockPosts(countPosts: Int, downloadCount: Int): Int {
-        val downloadedCount = postRepo.count().toInt()
-        logger.debug(">> Downloaded (before sync): $downloadedCount/$countPosts")
+    private fun syncBlockPosts(vkPostsCount: Int, downloadCount: Int): Int {
+        val dbPostsCount = postRepo.count().toInt()
+        logger.debug(">> Downloaded (before sync): $dbPostsCount/$vkPostsCount")
 
-        val offset = if (countPosts - downloadedCount > downloadCount) {
-            countPosts - downloadedCount - downloadCount
+        val offset = if (vkPostsCount - dbPostsCount > downloadCount) {
+            vkPostsCount - dbPostsCount - downloadCount
         } else 0
 
         val dbProfiles = profileRepo.findAll().toMutableList()
 
         val response = vkApiService.wallGet(offset, downloadCount)
 
-        if (response.count != countPosts) {
-            logger.debug(" -- Number of posts in VK changed: $countPosts -> ${response.count}")
-            return downloadedCount
+        if (response.count != vkPostsCount) {
+            logger.debug(" -- Number of posts in VK changed: $vkPostsCount -> ${response.count}")
+            return dbPostsCount
         }
 
         val vkPosts = response.items.reversed()
@@ -131,7 +132,7 @@ class SyncService(
         }
 
         // Deleting posts from the client, after sync without exceptions
-        deletedPosts.forEach{ it -> postSender.accept(EventType.Remove, PostDtoObject.create(it)) }
+        deletedPosts.forEach { postSender.accept(EventType.Remove, PostDtoObject.create(it)) }
 
         return postRepo.count().toInt()
     }
@@ -143,8 +144,9 @@ class SyncService(
 
     /** Удаление из БД удаленных постов */
     private fun removeDeletedPosts(vkPosts: List<WallPostFull>, lastDbPosts: MutableList<Post>): List<Post> {
-        // Поиск постов за последние сутки
-        val startDate = Date(Date().time - 24 * 3600 * 1000)
+        // Поиск постов за последние ${numberOfLastDays} дней
+        val numberOfLastDays = 5
+        val startDate = Date(Date().time - 24 * 3600 * 1000 * numberOfLastDays)
         val lastDayPosts = lastDbPosts.filter{ it.date >= startDate }
         val deletedPosts = lastDayPosts.filter { post ->
             vkPosts.find { it.id == post.id.toInt() } == null
