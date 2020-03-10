@@ -1,6 +1,8 @@
 WildRace - Сервис для анализа постов с vk.com
 ====================================================
 
+> This is old version, new version v3 [here](https://github.com/phpusr/wildrace)
+
 ## Changelog
 
 + Добавление нового функционала
